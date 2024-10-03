@@ -4,68 +4,72 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="container-fluid mt-4">
+    <!-- Header section -->
+    <div class="row align-items-center justify-content-between">
+        <!-- EmpowerU logo/text on the left -->
+        <div class="col-md-6 text-left">
+            <h1>EmpowerU</h1>
+        </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.PreferredCategories)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PhoneNo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Role)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastLogin)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.PreferredCategories)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Role)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastLogin)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.UserID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.UserID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.UserID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <!-- Buttons and User Profile on the right -->
+        <div class="col-md-6 text-right clearfix">
+            <!-- Logged-in User Profile with Dropdown should come first in the code, but float to the right -->
+            <div class="dropdown d-inline-block" style="float: right; margin-left: 15px;">
+                <a href="#" class="dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="https://th.bing.com/th/id/OIP.qnBU1qkkbFfp4tQjrMVx9wHaHw?rs=1&pid=ImgDetMain" alt="Profile Picture" class="rounded-circle" style="width: 40px; height: 40px;">
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="/Account/Profile">View Profile</a>
+                    <a class="dropdown-item" href="/Account/Settings">Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/Account/Logout">Logout</a>
+                </div>
+            </div>
+
+            <!-- First 3 buttons on the right -->
+            <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 3</button>
+            <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 2</button>
+            <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 1</button>
+        </div>
+    </div>
+</div>
+
+<!-- Main section with centered content -->
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4 text-center">
+        <!-- Adjusted column width -->
+        <!-- Circular space for the Consumer logo -->
+        <img src="https://wallpapercave.com/wp/wp6542570.jpg" alt="Consumer Logo" class="rounded-circle" style="width: 350px; height: 350px;">
+
+        <!-- Edit Consumer Profile as an underlined link -->
+        <div class="mt-3">
+            <a href="/Consumeres/Edit" class="btn btn-link" style="text-decoration: underline; color: #4a4a4a;">Edit Consumer Profile</a>
+        </div>
+
+        <!-- Manage Appointments and View Insights buttons -->
+        <div class="mt-4">
+            <a href="/Appointments/Manage" class="btn btn-secondary btn-block mb-3" style="width: 250px; margin-left: auto; margin-right: auto;">Book Appointments</a>
+            <a href="/Insights/View" class="btn btn-secondary btn-block mb-3" style="width: 250px; margin-left: auto; margin-right: auto;">View appointment details</a>
+            <a href="/Insights/View" class="btn btn-secondary btn-block" style="width: 250px; margin-left: auto; margin-right: auto;">Leave review</a>
+        </div>
+
+    </div>
+</div>
+
+<!-- Add styles if needed -->
+<style>
+    .btn {
+        min-width: 100px; /* Ensures the buttons are the same size */
+    }
+
+    /* Center-aligns the circular profile and other content */
+    .btn-block {
+        display: block;
+        width: 100%;
+    }
+
+    .rounded-circle {
+        object-fit: cover;
+    }
+</style>
