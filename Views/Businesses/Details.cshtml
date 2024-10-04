@@ -4,69 +4,93 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div class="container-fluid mt-4">
+    <!-- Header section -->
+    <div class="row align-items-center justify-content-between">
+        <!-- EmpowerU logo/text on the left -->
+        <div class="col-md-6 text-left">
+            <h1>EmpowerU</h1>
+        </div>
 
-<div>
-    <h4>Business</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Rating)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Rating)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LocationService)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LocationService.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Password)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Password)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Role)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Role)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastLogin)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastLogin)
-        </dd>
-    </dl>
+        <!-- Buttons and User Profile on the right -->
+        <div class="col-md-6 text-right clearfix">
+            <!-- Logged-in User Profile with Dropdown should come first in the code, but float to the right -->
+            <div class="dropdown d-inline-block" style="float: right; margin-left: 15px;">
+                <a href="#" class="dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="https://th.bing.com/th/id/OIP.qnBU1qkkbFfp4tQjrMVx9wHaHw?rs=1&pid=ImgDetMain" alt="Profile Picture" class="rounded-circle" style="width: 40px; height: 40px;">
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="/Account/Profile">View Profile</a>
+                    <a class="dropdown-item" href="/Account/Settings">Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/Account/Logout">Logout</a>
+                </div>
+            </div>
+
+            <!-- First 3 buttons on the right -->
+            <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 3</button>
+            <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 2</button>
+            <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 1</button>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.UserID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+
+<!-- Main section with centered content -->
+<div class="row justify-content-center mt-5 ">
+    <!-- Column for the business logo -->
+    <div class="col-md-6 text-center">
+        <!-- Circular space for the business logo -->
+        <img src="https://wallpapercave.com/wp/wp6542570.jpg" alt="Business Logo" class="rounded-circle" style="width: 250px; height: 250px;">
+
+        <!-- Manage Appointments and Leave Review buttons -->
+        <div class="mt-5">
+            <a href="/Appointments/Book" class="btn btn-secondary btn-block mb-3" style="width: 200px; margin-left: auto; margin-right: auto;">Book Appointment</a>
+            <a href="/Review/Add" class="btn btn-secondary btn-block" style="width: 200px; margin-left: auto; margin-right: auto;">Leave review</a>
+        </div>
+    </div>
+
+    <!-- Column for the business information -->
+    <div class="col-md-4">
+        <h4>Business Information</h4>
+        <hr />
+        <dl class="row">
+            <!-- Display Business Name -->
+            <dt class="col-sm-4">Business Name</dt>
+            <dd class="col-sm-8">@Model.Name</dd>
+
+            <!-- Display Business Email -->
+            <dt class="col-sm-4">Email</dt>
+            <dd class="col-sm-8">@Model.Email</dd>
+
+            <!-- Display Business Phone Number -->
+            <dt class="col-sm-4">Phone Number</dt>
+            <dd class="col-sm-8">@Model.PhoneNo</dd>
+
+            <!-- Display Business Rating -->
+            <dt class="col-sm-4">Rating</dt>
+            <dd class="col-sm-8">@Model.Rating</dd>
+
+            <!-- Display Business Description -->
+            <dt class="col-sm-4">Description</dt>
+            <dd class="col-sm-8">@Model.Description</dd>
+        </dl>
+    </div>
 </div>
+
+<!-- Add styles if needed -->
+<style>
+    .btn {
+        min-width: 70px; /* Ensures the buttons are the same size */
+    }
+
+    /* Center-aligns the circular profile and other content */
+    .btn-block {
+        display: block;
+        width: 100%;
+    }
+
+    .rounded-circle {
+        object-fit: cover;
+    }
+</style>
