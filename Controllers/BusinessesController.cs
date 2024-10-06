@@ -159,5 +159,61 @@ namespace EmpowerU.Controllers
         {
             return _context.Businesses.Any(e => e.UserID == id);
         }
+
+        // GET: Businesses/ManageAppointments/5
+        public async Task<IActionResult> ManageAppointments(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var business = await _context.Businesses
+                .Include(b => b.LocationService)
+                .FirstOrDefaultAsync(m => m.UserID == id);
+
+            if (business == null)
+            {
+                return NotFound();
+            }
+
+            // Retrieve all appointments for the business
+            var appointments = await _context.Appointments
+                .Where(a => a.BusinessID == id)
+                .Include(a => a.Consumer)  // Eager load the Consumer
+                .ToListAsync();
+
+            // Pass appointments and business to the view
+            ViewBag.Business = business;
+            ViewBag.Appointments = appointments;
+
+            return View();
+        }
+
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAppointmentStatus(int id, [FromBody] UpdateAppointmentStatusDto statusDto)
+        {
+            if (statusDto == null || string.IsNullOrWhiteSpace(statusDto.Status))
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            var appointment = await _context.Appointments.FindAsync(id);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            appointment.Status = statusDto.Status;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        public class UpdateAppointmentStatusDto
+        {
+            public string Status { get; set; }
+        }
     }
 }
