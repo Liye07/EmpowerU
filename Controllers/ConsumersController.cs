@@ -152,5 +152,10 @@ namespace EmpowerU.Controllers
         {
             return _context.Consumers.Any(e => e.UserID == id);
         }
+
+        public IActionResult Search()
+        {
+            return View();  // This will render the Search.cshtml view.
+        }
     }
 }
