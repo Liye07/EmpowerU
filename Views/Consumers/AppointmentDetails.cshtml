@@ -1,60 +1,93 @@
 ﻿@model Consumer
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Appointment Details";
+    var pastAppointments = ViewBag.PastAppointments as List<EmpowerU.Models.Appointment>;
+    var upcomingAppointments = ViewBag.UpcomingAppointments as List<EmpowerU.Models.Appointment>;
 }
 
-<h1>Details</h1>
+<div class="container">
+    <h2>Appointments</h2>
 
-<div>
-    <h4>Consumer</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PreferredCategories)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PreferredCategories)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Password)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Password)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Role)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Role)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastLogin)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastLogin)
-        </dd>
-    </dl>
+    <div class="tab-buttons">
+        <button id="past-btn" class="tab-btn" onclick="showPastAppointments()">Past</button>
+        <button id="upcoming-btn" class="tab-btn active" onclick="showUpcomingAppointments()">Upcoming</button>
+    </div>
+
+    <table id="upcoming-appointments-table" class="appointments-table">
+        <thead>
+            <tr>
+                <th>Appointment ID</th>
+                <th>Business Name</th>
+                <th>Date</th>
+                <th>Service Type</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var appointment in upcomingAppointments)
+            {
+                <tr>
+                    <td>@appointment.AppointmentID</td>
+                    <td>@appointment.Business.Name</td>
+                    <td>@appointment.DateTime.ToShortDateString()</td>
+                    <td>@appointment.ServiceType</td>
+                    <td>@appointment.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <table id="past-appointments-table" class="appointments-table" style="display:none;">
+        <thead>
+            <tr>
+                <th>Appointment ID</th>
+                <th>Business Name</th>
+                <th>Date</th>
+                <th>Service Type</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var appointment in pastAppointments)
+            {
+                <tr>
+                    <td>@appointment.AppointmentID</td>
+                    <td>@appointment.Business.Name</td>
+                    <td>@appointment.DateTime.ToShortDateString()</td>
+                    <td>@appointment.ServiceType</td>
+                    <td>@appointment.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.UserID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="appointment-details">
+    <h3>APPOINTMENT DETAILS</h3>
+    <p><strong>First Name: </strong>@Model.Name</p>
+    <p><strong>Surname: </strong>@Model.Name</p>
+    <p><strong>Email: </strong>@Model.Email</p>
+    <p><strong>Phone No.: </strong>@Model.PhoneNo</p>
+
+    <button class="review-btn">Leave a Review</button>
 </div>
+
+@section Scripts {
+    <script>
+        function showPastAppointments() {
+            document.getElementById('upcoming-appointments-table').style.display = 'none';
+            document.getElementById('past-appointments-table').style.display = 'table';
+            document.getElementById('past-btn').classList.add('active');
+            document.getElementById('upcoming-btn').classList.remove('active');
+        }
+
+        function showUpcomingAppointments() {
+            document.getElementById('upcoming-appointments-table').style.display = 'table';
+            document.getElementById('past-appointments-table').style.display = 'none';
+            document.getElementById('past-btn').classList.remove('active');
+            document.getElementById('upcoming-btn').classList.add('active');
+        }
+    </script>
+}
+
