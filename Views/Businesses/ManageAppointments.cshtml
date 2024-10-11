@@ -72,11 +72,11 @@
                                     <td>@appointment.ServiceType</td>
                                     <td>@appointment.DateTime.ToString("dd MMM yyyy")</td>
                                     <td>
-                                        <select class="form-select">
+                                        @* <select class="form-select">
                                             <option value="Confirmed" @(appointment.Status == "Confirmed" ? "selected" : "")>Confirmed</option>
                                             <option value="Pending" @(appointment.Status == "Pending" ? "selected" : "")>Pending</option>
                                             <option value="Cancelled" @(appointment.Status == "Cancelled" ? "selected" : "")>Cancelled</option>
-                                        </select>
+                                        </select> *@
                                     </td>
                                 </tr>
                             }

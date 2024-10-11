@@ -16,6 +16,10 @@ namespace EmpowerU.Models
 
         [Required]
         [StringLength(45)]
+        public string Surname { get; set; }
+
+        [Required]
+        [StringLength(45)]
         public string Email { get; set; }
 
         [StringLength(45)]
