@@ -1,0 +1,170 @@
+﻿@{
+    ViewData["Title"] = "Search";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Businesses</title>
+    <style>
+        /* Add some basic styling for layout */
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 30%;
+            padding: 10px;
+            border-right: 1px solid #ccc;
+            max-height: 500px; /* Ensure a height is set */
+            overflow-y: auto; /* Enable vertical scrolling */
+            background-color: #f1f1f1;
+        }
+
+        .map {
+            width: 70%;
+            padding: 10px;
+        }
+
+        .business-card {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+
+            .business-card img {
+                width: 50px;
+                height: 50px;
+            }
+
+        .business-details {
+            margin-top: 5px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+        }
+
+        .search-bar input {
+            padding: 2px;
+            width: 100%;
+        }
+
+        .button-group button {
+            padding: 5px 10px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="search-bar">
+            <h1>EmpowerU</h1>
+            <input type="text" placeholder="Enter business or location">
+        </div>
+        <div class="col-md-6 text-right clearfix">
+            <!-- Logged-in User Profile with Dropdown should come first in the code, but float to the right -->
+            <div class="dropdown d-inline-block" style="float: right; margin-left: 15px;">
+                <a href="#" class="dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="https://th.bing.com/th/id/OIP.qnBU1qkkbFfp4tQjrMVx9wHaHw?rs=1&pid=ImgDetMain" alt="Profile Picture" class="rounded-circle" style="width: 40px; height: 40px;">
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="/Account/Profile">View Profile</a>
+                    <a class="dropdown-item" href="/Account/Settings">Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/Account/Logout">Logout</a>
+                </div>
+            </div>
+
+            <!-- First 3 buttons on the right -->
+            <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 3</button>
+            <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 2</button>
+            <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 1</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <h6>Search results: Businesses in [Specified location]</h6>
+
+            <!-- Add more business cards for testing scroll functionality -->
+            <div class="business-card">
+                <img src="https://via.placeholder.com/50" alt="Logo">
+                <div class="business-details">
+                    [Business details 1]
+                </div>
+            </div>
+
+            <div class="business-card">
+                <img src="https://via.placeholder.com/50" alt="Logo">
+                <div class="business-details">
+                    [Business details 2]
+                </div>
+            </div>
+
+            <div class="business-card">
+                <img src="https://via.placeholder.com/50" alt="Logo">
+                <div class="business-details">
+                    [Business details 3]
+                </div>
+            </div>
+
+            <div class="business-card">
+                <img src="https://via.placeholder.com/50" alt="Logo">
+                <div class="business-details">
+                    [Business details 4]
+                </div>
+            </div>
+
+            <div class="business-card">
+                <img src="https://via.placeholder.com/50" alt="Logo">
+                <div class="business-details">
+                    [Business details 5]
+                </div>
+            </div>
+
+            <div class="business-card">
+                <img src="https://via.placeholder.com/50" alt="Logo">
+                <div class="business-details">
+                    [Business details 6]
+                </div>
+            </div>
+
+            <div class="business-card">
+                <img src="https://via.placeholder.com/50" alt="Logo">
+                <div class="business-details">
+                    [Business details 7]
+                </div>
+            </div>
+
+            <div class="business-card">
+                <img src="https://via.placeholder.com/50" alt="Logo">
+                <div class="business-details">
+                    [Business details 8]
+                </div>
+            </div>
+
+        </div>
+
+        <div class="map">
+            <img src="https://via.placeholder.com/600x400" alt="Map" style="width: 100%; height: auto;">
+        </div>
+    </div>
+
+</body>
+</html>

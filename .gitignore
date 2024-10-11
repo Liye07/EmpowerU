@@ -362,10 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /appsettings.json
-/Models/Appointment.cs
-/Models/Report.cs
-/Views/Reviews/Details.cshtml
-/Controllers/AppointmentsController.cs
-/wwwroot/css/site.css
-/Views/Appointments/Book.cshtml
-/Views/Appointments/Confirm.cshtml
+/appsettings.Development.json

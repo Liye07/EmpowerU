@@ -1,74 +1,103 @@
 ﻿@model Business
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Business Profile";
 }
 
-<h1>Edit</h1>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card">
+                <div class="card-header text-left">
+                    <h2>Business Information</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Profile Picture Section -->
+                    <div class="text-center mb-4">
+                        <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg" alt="Profile Picture" class="rounded-circle" width="120" height="120">
+                        <br />
+                        <button type="button" class="btn btn-secondary mt-3">Change picture</button>
+                        <p class="mt-2 text-muted">
+                            <small>Acceptable size: 512x512 pixels. Maximum file size: 2MB. Accepted formats: JPEG, PNG.</small>
+                        </p>
+                    </div>
 
-<h4>Business</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="EditBusinessProfile">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+                    <!-- Account Information Form -->
+                    <form asp-action="EditBusinessProfile" method="post" class="form-horizontal">
+                        <!-- Name Field -->
+                        <div class="form-group row">
+                            <label for="Name" class="col-sm-2 col-form-label">Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" asp-for="Name" class="form-control" placeholder="Enter your business name" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="form-group row mt-3">
+                            <label for="Email" class="col-sm-2 col-form-label">Email</label>
+                            <div class="col-sm-10">
+                                <input type="email" asp-for="Email" class="form-control" placeholder="Enter your business email" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Phone Field -->
+                        <div class="form-group row mt-3">
+                            <label for="Phone" class="col-sm-2 col-form-label">Phone No.</label>
+                            <div class="col-sm-10">
+                                <input type="tel" asp-for="PhoneNo" class="form-control" placeholder="Enter your phone number" />
+                                <span asp-validation-for="PhoneNo" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Description Field -->
+                        <div class="form-group row mt-3">
+                            <label for="Description" class="col-sm-2 col-form-label">Description</label>
+                            <div class="col-sm-10">
+                                <textarea asp-for="Description" class="form-control" placeholder="Describe your business"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Services Section -->
+                        <h4 class="mt-4">Services</h4>
+                        <div class="d-flex flex-wrap justify-content-start mb-4">
+                            <!-- List of Services (Dynamically generated with 'x' for removal) -->
+                            @foreach (var service in Model.Email)
+                            {
+                                <div class="position-relative me-2 mb-2">
+                                    <span class="badge bg-light text-dark px-3 py-2">
+                                        @service
+                                        <a href="javascript:void(0);" class="text-danger ms-2" title="Remove service">
+                                            <i class="fas fa-times"></i> <!-- 'x' for removal -->
+                                        </a>
+                                    </span>
+                                </div>
+                            }
+                        </div>
+
+
+                      @*   <div class="row">
+                            <div class="col-sm-5 offset-sm-2">
+                                <button type="button" class="btn btn-danger me-3">Remove</button>
+                                <button type="button" class="btn btn-primary">Add</button>
+                            </div>
+                        </div> *@
+
+                        <!-- Save Changes Button -->
+                        <div class="text-end mt-4">
+                            <button type="submit" class="btn btn-success">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="LocationID" class="control-label"></label>
-                <select asp-for="LocationID" class="form-control" asp-items="ViewBag.LocationID"></select>
-                <span asp-validation-for="LocationID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Rating" class="control-label"></label>
-                <input asp-for="Rating" class="form-control" />
-                <span asp-validation-for="Rating" class="text-danger"></span>
-            </div>
-            <input type="hidden" asp-for="UserID" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneNo" class="control-label"></label>
-                <input asp-for="PhoneNo" class="form-control" />
-                <span asp-validation-for="PhoneNo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Role" class="control-label"></label>
-                <input asp-for="Role" class="form-control" />
-                <span asp-validation-for="Role" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastLogin" class="control-label"></label>
-                <input asp-for="LastLogin" class="form-control" />
-                <span asp-validation-for="LastLogin" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

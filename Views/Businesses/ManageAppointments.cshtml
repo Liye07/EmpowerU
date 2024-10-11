@@ -1,72 +1,117 @@
 ﻿@model Business
 
 @{
-    ViewData["Title"] = "Details";
+    ViewBag.Title = "Manage Appointments";
+    var business = ViewBag.Business as Business;  <!-- Reference to Business model -->
+    var appointments = ViewBag.Appointments as List<Appointment>;
 }
 
-<h1>Details</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container mt-2">
+        <!-- Header -->
+        <header class="d-flex justify-content-between align-items-center mb-4">
+            <!-- EmpowerU logo/text on the left -->
+            <div class="col-md-6 text-left">
+                <h1>EmpowerU</h1>
+            </div>
 
-<div>
-    <h4>Business</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Rating)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Rating)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LocationService)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LocationService.Address)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Password)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Password)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Role)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Role)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastLogin)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastLogin)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.UserID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+            <!-- Buttons and User Profile on the right -->
+            <div class="col-md-6 text-right clearfix">
+                <!-- Logged-in User Profile with Dropdown should come first in the code, but float to the right -->
+                <div class="dropdown d-inline-block" style="float: right; margin-left: 15px;">
+                    <a href="#" class="dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg" alt="Profile Picture" class="rounded-circle" style="width: 40px; height: 40px;">
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="/Account/Profile">View Profile</a>
+                        <a class="dropdown-item" href="/Account/Settings">Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/Account/Logout">Logout</a>
+                    </div>
+                </div>
+
+                <!-- First 3 buttons on the right -->
+                <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 3</button>
+                <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 2</button>
+                <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 1</button>
+            </div>
+        </header>
+
+        <!-- Appointments Section -->
+        <section class="row">
+            <!-- Appointments Table -->
+            <div class="col-md-8">
+                <h2 class="h4 mb-3">Appointments</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Appointment ID</th>
+                            <th>Full Name</th>
+                            <th>Service Type</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (appointments != null && appointments.Any())
+                        {
+                            foreach (var appointment in appointments)
+                            {
+                                <tr>
+                                    <td>@appointment.AppointmentID</td>
+                                    <td>@appointment.Consumer.Name</td> <!-- Assuming Consumer is part of Appointment -->
+                                    <td>@appointment.ServiceType</td>
+                                    <td>@appointment.DateTime.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        <select class="form-select">
+                                            <option value="Confirmed" @(appointment.Status == "Confirmed" ? "selected" : "")>Confirmed</option>
+                                            <option value="Pending" @(appointment.Status == "Pending" ? "selected" : "")>Pending</option>
+                                            <option value="Cancelled" @(appointment.Status == "Cancelled" ? "selected" : "")>Cancelled</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">No appointments available</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Appointment Details Section -->
+            <div class="col-md-4">
+                @if (appointments != null && appointments.Any())
+                {
+                    var firstAppointment = appointments.First();
+                    <h2 class="h5">APPOINTMENT @firstAppointment.AppointmentID</h2>
+                    <div class="card p-3">
+                        <h3 class="h6">First Name: @firstAppointment.Consumer.Name</h3>
+                        <h3 class="h6">Surname: @firstAppointment.Consumer.Name</h3> <!-- Adjust field as per your model -->
+                        <p><strong>Email:</strong> @firstAppointment.Consumer.Email</p>
+                        <p><strong>Phone No.:</strong> @firstAppointment.Consumer.PhoneNo</p>
+                    </div>
+                }
+                else
+                {
+                    <p>No appointment details to show</p>
+                }
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

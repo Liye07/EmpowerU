@@ -152,5 +152,55 @@ namespace EmpowerU.Controllers
         {
             return _context.Consumers.Any(e => e.UserID == id);
         }
+
+        public IActionResult Search()
+        {
+            return View();  // This will render the Search.cshtml view.
+        }
+
+        [Route("Consumers/AppointmentDetails/{id?}")]
+        public async Task<IActionResult> AppointmentDetails(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            // Get the consumer by ID
+            var consumer = await _context.Consumers.FirstOrDefaultAsync(c => c.UserID == id);
+
+            if (consumer == null)
+            {
+                return NotFound();
+            }
+
+            // Get the consumer's appointments directly from the Appointments table
+            var appointments = await _context.Appointments
+                .Where(a => a.ConsumerID == consumer.UserID)
+                .ToListAsync();
+
+            // Get the current date to filter appointments
+            var currentDate = DateTime.Now;
+
+            // Filter past and upcoming appointments
+            ViewBag.PastAppointments = appointments
+                .Where(a => a.DateTime < currentDate)
+                .OrderByDescending(a => a.DateTime)
+                .ToList();
+
+            ViewBag.UpcomingAppointments = appointments
+                .Where(a => a.DateTime >= currentDate)
+                .OrderBy(a => a.DateTime)
+                .ToList();
+
+            ViewBag.Consumer = consumer; // Pass consumer details
+
+            return View(consumer); // Make sure to pass the consumer object
+        }
+
+
+
+
+
     }
 }
