@@ -31,8 +31,8 @@ namespace EmpowerU.Controllers
         {
             var reviews = new List<Review>
         {
-            new Review { Title = "Great product!", Comment = "Really enjoyed using this.", ReviewerName = "John Doe", Rating = 5, Date = DateTime.Now },
-            new Review { Title = "Could be better", Comment = "There were some issues with this.", ReviewerName = "Jane Smith", Rating = 3, Date = DateTime.Now }
+            new Review { Title = "Great product!", Comment = "Really enjoyed using this.", Rating = 5, Date = DateTime.Now },
+            new Review { Title = "Could be better", Comment = "There were some issues with this.", Rating = 3, Date = DateTime.Now }
         };
 
             return View(reviews); 
