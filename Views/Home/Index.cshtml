@@ -1,8 +1,130 @@
-﻿@{
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <p class="text-left">Book Your Next Appointment</p>
 </div>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Search for businesses..." aria-label="Search">
+                <div class="input-group-append">
+                    <span class="input-group-text">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="mb-3">
+                <a href="#" class="btn btn-outline-primary mx-1">Massage</a>
+                <a href="#" class="btn btn-outline-primary mx-1">Hair</a>
+                <a href="#" class="btn btn-outline-primary mx-1">Barber</a>
+                <a href="#" class="btn btn-outline-primary mx-1">Nails</a>
+            </div>
+
+            <!-- Large Text for Services -->
+            <h2 class="text-left">Services</h2>
+
+            <!-- Advertisement Section -->
+            <div class="row mt-4">
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="https://th.bing.com/th/id/OIP.H89kYH0lwAh-iZEtH0RG4wHaId?rs=1&pid=ImgDetMain/200" class="card-img-top" alt="Business 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Business Name 1</h5>
+                            <p class="card-text">Description of the first business, highlighting its services and offerings. Specializes in quality.</p>
+                            <a href="#" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="https://th.bing.com/th/id/OIP.5zMEKzL6uRClRnbtl9kjWgHaIN?rs=1&pid=ImgDetMain/200" class="card-img-top" alt="Business 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Business Name 2</h5>
+                            <p class="card-text">Description of the second business, focusing on haircuts and styling. Offers a range of services for all hair types.</p>
+                            <a href="#" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="https://th.bing.com/th/id/OIP.VAzkpbCmRi8g4OPPbCMZdQAAAA?w=350&h=350&rs=1&pid=ImgDetMain/200" class="card-img-top" alt="Business 3">
+                        <div class="card-body">
+                            <h5 class="card-title">Business Name 3</h5>
+                            <p class="card-text">Description of the third business, specializing in manicures and pedicures. Experience luxury nail care in a relaxing environment.</p>
+                            <a href="#" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<footer class="bg-light text-center text-lg-start mt-4">
+    <div class="container p-4">
+        <div class="row">
+            <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
+                <h5 class="text-uppercase">Contact Us</h5>
+                <p>
+                    Phone: +1 234 567 890<br>
+                    Email: support@empoweru.com<br>
+                    Address: 123 EmpowerU St, City, Country
+                </p>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase">About Us</h5>
+                <p>
+                    EmpowerU connects consumers with top-rated service providers in beauty and wellness.
+                    Our goal is to streamline the process of discovering and booking appointments.
+                </p>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase">Follow Us</h5>
+                <a href="#" class="text-dark">Facebook</a><br>
+                <a href="#" class="text-dark">Instagram</a><br>
+                <a href="#" class="text-dark">Twitter</a>
+            </div>
+        </div>
+    </div>
+    <div class="text-center p-3">
+        © 2024 EmpowerU. All rights reserved.
+    </div>
+</footer>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+    }
+
+    .btn-outline-primary {
+        width: 120px;
+    }
+
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+    }
+
+    footer {
+        background-color: #f8f9fa;
+    }
+</style>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
