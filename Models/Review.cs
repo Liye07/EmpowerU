@@ -29,5 +29,11 @@ namespace EmpowerU.Models
 
         [ForeignKey(nameof(ConsumerID))]
         public Consumer Consumer { get; set; }
+
+        /* added by me */
+        public string Title { get; set; }
+
+
+
     }
 }

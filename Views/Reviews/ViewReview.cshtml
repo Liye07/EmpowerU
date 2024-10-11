@@ -1,0 +1,33 @@
+﻿@model IEnumerable<EmpowerU.Models.Review>
+
+@{
+    ViewBag.Title = "View Reviews";
+}
+
+<div class="container">
+    <h2>Latest Reviews</h2>
+    <div class="row">
+        @foreach (var review in Model)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">@review.Title</h5>
+                        <p class="card-text">@review.Comment</p>
+                        <p class="text-muted">Rating: @Html.Raw(new string('★', review.Rating))@Html.Raw(new string('☆', 5 - review.Rating))</p>
+                        <footer class="blockquote-footer">
+                            @review.Consumer on @review.Date.ToString("MM/dd/yyyy")
+                        </footer>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

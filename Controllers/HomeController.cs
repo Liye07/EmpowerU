@@ -18,6 +18,11 @@ namespace EmpowerU.Controllers
             return View();
         }
 
+        public IActionResult SecuritySettngs()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

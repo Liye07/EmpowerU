@@ -24,6 +24,7 @@ namespace EmpowerU.Controllers
         {
             var empowerUContext = _context.Reports.Include(r => r.Business);
             return View(await empowerUContext.ToListAsync());
+
         }
 
         // GET: Reports/Details/5

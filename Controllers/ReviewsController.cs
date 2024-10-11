@@ -26,49 +26,38 @@ namespace EmpowerU.Controllers
             return View(await empowerUContext.ToListAsync());
         }
 
-        // GET: Reviews/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Reviews/ViewReview/5
+        public ActionResult ViewReview()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var reviews = new List<Review>
+        {
+            new Review { Title = "Great product!", Comment = "Really enjoyed using this.", ReviewerName = "John Doe", Rating = 5, Date = DateTime.Now },
+            new Review { Title = "Could be better", Comment = "There were some issues with this.", ReviewerName = "Jane Smith", Rating = 3, Date = DateTime.Now }
+        };
 
-            var review = await _context.Reviews
-                .Include(r => r.Business)
-                .Include(r => r.Consumer)
-                .FirstOrDefaultAsync(m => m.ReviewID == id);
-            if (review == null)
-            {
-                return NotFound();
-            }
-
-            return View(review);
+            return View(reviews); 
         }
 
         // GET: Reviews/CreateReview
         public IActionResult CreateReview()
         {
-            ViewData["BusinessID"] = new SelectList(_context.Businesses, "UserID", "Email");
-            ViewData["ConsumerID"] = new SelectList(_context.Consumers, "UserID", "Email");
             return View();
         }
 
         // POST: Reviews/CreateReview
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // For more ViewReview, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateReview([Bind("ReviewID,BusinessID,ConsumerID,Rating,Comment,Date")] Review review)
+        public async Task<IActionResult> CreateReview( Review review)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(review);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("ViewReview");
             }
-            ViewData["BusinessID"] = new SelectList(_context.Businesses, "UserID", "Email", review.BusinessID);
-            ViewData["ConsumerID"] = new SelectList(_context.Consumers, "UserID", "Email", review.ConsumerID);
+            
             return View(review);
         }
 
