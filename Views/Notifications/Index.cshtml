@@ -1,53 +1,70 @@
-﻿@model IEnumerable<EmpowerU.Models.Notification>
+@model EmpowerU.Models.Notification
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Left side: List of messages -->
+        <div class="col-md-4">
+            <h3 class="text-primary">Messages</h3>
+            <ul class="list-group mb-3">
+                @* Example list items *@
+                <li class="list-group-item list-group-item-action">Message 1</li>
+                <li class="list-group-item list-group-item-action">Message 2</li>
+                <li class="list-group-item list-group-item-action">Message 3</li>
+            </ul>
+            <div>
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                <a asp-action="Edit" asp-route-id="@Model?.NotificationID" class="btn btn-warning">Edit</a>
+            </div>
+        </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NotificationContent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsRead)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Timestamp)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NotificationContent)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsRead)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Timestamp)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Email)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.NotificationID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.NotificationID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.NotificationID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <!-- Right side: Selected message view and reply space -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4>Notification Details</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3 font-weight-bold">
+                            @Html.DisplayNameFor(model => model.NotificationContent)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.NotificationContent)
+                        </dd>
+                        <dt class="col-sm-3 font-weight-bold">
+                            @Html.DisplayNameFor(model => model.IsRead)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.IsRead)
+                        </dd>
+                        <dt class="col-sm-3 font-weight-bold">
+                            @Html.DisplayNameFor(model => model.Timestamp)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.Timestamp)
+                        </dd>
+                        <dt class="col-sm-3 font-weight-bold">
+                            @Html.DisplayNameFor(model => model.User)
+                        </dt>
+                        <dd class="col-sm-9">
+                            @Html.DisplayFor(model => model.User.Email)
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="mt-4">
+                <h4 class="text-primary">Reply</h4>
+                <form>
+                    <div class="form-group">
+                        <textarea class="form-control" rows="3" placeholder="Type your reply here..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success mt-2">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
