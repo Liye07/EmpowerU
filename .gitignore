@@ -363,3 +363,8 @@ MigrationBackup/
 FodyWeavers.xsd
 /appsettings.json
 /appsettings.Development.json
+/Controllers/AppointmentsController.cs
+/Models/Report.cs
+/Views/Appointments/Book.cshtml
+/Views/Appointments/Confirm.cshtml
+/Models/Appointment.cs
