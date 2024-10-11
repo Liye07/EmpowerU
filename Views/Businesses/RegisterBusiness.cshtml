@@ -1,59 +1,113 @@
-﻿@model Business
+@model Business
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Register Business</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-white bg-primary">
+                    <h4 class="mb-0">Business Registration</h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <p>Sign up using:</p>
+                        <a href="#" class="btn btn-outline-primary mx-1">
+                            <i class="fab fa-facebook-f"></i> Facebook
+                        </a>
+                        <a href="#" class="btn btn-outline-danger mx-1">
+                            <i class="fab fa-instagram"></i> Instagram
+                        </a>
+                    </div>
 
-<h4>Business</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="RegisterBusiness">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-           
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                    <form asp-action="RegisterBusiness">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-group">
+                            <label asp-for="Name" class="control-label"></label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter business name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label"></label>
+                            <input asp-for="Email" class="form-control" placeholder="Enter business email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="PhoneNo" class="control-label"></label>
+                            <input asp-for="PhoneNo" class="form-control" placeholder="Enter business phone number" />
+                            <span asp-validation-for="PhoneNo" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Password" class="control-label"></label>
+                            <input asp-for="Password" class="form-control" type="password" placeholder="Enter password" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Role" class="control-label"></label>
+                            <select asp-for="Role" class="form-control">
+                                <option value="">Select Role</option>
+                                <option value="Admin">Admin</option>
+                                <option value="User">User</option>
+                                <!-- Add more roles as needed -->
+                            </select>
+                            <span asp-validation-for="Role" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="LastLogin" class="control-label"></label>
+                            <input asp-for="LastLogin" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="LastLogin" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <input type="submit" value="Register" class="btn btn-primary" />
+                            <p class="mb-0">Already have an account? <a href="#" class="text-primary">Login</a></p>
+                        </div>
+                    </form>
+
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneNo" class="control-label"></label>
-                <input asp-for="PhoneNo" class="form-control" />
-                <span asp-validation-for="PhoneNo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Role" class="control-label"></label>
-                <input asp-for="Role" class="form-control" />
-                <span asp-validation-for="Role" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastLogin" class="control-label"></label>
-                <input asp-for="LastLogin" class="form-control" />
-                <span asp-validation-for="LastLogin" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Register" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
+    </div>
+
+    <div class="text-center mt-3">
+        <a asp-action="Index">Back to List</a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+    }
+
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .btn-outline-primary, .btn-outline-danger {
+        width: 120px;
+    }
+</style>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha384-89XigT+3tHsmcoH9tGxjUUlDhD9gY9wQ0+L2cRj06YYvJ4bAksbL3uOJa9cT87ze" crossorigin="anonymous" />
