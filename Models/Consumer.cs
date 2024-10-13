@@ -8,6 +8,10 @@ public class Consumer : User
         this.Role = "Consumer";  // Automatically sets Role to 'Consumer'
     }
 
+    [Required]
+    [StringLength(45)]
+    public string Surname { get; set; }
+
     [StringLength(255)] // Limit string length
     public string PreferredCategories { get; set; }
 

@@ -98,8 +98,8 @@
                     var firstAppointment = appointments.First();
                     <h2 class="h5">APPOINTMENT @firstAppointment.AppointmentID</h2>
                     <div class="card p-3">
-                        <h3 class="h6">First Name: @firstAppointment.Consumer.Name</h3>
-                        <h3 class="h6">Surname: @firstAppointment.Consumer.Name</h3> <!-- Adjust field as per your model -->
+                        <p><strong>First Name:</strong> @firstAppointment.Consumer.Name</p>
+                        <p><strong>Surname:</strong> @firstAppointment.Consumer.Surname</p> <!-- Adjust field as per your model -->
                         <p><strong>Email:</strong> @firstAppointment.Consumer.Email</p>
                         <p><strong>Phone No.:</strong> @firstAppointment.Consumer.PhoneNo</p>
                     </div>

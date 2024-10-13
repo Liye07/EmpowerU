@@ -53,7 +53,7 @@ namespace EmpowerU.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterConsumer([Bind("PreferredCategories,UserID,Name,Email,PhoneNo,Password,Role,LastLogin")] Consumer consumer)
+        public async Task<IActionResult> RegisterConsumer([Bind("PreferredCategories,UserID,Name,Surname,Email,PhoneNo,Password,Role,LastLogin")] Consumer consumer)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace EmpowerU.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditConsumerProfile(int id, [Bind("PreferredCategories,UserID,Name,Email,PhoneNo,Password,Role,LastLogin")] Consumer consumer)
+        public async Task<IActionResult> EditConsumerProfile(int id, [Bind("PreferredCategories,UserID,Name,Surname,Email,PhoneNo,Password,Role,LastLogin")] Consumer consumer)
         {
             if (id != consumer.UserID)
             {
