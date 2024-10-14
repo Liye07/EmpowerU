@@ -6,16 +6,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmpowerU.Models.Data;
+using EmpowerU.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace EmpowerU.Controllers
 {
     public class ConsumersController : Controller
     {
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole<int>> _roleManager; // Change here if User is int
         private readonly EmpowerUContext _context;
+        private readonly ILogger<ConsumersController> _logger;
 
-        public ConsumersController(EmpowerUContext context)
+        public ConsumersController(EmpowerUContext context, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager, ILogger<ConsumersController> logger) // Change here if User is int
         {
+            _userManager = userManager;
             _context = context;
+            _roleManager = roleManager;
+            _logger = logger;
         }
 
         // GET: Consumers
@@ -33,7 +41,7 @@ namespace EmpowerU.Controllers
             }
 
             var consumer = await _context.Consumers
-                .FirstOrDefaultAsync(m => m.UserID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (consumer == null)
             {
                 return NotFound();
@@ -42,27 +50,63 @@ namespace EmpowerU.Controllers
             return View(consumer);
         }
 
-        // GET: Consumers/RegisterConsumer
         public IActionResult RegisterConsumer()
         {
-            return View();
+            return View();  // This will render the RegisterConsumer view.
         }
 
         // POST: Consumers/RegisterConsumer
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterConsumer([Bind("PreferredCategories,UserID,Name,Surname,Email,PhoneNo,Password,Role,LastLogin")] Consumer consumer)
+        public async Task<IActionResult> RegisterConsumer([Bind("PreferredCategories,UserName,Name,Surname,Email,PhoneNo,Password")] Consumer consumer)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(consumer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var user = new Consumer
+                {
+                    Email = consumer.Email,
+                    Name = consumer.Name,
+                    Surname = consumer.Surname,
+                    PhoneNo = consumer.PhoneNo,
+                    PreferredCategories = consumer.PreferredCategories,
+                    UserName = consumer.UserName, // Add this line to set the username
+                    Role = "Consumer"
+                };
+
+                var result = await _userManager.CreateAsync(user, consumer.Password);
+                if (result.Succeeded)
+                {
+                    // Ensure the role exists before assigning
+                    if (!await _roleManager.RoleExistsAsync("Consumer"))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole<int>("Consumer")); // Use int if User is int
+                    }
+
+                    await _userManager.AddToRoleAsync(user, "Consumer");
+                    return RedirectToAction("Login", "Home");
+                }
+
+                // Capture and log any creation errors
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
+            else
+            {
+                // Log validation errors
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                foreach (var error in errors)
+                {
+                    // Log error message
+                    Console.WriteLine(error);
+                }
+            }
+
+            // If model state is invalid, redisplay the form with errors
             return View(consumer);
         }
+
 
         // GET: Consumers/EditConsumerProfile/5
         public async Task<IActionResult> EditConsumerProfile(int? id)
@@ -81,13 +125,11 @@ namespace EmpowerU.Controllers
         }
 
         // POST: Consumers/EditConsumerProfile/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditConsumerProfile(int id, [Bind("PreferredCategories,UserID,Name,Surname,Email,PhoneNo,Password,Role,LastLogin")] Consumer consumer)
+        public async Task<IActionResult> EditConsumerProfile(int id, [Bind("PreferredCategories,Id,Name,Surname,Email,PhoneNo,Password,Role,LastLogin")] Consumer consumer)
         {
-            if (id != consumer.UserID)
+            if (id != consumer.Id)
             {
                 return NotFound();
             }
@@ -101,7 +143,7 @@ namespace EmpowerU.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ConsumerExists(consumer.UserID))
+                    if (!ConsumerExists(consumer.Id))
                     {
                         return NotFound();
                     }
@@ -124,7 +166,7 @@ namespace EmpowerU.Controllers
             }
 
             var consumer = await _context.Consumers
-                .FirstOrDefaultAsync(m => m.UserID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (consumer == null)
             {
                 return NotFound();
@@ -150,12 +192,12 @@ namespace EmpowerU.Controllers
 
         private bool ConsumerExists(int id)
         {
-            return _context.Consumers.Any(e => e.UserID == id);
+            return _context.Consumers.Any(e => e.Id == id);
         }
 
         public IActionResult Search()
         {
-            return View();  // This will render the Search.cshtml view.
+            return View();  // This will render the Search view.
         }
 
         [Route("Consumers/AppointmentDetails/{id?}")]
@@ -167,7 +209,7 @@ namespace EmpowerU.Controllers
             }
 
             // Get the consumer by ID
-            var consumer = await _context.Consumers.FirstOrDefaultAsync(c => c.UserID == id);
+            var consumer = await _context.Consumers.FirstOrDefaultAsync(c => c.Id == id);
 
             if (consumer == null)
             {
@@ -176,7 +218,7 @@ namespace EmpowerU.Controllers
 
             // Get the consumer's appointments directly from the Appointments table
             var appointments = await _context.Appointments
-                .Where(a => a.ConsumerID == consumer.UserID)
+                .Where(a => a.ConsumerID == consumer.Id)
                 .ToListAsync();
 
             // Get the current date to filter appointments
@@ -197,10 +239,5 @@ namespace EmpowerU.Controllers
 
             return View(consumer); // Make sure to pass the consumer object
         }
-
-
-
-
-
     }
 }

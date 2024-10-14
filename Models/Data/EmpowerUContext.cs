@@ -1,16 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using EmpowerU.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace EmpowerU.Models.Data
 {
-    public class EmpowerUContext : DbContext
+    public class EmpowerUContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         public EmpowerUContext(DbContextOptions<EmpowerUContext> options)
-           : base(options)
+            : base(options)
         {
         }
 
-        public DbSet<User> Users { get; set; }
         public DbSet<Consumer> Consumers { get; set; }
         public DbSet<Business> Businesses { get; set; }
         public DbSet<LocationService> LocationServices { get; set; }
@@ -31,27 +32,32 @@ namespace EmpowerU.Models.Data
 
             // Configure TPT inheritance
             modelBuilder.Entity<User>()
-                .ToTable("User"); // This table will store common user fields
+                .ToTable("User"); // Common user fields
 
+            // Configure Consumer entity
             modelBuilder.Entity<Consumer>()
-                .ToTable("Consumer")  // Store consumer-specific data in a separate table
+                .ToTable("Consumer")
                 .Property(c => c.PreferredCategories)
-                .HasMaxLength(255);
+                .HasMaxLength(255)
+                .IsRequired(); // Make required if applicable
 
+            // Configure Business entity
             modelBuilder.Entity<Business>()
-                .ToTable("Business")  // Store business-specific data in a separate table
+                .ToTable("Business")
                 .Property(b => b.Description)
-                .HasMaxLength(1000); // Adjust as needed
+                .HasMaxLength(1000)
+                .IsRequired(); // Make required if applicable
 
             modelBuilder.Entity<Business>()
                 .Property(b => b.Rating)
                 .HasColumnType("decimal(5, 2)");
 
+            // Define relationships and constraints for Business
             modelBuilder.Entity<Business>()
                 .HasOne(b => b.LocationService)
                 .WithMany()
                 .HasForeignKey(b => b.LocationID)
-                .OnDelete(DeleteBehavior.Restrict); // Adjust based on your requirements
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configure LocationService entity
             modelBuilder.Entity<LocationService>()
@@ -161,6 +167,5 @@ namespace EmpowerU.Models.Data
                 .HasForeignKey(n => n.UserID)
                 .OnDelete(DeleteBehavior.Restrict);
         }
-
     }
 }

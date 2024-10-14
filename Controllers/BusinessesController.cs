@@ -6,15 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmpowerU.Models.Data;
+using EmpowerU.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace EmpowerU.Controllers
 {
     public class BusinessesController : Controller
     {
+        private readonly UserManager<User> _userManager;
         private readonly EmpowerUContext _context;
 
-        public BusinessesController(EmpowerUContext context)
+        public BusinessesController(EmpowerUContext context, UserManager<User> userManager)
         {
+            _userManager = userManager;
             _context = context;
         }
 
@@ -35,7 +39,7 @@ namespace EmpowerU.Controllers
 
             var business = await _context.Businesses
                 .Include(b => b.LocationService)
-                .FirstOrDefaultAsync(m => m.UserID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (business == null)
             {
                 return NotFound();
@@ -52,21 +56,41 @@ namespace EmpowerU.Controllers
         }
 
         // POST: Businesses/RegisterBusiness
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterBusiness([Bind("Rating,Name,Email,PhoneNo,Password,Role,LastLogin")] Business business)
+        public async Task<IActionResult> RegisterBusiness([Bind("Description,LocationID,Rating,Name,Email,PhoneNo,Password")] Business business)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(business);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var user = new Business
+                {
+                    Email = business.Email,
+                    Name = business.Name,
+                    PhoneNo = business.PhoneNo,
+                    Role = "Business",
+                    LocationID = business.LocationID,
+                    Description = business.Description,
+                    Rating = business.Rating
+                };
+
+                var result = await _userManager.CreateAsync(user, business.Password);
+                if (result.Succeeded)
+                {
+                    _context.Businesses.Add(user);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
+
             ViewData["LocationID"] = new SelectList(_context.LocationServices, "LocationID", "Address", business.LocationID);
             return View(business);
         }
+
 
         // GET: Businesses/EditBusinessProfile/5
         public async Task<IActionResult> EditBusinessProfile(int? id)
@@ -90,9 +114,9 @@ namespace EmpowerU.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditBusinessProfile(int id, [Bind("Description,LocationID,Rating,UserID,Name,Email,PhoneNo,Password,Role,LastLogin")] Business business)
+        public async Task<IActionResult> EditBusinessProfile(int id, [Bind("Description,LocationID,Rating,Id,Name,Email,PhoneNo,Password,Role,LastLogin")] Business business)
         {
-            if (id != business.UserID)
+            if (id != business.Id)
             {
                 return NotFound();
             }
@@ -106,7 +130,7 @@ namespace EmpowerU.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BusinessExists(business.UserID))
+                    if (!BusinessExists(business.Id))
                     {
                         return NotFound();
                     }
@@ -131,7 +155,7 @@ namespace EmpowerU.Controllers
 
             var business = await _context.Businesses
                 .Include(b => b.LocationService)
-                .FirstOrDefaultAsync(m => m.UserID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (business == null)
             {
                 return NotFound();
@@ -157,7 +181,7 @@ namespace EmpowerU.Controllers
 
         private bool BusinessExists(int id)
         {
-            return _context.Businesses.Any(e => e.UserID == id);
+            return _context.Businesses.Any(e => e.Id == id);
         }
 
         // GET: Businesses/ManageAppointments/5
@@ -170,7 +194,7 @@ namespace EmpowerU.Controllers
 
             var business = await _context.Businesses
                 .Include(b => b.LocationService)
-                .FirstOrDefaultAsync(m => m.UserID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (business == null)
             {

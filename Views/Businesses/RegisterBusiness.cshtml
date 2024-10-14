@@ -38,9 +38,21 @@
                         </div>
 
                         <div class="form-group">
-                            <label asp-for="PhoneNo" class="control-label"></label>
+                            <label asp-for="PhoneNo" class="control-label">Phone Number</label>
                             <input asp-for="PhoneNo" class="form-control" placeholder="Enter business phone number" />
                             <span asp-validation-for="PhoneNo" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="LocationID" class="control-label"></label>
+                            @Html.DropDownList("LocationID", ViewData["LocationID"] as SelectList, "Select Location", new { @class = "form-control" })
+                            <span asp-validation-for="LocationID" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label"></label>
+                            <textarea asp-for="Description" class="form-control" placeholder="Describe your business"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
 
                         <div class="form-group">
@@ -49,11 +61,15 @@
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
 
+                        <!-- Hidden field for Rating -->
+                        <input type="hidden" asp-for="Rating" />
+
                         <div class="d-flex justify-content-between align-items-center">
                             <input type="submit" value="Register" class="btn btn-primary" />
-                            <p class="mb-0">Already have an account? <a href="#" class="text-primary">Login</a></p>
+                            <p class="mb-0">Already have an account? <a href="@Url.Action("Login", "Account")" class="text-primary">Login</a></p>
                         </div>
                     </form>
+
 
                 </div>
             </div>
