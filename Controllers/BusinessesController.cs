@@ -51,6 +51,7 @@ namespace EmpowerU.Controllers
         // GET: Businesses/RegisterBusiness
         public IActionResult RegisterBusiness()
         {
+
             ViewData["LocationID"] = new SelectList(_context.LocationServices, "LocationID", "Address");
             return View();
         }
@@ -58,19 +59,28 @@ namespace EmpowerU.Controllers
         // POST: Businesses/RegisterBusiness
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterBusiness([Bind("Description,LocationID,Rating,Name,Email,PhoneNo,Password")] Business business)
+        public async Task<IActionResult> RegisterBusiness([Bind("Description,Rating,Name,Email,PhoneNo,Password,BusinessCategory,LocationService")] Business business)
         {
             if (ModelState.IsValid)
             {
+                // Debugging: Log the received values
+                Console.WriteLine($"Latitude: {business.LocationService.Latitude}, Longitude: {business.LocationService.Longitude}");
+
+                // Add the new LocationService to the context
+                _context.LocationServices.Add(business.LocationService);
+                await _context.SaveChangesAsync(); // Save to get the LocationID
+
+                // Now create the Business entry
                 var user = new Business
                 {
                     Email = business.Email,
                     Name = business.Name,
                     PhoneNo = business.PhoneNo,
                     Role = "Business",
-                    LocationID = business.LocationID,
+                    LocationID = business.LocationService.LocationID, // Use the newly created LocationID
                     Description = business.Description,
-                    Rating = business.Rating
+                    Rating = business.Rating,
+                    BusinessCategory = business.BusinessCategory
                 };
 
                 var result = await _userManager.CreateAsync(user, business.Password);
@@ -86,10 +96,21 @@ namespace EmpowerU.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
+            else
+            {
+                // Log validation errors
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                foreach (var error in errors)
+                {
+                    Console.WriteLine(error);
+                }
+            }
 
             ViewData["LocationID"] = new SelectList(_context.LocationServices, "LocationID", "Address", business.LocationID);
             return View(business);
         }
+
+
 
 
         // GET: Businesses/EditBusinessProfile/5

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmpowerU.Migrations
 {
     [DbContext(typeof(EmpowerUContext))]
-    [Migration("20241014105116_InitialCreate")]
+    [Migration("20241015205858_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -134,11 +134,11 @@ namespace EmpowerU.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<float>("Latitude")
-                        .HasColumnType("real");
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
 
-                    b.Property<float>("Longitude")
-                        .HasColumnType("real");
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
 
                     b.HasKey("LocationID");
 
