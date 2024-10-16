@@ -1,42 +1,68 @@
 ﻿@model EmpowerU.Models.Notification
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Notification Details";
 }
 
-<h1>Details</h1>
+<h2 class="mb-3">Notification Details</h2>
+
+<div class="notification-details-card card p-3 mb-4">
+    <div class="d-flex align-items-center">
+        <div class="notification-avatar me-3">
+            <img src="~/images/default-avatar.png" alt="User Avatar" class="rounded-circle" style="width: 50px; height: 50px;" />
+        </div>
+        <div class="notification-info">
+            <h5 class="mb-1">
+                <strong>@Html.DisplayFor(model => model.User.Email)</strong>
+            </h5>
+            <small class="text-muted">@Html.DisplayFor(model => model.Timestamp)</small>
+        </div>
+    </div>
+
+    <div class="notification-content mt-3">
+        <p class="mb-0">@Html.DisplayFor(model => model.NotificationContent)</p>
+    </div>
+
+    <div class="mt-2">
+        <span class="badge @(Model.IsRead ? "badge-secondary" : "badge-primary")">
+            @(Model.IsRead ? "Read" : "Unread")
+        </span>
+    </div>
+</div>
 
 <div>
-    <h4>Notification</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NotificationContent)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NotificationContent)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsRead)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsRead)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Timestamp)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Timestamp)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Email)
-        </dd>
-    </dl>
+    <a asp-action="Edit" asp-route-id="@Model?.NotificationID" class="btn btn-warning me-2">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.NotificationID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    .notification-details-card {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        background-color: #fff;
+        border-radius: 8px;
+    }
+
+    .notification-avatar img {
+        border-radius: 50%;
+    }
+
+    .notification-info h5 {
+        font-size: 1.25rem;
+    }
+
+    .badge {
+        padding: 0.5em 0.75em;
+        font-size: 0.875rem;
+    }
+
+    .badge-primary {
+        background-color: #007bff;
+    }
+
+    .badge-secondary {
+        background-color: #6c757d;
+    }
+</style>
+
+<!-- Font Awesome for the icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
