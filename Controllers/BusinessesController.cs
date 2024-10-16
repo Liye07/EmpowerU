@@ -59,7 +59,7 @@ namespace EmpowerU.Controllers
         // POST: Businesses/RegisterBusiness
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterBusiness([Bind("Description,Rating,Name,Email,PhoneNo,Password,BusinessCategory,LocationService")] Business business)
+        public async Task<IActionResult> RegisterBusiness([Bind("Description,Rating,Name,Username,Email,PhoneNo,Password,BusinessCategory,LocationService")] Business business)
         {
             if (ModelState.IsValid)
             {
@@ -75,6 +75,7 @@ namespace EmpowerU.Controllers
                 {
                     Email = business.Email,
                     Name = business.Name,
+                    UserName = business.UserName,
                     PhoneNo = business.PhoneNo,
                     Role = "Business",
                     LocationID = business.LocationService.LocationID, // Use the newly created LocationID
