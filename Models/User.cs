@@ -12,9 +12,6 @@ namespace EmpowerU.Models
         [StringLength(45)]
         public string Name { get; set; }
 
-        [StringLength(45)]
-        public string PhoneNo { get; set; }
-
         public string? Role { get; set; }
 
         public DateTime? LastLogin { get; set; }

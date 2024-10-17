@@ -14,19 +14,24 @@ namespace EmpowerU.Controllers
     public class BusinessesController : Controller
     {
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole<int>> _roleManager; // Change here if User is int
         private readonly EmpowerUContext _context;
 
-        public BusinessesController(EmpowerUContext context, UserManager<User> userManager)
+        public BusinessesController(EmpowerUContext context, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _context = context;
         }
 
         // GET: Businesses
         public async Task<IActionResult> Index()
         {
-            var empowerUContext = _context.Businesses.Include(b => b.LocationService);
-            return View(await empowerUContext.ToListAsync());
+            var businesses = await _context.Businesses
+                    .Include(b => b.LocationService)
+                    .ToListAsync();
+
+            return View(businesses);
         }
 
         // GET: Businesses/Details/5
@@ -59,39 +64,53 @@ namespace EmpowerU.Controllers
         // POST: Businesses/RegisterBusiness
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterBusiness([Bind("Description,Rating,Name,Username,Email,PhoneNo,Password,BusinessCategory,LocationService")] Business business)
+        public async Task<IActionResult> RegisterBusiness([Bind("Description,Rating,Name,UserName,Email,PhoneNumber,Password,BusinessCategory,LocationService")] Business business)
         {
             if (ModelState.IsValid)
             {
-                // Debugging: Log the received values
-                Console.WriteLine($"Latitude: {business.LocationService.Latitude}, Longitude: {business.LocationService.Longitude}");
+                // Check if LocationService is provided
+                if (business.LocationService != null)
+                {
+                    // Ensure the LocationService has necessary fields set
+                    if (string.IsNullOrWhiteSpace(business.LocationService.Address))
+                    {
+                        ModelState.AddModelError("LocationService.Address", "Address is required.");
+                        return View(business);
+                    }
 
-                // Add the new LocationService to the context
-                _context.LocationServices.Add(business.LocationService);
-                await _context.SaveChangesAsync(); // Save to get the LocationID
+                    // Add LocationService and save changes to get LocationID
+                    _context.LocationServices.Add(business.LocationService);
+                    await _context.SaveChangesAsync(); // Save to get the LocationID
+                }
 
-                // Now create the Business entry
                 var user = new Business
                 {
                     Email = business.Email,
                     Name = business.Name,
                     UserName = business.UserName,
-                    PhoneNo = business.PhoneNo,
+                    PhoneNumber = business.PhoneNumber,
                     Role = "Business",
-                    LocationID = business.LocationService.LocationID, // Use the newly created LocationID
+                    LocationID = business.LocationService?.LocationID ?? 0, // Use the newly created LocationID
                     Description = business.Description,
                     Rating = business.Rating,
                     BusinessCategory = business.BusinessCategory
                 };
 
+                // Create user in the Identity framework
                 var result = await _userManager.CreateAsync(user, business.Password);
                 if (result.Succeeded)
                 {
-                    _context.Businesses.Add(user);
-                    await _context.SaveChangesAsync();
+                    // Ensure the role exists before assigning
+                    if (!await _roleManager.RoleExistsAsync("Business"))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole<int>("Business")); // Use int if User is int
+                    }
+
+                    await _userManager.AddToRoleAsync(user, "Business");
                     return RedirectToAction(nameof(Index));
                 }
 
+                // Capture and log any creation errors
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
@@ -103,14 +122,16 @@ namespace EmpowerU.Controllers
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
                 foreach (var error in errors)
                 {
+                    // Log error message
                     Console.WriteLine(error);
                 }
             }
 
-            ViewData["LocationID"] = new SelectList(_context.LocationServices, "LocationID", "Address", business.LocationID);
+            // Ensure that LocationID is populated for dropdown lists in the View
+            ViewData["LocationID"] = new SelectList(_context.LocationServices, "LocationID", "Address", business.LocationService?.LocationID);
+
             return View(business);
         }
-
 
 
 

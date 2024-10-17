@@ -45,8 +45,7 @@ namespace EmpowerU.Models.Data
             modelBuilder.Entity<Business>()
                 .ToTable("Business")
                 .Property(b => b.Description)
-                .HasMaxLength(1000)
-                .IsRequired(); // Make required if applicable
+                .HasMaxLength(1000);
 
             modelBuilder.Entity<Business>()
                 .Property(b => b.Rating)

@@ -58,7 +58,7 @@ namespace EmpowerU.Controllers
         // POST: Consumers/RegisterConsumer
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterConsumer([Bind("PreferredCategories,UserName,Name,Surname,Email,PhoneNo,Password")] Consumer consumer)
+        public async Task<IActionResult> RegisterConsumer([Bind("PreferredCategories,UserName,Name,Surname,Email,PhoneNumber,Password")] Consumer consumer)
         {
             if (ModelState.IsValid)
             {
@@ -67,7 +67,7 @@ namespace EmpowerU.Controllers
                     Email = consumer.Email,
                     Name = consumer.Name,
                     Surname = consumer.Surname,
-                    PhoneNo = consumer.PhoneNo,
+                    PhoneNumber = consumer.PhoneNumber,
                     PreferredCategories = consumer.PreferredCategories,
                     UserName = consumer.UserName, // Add this line to set the username
                     Role = "Consumer"
