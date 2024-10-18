@@ -21,6 +21,7 @@ namespace EmpowerU.Controllers
 
         public IActionResult Index()
         {
+            ViewData["ActivePage"] = "Home"; // Set active page for Home
             return View();
         }
 

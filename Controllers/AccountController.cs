@@ -73,8 +73,8 @@ namespace EmpowerU.Controllers
             // Log out the user
             await _signInManager.SignOutAsync();
 
-            // Redirect to the home page or login page after logout
-            return RedirectToAction("Index", "Login");
+            // Redirect to the login page after logout
+            return RedirectToAction("Login", "Account");
         }
 
         public IActionResult RegisterConsumer()
@@ -170,7 +170,7 @@ namespace EmpowerU.Controllers
         // GET: Businesses/RegisterBusiness
         public IActionResult RegisterBusiness()
         {
-
+            ViewData["ActivePage"] = "RegisterBusiness"; // Set active page for List Business
             ViewData["LocationID"] = new SelectList(_context.LocationServices, "LocationID", "Address");
             return View();
         }

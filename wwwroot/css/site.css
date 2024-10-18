@@ -65,3 +65,36 @@ body {
         max-height: none; /* Allow dropdown to expand fully */
     }
 }
+
+.navbar {
+    background-color: #f8f9fa; /* Light background */
+}
+
+.navbar-nav .nav-link {
+    color: #343a40; /* Dark text */
+}
+
+    .navbar-nav .nav-link:hover {
+        color: #007bff; /* Blue on hover */
+    }
+
+.navbar-nav .btn-primary {
+    border-radius: 20px; /* Rounded login button */
+}
+
+.navbar-nav .btn-outline-danger {
+    border-radius: 20px; /* Rounded logout button */
+}
+
+.navbar {
+    background-color: #343a40; /* Dark gray color */
+}
+
+.navbar-nav .nav-link {
+    color: #ffffff; /* White color for links */
+}
+
+    .navbar-nav .nav-link.active {
+        font-weight: bold; /* Make active link bold */
+        background-color: #495057; /* Slightly darker background for active link */
+    }
