@@ -18,7 +18,7 @@ namespace EmpowerU.Models
         [Range(-180, 180, ErrorMessage = "Longitude must be between -180 and 180.")]
         public double Longitude { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Address is required.")]
         [StringLength(255)]
         public string Address { get; set; }
     }

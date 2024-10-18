@@ -7,5 +7,5 @@ public class Consumer : User
     [StringLength(45)]
     public string Surname { get; set; }
 
-    public string[] PreferredCategories { get; set; } // Make sure this property exists
+    public List<string> PreferredCategories { get; set; } // Make sure this property exists
 }

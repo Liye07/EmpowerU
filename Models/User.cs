@@ -17,8 +17,9 @@ namespace EmpowerU.Models
         public DateTime? LastLogin { get; set; }
 
         [NotMapped] // This prevents the password from being mapped to the database
-        [Required]
+        [Required(ErrorMessage = "Password is required.")]
         [DataType(DataType.Password)]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters long.")]
         public string Password { get; set; }
     }
 }

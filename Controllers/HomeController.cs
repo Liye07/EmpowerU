@@ -29,46 +29,6 @@ namespace EmpowerU.Controllers
             return View();
         }
 
-        // GET: Home/Login
-        // GET: Render the Login view
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        // POST: Handle the login form submission
-        [HttpPost]
-        [ValidateAntiForgeryToken] // Helps protect against CSRF attacks
-        public async Task<IActionResult> Login([FromForm] Login loginModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(loginModel); // Return the view with validation errors
-            }
-
-            // Find the user by email
-            var user = await _userManager.FindByEmailAsync(loginModel.Email);
-
-            if (user != null)
-            {
-                // Now attempt to sign in using the UserName and Password
-                var result = await _signInManager.PasswordSignInAsync(user.UserName, loginModel.Password, isPersistent: false, lockoutOnFailure: false);
-
-                if (result.Succeeded)
-                {
-                    // Optionally update LastLogin here or perform any post-login actions
-                    return RedirectToAction("Index", "Home"); // Redirect to the home page or desired page after successful login
-                }
-            }
-
-            // Add an error to the model state for invalid login attempts
-            ModelState.AddModelError(string.Empty, "Invalid login attempt."); // Add an error to the model state
-            ViewData["LoginError"] = "Invalid login attempt."; // Set the error message to be displayed in the view
-            return View(loginModel); // Return the view with the model containing the error
-        }
-
-
-
         public IActionResult Privacy()
         {
             return View();

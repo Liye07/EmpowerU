@@ -58,7 +58,7 @@ namespace EmpowerU.Migrations
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(10)",nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -68,6 +68,9 @@ namespace EmpowerU.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_User", x => x.Id);
+                    table.CheckConstraint("CK_User_Role", "[Role] IN ('Consumer', 'Business')"); // Ensure role is either 'Consumer' or 'Business'
+                    table.CheckConstraint("CK_User_Email", "[Email] LIKE '%_@__%.__%'");
+                    table.CheckConstraint("CK_User_PhoneNumber_Length", "LEN(PhoneNumber) = 10");
                 });
 
             migrationBuilder.CreateTable(

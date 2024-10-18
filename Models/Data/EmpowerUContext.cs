@@ -34,6 +34,14 @@ namespace EmpowerU.Models.Data
             modelBuilder.Entity<User>()
                 .ToTable("User"); // Common user fields
 
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.PhoneNumber)
+                .IsUnique();
+
             // Configure Consumer entity
             modelBuilder.Entity<Consumer>()
                 .ToTable("Consumer")

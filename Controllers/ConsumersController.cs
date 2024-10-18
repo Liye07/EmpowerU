@@ -50,63 +50,6 @@ namespace EmpowerU.Controllers
             return View(consumer);
         }
 
-        public IActionResult RegisterConsumer()
-        {
-            return View();  // This will render the RegisterConsumer view.
-        }
-
-        // POST: Consumers/RegisterConsumer
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterConsumer([Bind("PreferredCategories,UserName,Name,Surname,Email,PhoneNumber,Password")] Consumer consumer)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new Consumer
-                {
-                    Email = consumer.Email,
-                    Name = consumer.Name,
-                    Surname = consumer.Surname,
-                    PhoneNumber = consumer.PhoneNumber,
-                    PreferredCategories = consumer.PreferredCategories,
-                    UserName = consumer.UserName, // Add this line to set the username
-                    Role = "Consumer"
-                };
-
-                var result = await _userManager.CreateAsync(user, consumer.Password);
-                if (result.Succeeded)
-                {
-                    // Ensure the role exists before assigning
-                    if (!await _roleManager.RoleExistsAsync("Consumer"))
-                    {
-                        await _roleManager.CreateAsync(new IdentityRole<int>("Consumer")); // Use int if User is int
-                    }
-
-                    await _userManager.AddToRoleAsync(user, "Consumer");
-                    return RedirectToAction("Login", "Home");
-                }
-
-                // Capture and log any creation errors
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-            else
-            {
-                // Log validation errors
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-                foreach (var error in errors)
-                {
-                    // Log error message
-                    Console.WriteLine(error);
-                }
-            }
-
-            // If model state is invalid, redisplay the form with errors
-            return View(consumer);
-        }
-
 
         // GET: Consumers/EditConsumerProfile/5
         public async Task<IActionResult> EditConsumerProfile(int? id)
