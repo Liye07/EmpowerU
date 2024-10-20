@@ -148,6 +148,11 @@ namespace EmpowerU.Controllers
             return View();  // This will render the Search view.
         }
 
+        public IActionResult AppointmentDetails()
+        {
+            return View();  // This will render the Search view.
+        }
+
         [Route("Consumers/AppointmentDetails/{id?}")]
         public async Task<IActionResult> AppointmentDetails(int? id)
         {
@@ -164,9 +169,10 @@ namespace EmpowerU.Controllers
                 return NotFound();
             }
 
-            // Get the consumer's appointments directly from the Appointments table
+            // Get the consumer's appointments directly from the Appointments table, including Business details
             var appointments = await _context.Appointments
                 .Where(a => a.ConsumerID == consumer.Id)
+                .Include(a => a.Business) // Include the Business information from appointments
                 .ToListAsync();
 
             // Get the current date to filter appointments
@@ -185,7 +191,16 @@ namespace EmpowerU.Controllers
 
             ViewBag.Consumer = consumer; // Pass consumer details
 
-            return View(consumer); // Make sure to pass the consumer object
+            // If you want to show business names, you could do something like this:
+            ViewBag.BusinessNames = appointments.Select(a => a.Business?.Description).Distinct().ToList();
+
+            // Assuming you want to return the first appointment or handle differently based on your requirements
+            var firstAppointment = appointments.FirstOrDefault();
+            return View(firstAppointment); // Pass the first appointment or adjust as needed
         }
+
+
+
+
     }
 }

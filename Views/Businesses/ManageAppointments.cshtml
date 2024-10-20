@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "Manage Appointments";
-    var business = ViewBag.Business as Business;  <!-- Reference to Business model -->
+    var business = ViewBag.Business as Business;
     var appointments = ViewBag.Appointments as List<Appointment>;
 }
 
@@ -16,49 +16,30 @@
     <link href="~/Content/Site.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="container mt-2">
-        <!-- Header -->
-        <header class="d-flex justify-content-between align-items-center mb-4">
-            <!-- EmpowerU logo/text on the left -->
-            <div class="col-md-6 text-left">
-                <h1>EmpowerU</h1>
+    <div class="container mt-4">
+        <!-- Filters & Search -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2 class="h4 mb-3">Manage Appointments</h2>
             </div>
-
-            <!-- Buttons and User Profile on the right -->
-            <div class="col-md-6 text-right clearfix">
-                <!-- Logged-in User Profile with Dropdown should come first in the code, but float to the right -->
-                <div class="dropdown d-inline-block" style="float: right; margin-left: 15px;">
-                    <a href="#" class="dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg" alt="Profile Picture" class="rounded-circle" style="width: 40px; height: 40px;">
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="/Account/Profile">View Profile</a>
-                        <a class="dropdown-item" href="/Account/Settings">Settings</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/Account/Logout">Logout</a>
-                    </div>
-                </div>
-
-                <!-- First 3 buttons on the right -->
-                <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 3</button>
-                <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 2</button>
-                <button class="btn btn-outline-secondary" style="float: right; margin-right: 10px;">Button 1</button>
+            <div class="col-md-4 text-right">
+                <input type="text" class="form-control" placeholder="Search by name or service..." />
             </div>
-        </header>
+        </div>
 
         <!-- Appointments Section -->
         <section class="row">
             <!-- Appointments Table -->
             <div class="col-md-8">
-                <h2 class="h4 mb-3">Appointments</h2>
-                <table class="table table-bordered">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
                             <th>Appointment ID</th>
                             <th>Full Name</th>
-                            <th>Service Type</th>
-                            <th>Date</th>
+                            <th>Service</th>
+                            <th>Date & Time</th>
                             <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -66,17 +47,27 @@
                         {
                             foreach (var appointment in appointments)
                             {
-                                <tr>
+                                <tr onclick="showAppointmentDetails(@appointment.AppointmentID, '@appointment.Consumer.Name', '@appointment.Consumer.Email', '@appointment.Consumer.PhoneNumber', '@appointment.ServiceType', '@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")', '@appointment.Status')">
                                     <td>@appointment.AppointmentID</td>
-                                    <td>@appointment.Consumer.Name</td> <!-- Assuming Consumer is part of Appointment -->
+                                    <td>@appointment.Consumer.Name</td>
                                     <td>@appointment.ServiceType</td>
-                                    <td>@appointment.DateTime.ToString("dd MMM yyyy")</td>
+                                    <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
                                     <td>
-                                        @* <select class="form-select">
-                                            <option value="Confirmed" @(appointment.Status == "Confirmed" ? "selected" : "")>Confirmed</option>
-                                            <option value="Pending" @(appointment.Status == "Pending" ? "selected" : "")>Pending</option>
-                                            <option value="Cancelled" @(appointment.Status == "Cancelled" ? "selected" : "")>Cancelled</option>
-                                        </select> *@
+                                        <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
+                                                appointment.Status == "Pending" ? "bg-warning" :
+                                                appointment.Status == "Scheduled" ? "bg-primary" :
+                                                appointment.Status == "Cancelled" ? "bg-danger" :"bg-secondary")">
+                                                @appointment.Status
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <div class="d-flex">
+                                            <a href="/Appointments/Details/@appointment.AppointmentID" class="btn btn-sm btn-outline-info me-2">View</a>
+                                            <button class="btn btn-sm btn-outline-primary me-2" onclick="rescheduleAppointment(@appointment.AppointmentID)">Reschedule</button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="cancelAppointment(@appointment.AppointmentID)">Cancel</button>
+                                        </div>
                                     </td>
                                 </tr>
                             }
@@ -84,7 +75,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="5" class="text-center">No appointments available</td>
+                                <td colspan="6" class="text-center">No appointments available</td>
                             </tr>
                         }
                     </tbody>
@@ -93,25 +84,67 @@
 
             <!-- Appointment Details Section -->
             <div class="col-md-4">
-                @if (appointments != null && appointments.Any())
-                {
-                    var firstAppointment = appointments.First();
-                    <h2 class="h5">APPOINTMENT @firstAppointment.AppointmentID</h2>
-                    <div class="card p-3">
-                        <p><strong>First Name:</strong> @firstAppointment.Consumer.Name</p>
-                        <p><strong>Surname:</strong> @firstAppointment.Consumer.Surname</p> <!-- Adjust field as per your model -->
-                        <p><strong>Email:</strong> @firstAppointment.Consumer.Email</p>
-                        <p><strong>Phone No.:</strong> @firstAppointment.Consumer.PhoneNumber</p>
-                    </div>
-                }
-                else
-                {
-                    <p>No appointment details to show</p>
-                }
+                <h2 class="h5 mb-3">Appointment Details</h2>
+                <div id="appointmentDetails" class="card p-3 mb-3" style="display: none;">
+                    <p><strong>Appointment ID:</strong> <span id="appointmentId"></span></p>
+                    <p><strong>Full Name:</strong> <span id="appointmentName"></span></p>
+                    <p><strong>Email:</strong> <span id="appointmentEmail"></span></p>
+                    <p><strong>Phone:</strong> <span id="appointmentPhone"></span></p>
+                    <p><strong>Service:</strong> <span id="appointmentService"></span></p>
+                    <p><strong>Date & Time:</strong> <span id="appointmentDateTime"></span></p>
+                    <p>
+                        <strong>Status:</strong>
+                        <span id="appointmentStatus" class="badge"></span>
+                    </p>
+                </div>
+                <div id="noAppointmentSelected" class="alert alert-info" style="display: block;">
+                    No appointment selected.
+                </div>
+                <button class="btn btn-primary btn-block" id="editAppointmentButton" style="display: none;">Edit Appointment</button>
             </div>
         </section>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function showAppointmentDetails(id, name, email, phone, service, dateTime, status) {
+            document.getElementById("appointmentId").innerText = id;
+            document.getElementById("appointmentName").innerText = name;
+            document.getElementById("appointmentEmail").innerText = email;
+            document.getElementById("appointmentPhone").innerText = phone;
+            document.getElementById("appointmentService").innerText = service;
+            document.getElementById("appointmentDateTime").innerText = dateTime;
+
+            // Update the status badge
+            var statusBadge = document.getElementById("appointmentStatus");
+            statusBadge.innerText = status;
+            statusBadge.className = "badge " + (status === "Completed" ? "bg-success" :
+                status === "Pending" ? "bg-warning" :
+                    status === "Scheduled" ? "bg-primary" :
+                        status === "Cancelled" ? "bg-danger" :
+                            "bg-secondary");
+
+            // Show the appointment details card and hide the no appointment message
+            document.getElementById("appointmentDetails").style.display = "block";
+            document.getElementById("noAppointmentSelected").style.display = "none";
+            document.getElementById("editAppointmentButton").style.display = "block"; // Show the edit button
+        }
+
+        function rescheduleAppointment(appointmentID) {
+            alert('Reschedule feature is under construction for Appointment ID: ' + appointmentID);
+        }
+
+        function cancelAppointment(appointmentID) {
+            if (confirm('Are you sure you want to cancel this appointment?')) {
+                alert('Appointment ID ' + appointmentID + ' has been canceled.');
+            }
+        }
+    </script>
+    <style>
+        .table-hover tbody tr:hover {
+            background-color: #f0f8ff; /* Light blue background on hover */
+        }
+        </style>
 </body>
 </html>
