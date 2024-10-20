@@ -160,5 +160,12 @@ namespace EmpowerU.Controllers
         {
             return _context.Subscriptions.Any(e => e.SubscriptionID == id);
         }
+
+
+
+        //private bool SubscriptionExists(int id)
+        //{
+        //    return _context.Subscriptions.Any(e => e.SubscriptionID == id);
+        //}
     }
 }
