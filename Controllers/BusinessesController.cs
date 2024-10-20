@@ -165,21 +165,30 @@ namespace EmpowerU.Controllers
                 return NotFound();
             }
 
-            var business = await _context.Businesses.FindAsync(id);
+            // Include the related LocationService when fetching the business profile
+            var business = await _context.Businesses
+                .Include(b => b.LocationService) // Include LocationService data
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (business == null)
             {
                 return NotFound();
             }
+
+            // If there is no associated LocationService, create an empty one
+            if (business.LocationService == null)
+            {
+                business.LocationService = new LocationService();
+            }
+
             ViewData["LocationID"] = new SelectList(_context.LocationServices, "LocationID", "Address", business.LocationID);
             return View(business);
         }
 
         // POST: Businesses/EditBusinessProfile/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditBusinessProfile(int id, [Bind("Description,LocationID,Rating,Id,Name,Email,PhoneNo,Password,Role,LastLogin")] Business business)
+        public async Task<IActionResult> EditBusinessProfile(int id, [Bind("Description,LocationID,Rating,Id,Name,Email,PhoneNo,Password,Role,LastLogin,LocationService")] Business business)
         {
             if (id != business.Id)
             {
@@ -190,6 +199,26 @@ namespace EmpowerU.Controllers
             {
                 try
                 {
+                    // Update the LocationService if it exists or create a new one
+                    if (business.LocationService != null)
+                    {
+                        var locationService = await _context.LocationServices.FindAsync(business.LocationID);
+
+                        if (locationService != null)
+                        {
+                            // Update existing LocationService
+                            locationService.Address = business.LocationService.Address;
+                            _context.Update(locationService);
+                        }
+                        else
+                        {
+                            // Create a new LocationService
+                            _context.LocationServices.Add(business.LocationService);
+                            await _context.SaveChangesAsync();
+                            business.LocationID = business.LocationService.LocationID; // Assign the new ID
+                        }
+                    }
+
                     _context.Update(business);
                     await _context.SaveChangesAsync();
                 }
@@ -206,9 +235,11 @@ namespace EmpowerU.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["LocationID"] = new SelectList(_context.LocationServices, "LocationID", "Address", business.LocationID);
             return View(business);
         }
+
 
         // GET: Businesses/Delete/5
         public async Task<IActionResult> Delete(int? id)
