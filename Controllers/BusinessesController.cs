@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EmpowerU.Models.Data;
 using EmpowerU.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace EmpowerU.Controllers
 {
@@ -40,16 +41,15 @@ namespace EmpowerU.Controllers
         }
 
         // GET: Businesses/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            // Fetch the business along with its services and location service
+            var business = _context.Businesses
+                .Include(b => b.Reviews) // Include reviews if necessary
+                .Include(b => b.Services) // Include services
+                .Include(b => b.LocationService) // Include location service
+                .FirstOrDefault(b => b.Id == id); // Assuming 'Id' is the primary key
 
-            var business = await _context.Businesses
-                .Include(b => b.LocationService)
-                .FirstOrDefaultAsync(m => m.Id == id);
             if (business == null)
             {
                 return NotFound();
@@ -57,6 +57,105 @@ namespace EmpowerU.Controllers
 
             return View(business);
         }
+
+        // GET: BusinessProfile/CreateProfile
+        public IActionResult CreateProfile()
+        {
+            return View();
+        }
+
+        // POST: BusinessProfile/CreateProfile
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateProfile(Business model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Save business description and other business details
+                var newBusiness = new Business
+                {
+                    Description = model.Description,
+                    LocationID = model.LocationID,
+                    Rating = model.Rating,
+                    BusinessCategory = model.BusinessCategory,
+                    // Other fields can be added as needed
+                };
+
+                // Add business to the database
+                _context.Businesses.Add(newBusiness);
+                await _context.SaveChangesAsync();
+
+                // Save services associated with the business
+                if (model.Services != null && model.Services.Count > 0)
+                {
+                    foreach (var service in model.Services)
+                    {
+                        var newService = new Service
+                        {
+                            BusinessID = newBusiness.Id, // Foreign Key
+                            ServiceName = service.ServiceName,
+                            ServiceDescription = service.ServiceDescription,
+                            Price = service.Price
+                        };
+                        _context.Services.Add(newService);
+                    }
+
+                    await _context.SaveChangesAsync(); // Save all services
+                }
+
+                // Redirect to a different page (e.g., profile details or confirmation)
+                return RedirectToAction("ProfileDetails", new { id = newBusiness.Id });
+            }
+
+            // If the model state is invalid, return the form with validation messages
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult BookService(int serviceID, DateTime bookingDate, int businessID)
+        {
+            if (ModelState.IsValid)
+            {
+                // Get the currently logged-in user
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get user ID from claims
+                var consumer = _context.Consumers.Find(userId); // Assuming you have a Consumers DbSet
+
+                if (consumer == null)
+                {
+                    return Json(new { success = false, message = "Consumer not found." });
+                }
+
+                // Fetch the service name based on the serviceID
+                var service = _context.Services.Find(serviceID);
+                if (service == null)
+                {
+                    return Json(new { success = false, message = "Service not found." });
+                }
+
+                var appointment = new Appointment
+                {
+                    BusinessID = businessID,
+                    ConsumerID = consumer.Id, // Use the Consumer's ID
+                    ServiceType = service.ServiceName, // Assign the service name
+                    DateTime = bookingDate,
+                    Status = "Confirmed",
+                    Confirmation = true
+                };
+
+                // Save the appointment to the database
+                _context.Appointments.Add(appointment);
+                _context.SaveChanges();
+
+                // Return a success response
+                return Json(new { success = true, message = "Booking confirmed!", appointment });
+            }
+
+            // If the model state is not valid, return an error response
+            return Json(new { success = false, message = "Failed to book appointment. Please try again." });
+        }
+
+
+
 
         // GET: Businesses/EditBusinessProfile/5
         public async Task<IActionResult> EditBusinessProfile(int? id)
@@ -205,5 +304,7 @@ namespace EmpowerU.Controllers
         {
             public string Status { get; set; }
         }
+
+
     }
 }

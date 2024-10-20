@@ -4,6 +4,7 @@ using EmpowerU.Models.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmpowerU.Migrations
 {
     [DbContext(typeof(EmpowerUContext))]
-    partial class EmpowerUContextModelSnapshot : ModelSnapshot
+    [Migration("20241020124655_UpdateBusinessANDReviewsTables")]
+    partial class UpdateBusinessANDReviewsTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -314,9 +317,6 @@ namespace EmpowerU.Migrations
                     b.Property<int>("BusinessID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BusinessId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10, 2)");
 
@@ -332,8 +332,6 @@ namespace EmpowerU.Migrations
                     b.HasKey("ServiceID");
 
                     b.HasIndex("BusinessID");
-
-                    b.HasIndex("BusinessId");
 
                     b.ToTable("Service", (string)null);
                 });
@@ -761,10 +759,6 @@ namespace EmpowerU.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Business", null)
-                        .WithMany("Services")
-                        .HasForeignKey("BusinessId");
-
                     b.Navigation("Business");
                 });
 
@@ -858,8 +852,6 @@ namespace EmpowerU.Migrations
             modelBuilder.Entity("Business", b =>
                 {
                     b.Navigation("Reviews");
-
-                    b.Navigation("Services");
                 });
 #pragma warning restore 612, 618
         }

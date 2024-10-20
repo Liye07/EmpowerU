@@ -17,6 +17,9 @@ namespace EmpowerU.Models
         public int ConsumerID { get; set; }
 
         [Required]
+        public string Title { get; set; }
+
+        [Required]
         public int Rating { get; set; }
 
         public string Comment { get; set; }
@@ -30,8 +33,6 @@ namespace EmpowerU.Models
         [ForeignKey(nameof(ConsumerID))]
         public Consumer Consumer { get; set; }
 
-        /* added by me */
-        public string Title { get; set; }
 
 
 

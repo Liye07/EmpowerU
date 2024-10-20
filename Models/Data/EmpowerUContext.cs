@@ -66,6 +66,12 @@ namespace EmpowerU.Models.Data
                 .HasForeignKey(b => b.LocationID)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Business>()
+                .HasMany(b => b.Reviews)
+                .WithOne(r => r.Business)
+                .HasForeignKey(r => r.BusinessID)
+                .OnDelete(DeleteBehavior.Restrict); // Or whatever behavior you want
+
             // Configure LocationService entity
             modelBuilder.Entity<LocationService>()
                 .ToTable("LocationService");

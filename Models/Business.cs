@@ -17,4 +17,9 @@ public class Business : User
 
     [ForeignKey(nameof(LocationID))]
     public LocationService LocationService { get; set; }
+
+    public ICollection<Review>? Reviews { get; set; } // Updated to ICollection
+
+    public virtual ICollection<Service>? Services { get; set; }
+
 }

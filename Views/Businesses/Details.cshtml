@@ -1,61 +1,207 @@
 ﻿@model Business
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Business Details";
 }
 
+<!-- Include Font Awesome for star icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-<div class="container mt-5">
-    <div class="row">
-        <!-- Business Identifier Section -->
-        <div class="col-md-6">
-            <div class="text-center">
-                <!-- Placeholder for business logo or identifier -->
-                <div class="bg-light border" style="width: 100%; height: 300px; display: flex; justify-content: center; align-items: center;">
-                    <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg" alt="Profile Picture" class="squared" width="300" height=300">
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="row w-100">
+        <!-- Business Details Section -->
+        <div class="col-md-7 d-flex justify-content-center">
+            <div>
+                <div class="text-center mb-4">
+                    <!-- Business Logo or Identifier -->
+                    <div class="bg-light border" style="width: 100%; height: 300px; display: flex; justify-content: center; align-items: center;">
+                        <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg" alt="Profile Picture" class="squared" width="300" height="300">
+                    </div>
                 </div>
-            </div>
 
-            <!-- Placeholder for Business Details -->
-            <div class="mt-4">
-                <h4>Business Details</h4>
-                <p>@Model.Description</p>
-                <!-- Add any other business-specific details -->
-                <h4>Rating</h4>
-                <p>@Model.Rating</p>
-                <h4>Email</h4>
-                <p>@Model.Email</p>
-                <h4>Location</h4>
-                <p>@Model.LocationID.ToString()</p>
+                <!-- Business Details -->
+                <div class="business-details justify-content-right">
+                    <h4>Business Details</h4>
+                    <p>@Model.Description</p>
+
+                    <h4>Rating</h4>
+                    <p>
+                        @for (var i = 1; i <= 5; i++)
+                        {
+                            if (i <= @Model.Rating)
+                            {
+                                <span class="fas fa-star" style="color: #FFD700;"></span> <!-- Filled star -->
+                            }
+                            else
+                            {
+                                <span class="far fa-star" style="color: #D3D3D3;"></span> <!-- Empty star -->
+                            }
+                        }
+                        (@Model.Rating)
+                    </p>
+
+                    <h4>Email</h4>
+                    <p>@Model.Email</p>
+
+                    <h4>Location</h4>
+                    <p>@Model.LocationService.Address</p> <!-- Display the address -->
+                    <!-- Embed OpenStreetMap -->
+                    <h4>Map Location</h4>
+                    <iframe width="500"
+                            height="400"
+                            frameborder="0"
+                            style="border:0"
+                            src="https://www.openstreetmap.org/export/embed.html?bbox=@(Model.LocationService.Longitude.ToString().Replace(",", ".")),@(Model.LocationService.Latitude.ToString().Replace(",", ".")),@(Model.LocationService.Longitude.ToString().Replace(",", ".")),@(Model.LocationService.Latitude.ToString().Replace(",", "."))&layer=mapnik&marker=@(Model.LocationService.Latitude.ToString().Replace(",", ".")),@(Model.LocationService.Longitude.ToString().Replace(",", "."))&zoom=-0"
+                            allowfullscreen>
+                    </iframe>
+
+                    <!-- Reviews Section -->
+                    <h4>Reviews</h4>
+                    <div class="reviews-section">
+                        @if (Model.Reviews != null && Model.Reviews.Any())
+                        {
+                            foreach (var review in Model.Reviews)
+                            {
+                                <div class="review">
+                                    <strong>@review.Title</strong>
+                                    <p>@review.Comment</p>
+                                    <p>
+                                        Rating:
+                                        @for (var j = 1; j <= 5; j++)
+                                        {
+                                            if (j <= review.Rating)
+                                            {
+                                                <span class="fa fa-star checked" style="color: #FFD700;"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fa fa-star" style="color: #D3D3D3;"></span>
+                                            }
+                                        }
+                                    </p>
+                                    <p><small>@review.Date.ToString("MMMM dd, yyyy")</small></p> <!-- Date of review -->
+                                </div>
+                                <hr />
+                            }
+                        }
+                        else
+                        {
+                            <p>No reviews available.</p>
+                        }
+                    </div>
+
+                </div>
             </div>
         </div>
 
-        <!-- Booking Section -->
-        <div class="col-md-6">
-            <div class="card p-3">
+        <!-- Booking Form Section -->
+        <div class="col-md-5">
+            <div class="card p-4">
                 <h4 class="text-center mb-4">@Model.Name</h4>
 
-                <form asp-action="BookService" method="post" class="form-horizontal">
+                <form asp-action="BookService" method="post">
+                    <input type="hidden" name="BusinessID" value="@Model.Id" /> <!-- Hidden field for BusinessID -->
+
                     <div class="form-group mb-3">
-                        <label for="Service" class="form-label">Select service</label>
-                        <select class="form-select" id="Service" name="ServiceID">
-                            @foreach (var service in Model.Email) // Model.Services 
+                        <label for="Service" class="form-label">Select Service</label>
+                        <select class="form-select" id="Service" name="ServiceID" required>
+                            @foreach (var service in Model.Services)
                             {
-                                @* <option value="@service.ServiceID">@service.ServiceName</option> *@
+                                <option value="@service.ServiceID">@service.ServiceName</option>
                             }
                         </select>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="Date" class="form-label">Pick date</label>
-                        <input type="date" class="form-control" id="Date" name="BookingDate" />
+                        <label for="Date" class="form-label">Pick Date</label>
+                        <input type="date" class="form-control" id="Date" name="BookingDate" required />
                     </div>
 
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary w-100">Book</button>
                     </div>
                 </form>
+
+
+                <!-- Confirmation Message -->
+                <div id="confirmationMessage" class="alert alert-success mt-3" style="display:none;"></div>
             </div>
         </div>
     </div>
+
+    <style>
+        .business-details h4 {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .business-details p {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 900px;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 400px; /* Ensures the booking form is not too wide */
+        }
+
+        .fa-star {
+            font-size: 20px;
+        }
+
+        .reviews-section {
+            margin-top: 20px;
+        }
+
+        .review {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd; /* Optional: Adds a border around each review */
+            border-radius: 5px; /* Optional: Rounds the corners of the review box */
+        }
+
+            .review strong {
+                display: block;
+                font-weight: bold;
+                font-size: 1.1em; /* Slightly larger font for the title */
+            }
+
+        .fa-star {
+            font-size: 16px;
+        }
+    </style>
 </div>
+
+<!-- Include jQuery for AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#bookingForm").submit(function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("BookService", "YourControllerName")", // Update with your actual controller name
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        // Show confirmation message
+                        $("#confirmationMessage").text(response.message).show();
+                        // Optionally, hide the booking form
+                        $("#bookingForm").hide();
+                    } else {
+                        // Handle error message
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("An error occurred while booking. Please try again.");
+                }
+            });
+        });
+    });
+</script>
