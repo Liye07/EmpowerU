@@ -1,0 +1,279 @@
+﻿@model Business
+
+@{
+    ViewBag.Title = "Business Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Assuming you're using a shared layout
+}
+
+<div class="dashboard-container">
+    <div class="sidebar">
+        <div class="logo">
+            <img src="/images/logo.png" alt="Logo" />
+            <h2>Business Dashboard</h2>
+        </div>
+        <ul class="menu">
+            <li><a href="#" class="active">Summary</a></li>
+            <li><a href="#">Transaction</a></li>
+            <li><a href="#">Statistics</a></li>
+            <li><a href="#">Product</a></li>
+            <li><a href="#">Category</a></li>
+        </ul>
+        <div class="user-profile">
+            <img src="/images/profile-pic.jpg" alt="Sally Hawkins" />
+            <p>Sally Hawkins</p>
+            <button class="upgrade-button">Upgrade</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Business Dashboard</h1>
+            <div class="header-actions">
+                <button class="action-btn"> <i class="fa fa-bell"></i></button>
+                <button class="action-btn"> <i class="fa fa-cog"></i></button>
+            </div>
+        </div>
+
+        <div class="stats-cards">
+            <div class="stat-card">
+                <h3>Customers</h3>
+                <p>54,235</p>
+            </div>
+            <div class="stat-card">
+                <h3>Income</h3>
+                <p>$980,632</p>
+            </div>
+            <div class="stat-card">
+                <h3>Appointments Booked</h3>
+                <p>5,490</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <div class="left-column">
+                <div class="marketplace-card">
+                    <h3>Data Analytics Overview</h3>
+                    <p>See how your account grew and how you can boost it.</p>
+                    <button class="start-button">Start</button>
+                </div>
+
+                <div class="finance-card">
+                    <h3>Finance Flow</h3>
+                    <p>$2,530</p>
+                    <span>September 2021</span>
+                    <div class="chart-placeholder">[Graph]</div>
+                </div>
+
+                <div class="recent-orders">
+                    <h3>Recent Orders</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#1234565</td>
+                                <td>DJI Mavic Pro 2</td>
+                                <td>$42.00</td>
+                                <td class="status delivered">Delivered</td>
+                                <td>Sep 16, 2021</td>
+                            </tr>
+                            <tr>
+                                <td>#1235468</td>
+                                <td>iPad Pro 2017 Model</td>
+                                <td>$932.00</td>
+                                <td class="status cancelled">Cancelled</td>
+                                <td>Sep 15, 2021</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="balance-card">
+                    <h3>Your Balance</h3>
+                    <p>$10,632.00</p>
+                    <div class="balance-details">
+                        <p class="positive-change">+ $3,250.07</p>
+                        <p class="negative-change">- $1,062.90</p>
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <h3>Activity</h3>
+                    <ul class="activity-list">
+                        <li><strong>Withdraw Earning</strong> - $4,120</li>
+                        <li><strong>Paying Website Tax</strong> - $230</li>
+                    </ul>
+                </div>
+
+                <div class="top-categories-card">
+                    <h3>Top Categories</h3>
+                    <div class="category">
+                        <span>Footwear</span>
+                        <p>18,941 units</p>
+                    </div>
+                    <div class="category">
+                        <span>Accessories</span>
+                        <p>26,061 units</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dashboard-container {
+        display: flex;
+        height: 100vh;
+    }
+
+    .sidebar {
+        width: 250px;
+        background-color: #f5f6fa;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .logo img {
+        width: 40px;
+        margin-bottom: 10px;
+    }
+
+    .menu {
+        list-style: none;
+        padding: 0;
+    }
+
+        .menu li {
+            margin: 15px 0;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            display: block;
+        }
+
+            .menu a.active {
+                font-weight: bold;
+                color: #007bff;
+            }
+
+    .user-profile {
+        text-align: center;
+    }
+
+        .user-profile img {
+            width: 60px;
+            border-radius: 50%;
+        }
+
+    .upgrade-button {
+        background-color: #ff3860;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .main-content {
+        flex-grow: 1;
+        padding: 20px;
+        background-color: #f0f2f5;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .stats-cards {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .stat-card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        flex: 1;
+        margin: 0 10px;
+        text-align: center;
+    }
+
+        .stat-card h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #6b7280;
+        }
+
+    .content-section {
+        display: flex;
+    }
+
+    .left-column, .right-column {
+        flex: 1;
+        padding: 10px;
+    }
+
+    .marketplace-card, .finance-card, .recent-orders, .balance-card, .activity-card, .top-categories-card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .start-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .recent-orders table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .recent-orders th, .recent-orders td {
+        padding: 10px;
+        border-bottom: 1px solid #f0f2f5;
+        text-align: left;
+    }
+
+    .status.delivered {
+        color: green;
+    }
+
+    .status.cancelled {
+        color: red;
+    }
+
+    .chart-placeholder {
+        height: 100px;
+        background-color: #f0f2f5;
+        text-align: center;
+        line-height: 100px;
+        color: #aaa;
+    }
+</style>
+<!-- Add relevant Font Awesome CDN for icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">

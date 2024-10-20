@@ -1,0 +1,268 @@
+﻿@model Consumer
+
+@{
+    ViewBag.Title = "Consumer Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";  // Assuming you're using a shared layout
+}
+
+<div class="dashboard-container">
+    <div class="sidebar">
+        <div class="logo">
+            <img src="/images/logo.png" alt="Logo" />
+            <h2>Consumer Dashboard</h2>
+        </div>
+        <ul class="menu">
+            <li><a href="#" class="active">Dashboard</a></li>
+            <li><a href="#">Orders</a></li>
+            <li><a href="#">Wishlist</a></li>
+            <li><a href="#">Account</a></li>
+            <li><a href="#">Settings</a></li>
+        </ul>
+        <div class="user-profile">
+            <img src="/images/profile-pic.jpg" alt="User Image" />
+            <p>John Doe</p>
+            <button class="upgrade-button">Upgrade</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Consumer Dashboard</h1>
+            <div class="header-actions">
+                <button class="action-btn"> <i class="fa fa-bell"></i></button>
+                <button class="action-btn"> <i class="fa fa-cog"></i></button>
+            </div>
+        </div>
+
+        <div class="balance-section">
+            <div class="balance-card">
+                <h3>Your Balance</h3>
+                <p>$2,350.50</p>
+                <div class="balance-details">
+                    <p class="positive-change">+ $350.00</p>
+                    <p class="negative-change">- $120.50</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <div class="left-column">
+                <div class="orders-card">
+                    <h3>Recent Orders</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#987654</td>
+                                <td>iPhone 12</td>
+                                <td>$1,000.00</td>
+                                <td class="status delivered">Delivered</td>
+                                <td>Oct 12, 2023</td>
+                            </tr>
+                            <tr>
+                                <td>#123456</td>
+                                <td>Nike Shoes</td>
+                                <td>$120.00</td>
+                                <td class="status pending">Pending</td>
+                                <td>Oct 10, 2023</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="activity-card">
+                    <h3>Recent Activity</h3>
+                    <ul class="activity-list">
+                        <li><strong>Order Placed</strong> - iPhone 12 - $1,000.00</li>
+                        <li><strong>Payment Processed</strong> - Nike Shoes - $120.00</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="popular-categories-card">
+                    <h3>Popular Categories</h3>
+                    <div class="category">
+                        <span>Electronics</span>
+                        <p>12,345 items</p>
+                    </div>
+                    <div class="category">
+                        <span>Fashion</span>
+                        <p>8,910 items</p>
+                    </div>
+                </div>
+
+                <div class="wishlist-card">
+                    <h3>Wishlist</h3>
+                    <ul class="wishlist-list">
+                        <li><strong>MacBook Air</strong> - $999.00</li>
+                        <li><strong>Apple Watch</strong> - $399.00</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dashboard-container {
+        display: flex;
+        height: 100vh;
+    }
+
+    .sidebar {
+        width: 250px;
+        background-color: #f5f6fa;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .logo img {
+        width: 40px;
+        margin-bottom: 10px;
+    }
+
+    .menu {
+        list-style: none;
+        padding: 0;
+    }
+
+        .menu li {
+            margin: 15px 0;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            display: block;
+        }
+
+            .menu a.active {
+                font-weight: bold;
+                color: #007bff;
+            }
+
+    .user-profile {
+        text-align: center;
+    }
+
+        .user-profile img {
+            width: 60px;
+            border-radius: 50%;
+        }
+
+    .upgrade-button {
+        background-color: #ff3860;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .main-content {
+        flex-grow: 1;
+        padding: 20px;
+        background-color: #f0f2f5;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .balance-section {
+        margin-bottom: 20px;
+    }
+
+    .balance-card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+        .balance-card h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #6b7280;
+        }
+
+    .balance-details {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 10px;
+    }
+
+    .positive-change {
+        color: green;
+    }
+
+    .negative-change {
+        color: red;
+    }
+
+    .content-section {
+        display: flex;
+    }
+
+    .left-column, .right-column {
+        flex: 1;
+        padding: 10px;
+    }
+
+    .orders-card, .activity-card, .wishlist-card, .popular-categories-card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+        .orders-card table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-card th, .orders-card td {
+            padding: 10px;
+            border-bottom: 1px solid #f0f2f5;
+            text-align: left;
+        }
+
+    .status.delivered {
+        color: green;
+    }
+
+    .status.pending {
+        color: orange;
+    }
+
+    .activity-list, .wishlist-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .category {
+        background-color: #f5f6fa;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+</style>
+<!-- Add relevant Font Awesome CDN for icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
