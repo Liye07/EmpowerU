@@ -280,6 +280,7 @@ namespace EmpowerU.Controllers
         }
 
 
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAppointmentStatus(int id, [FromBody] UpdateAppointmentStatusDto statusDto)
         {
