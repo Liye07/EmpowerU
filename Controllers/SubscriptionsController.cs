@@ -156,11 +156,10 @@ namespace EmpowerU.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
         private bool SubscriptionExists(int id)
         {
             return _context.Subscriptions.Any(e => e.SubscriptionID == id);
         }
-
-        //Liyema
     }
 }
