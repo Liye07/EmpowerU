@@ -4,76 +4,179 @@
     ViewData["Title"] = "Edit Consumer Profile";
 }
 
-<div class="container mt-5">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-lg-8 offset-lg-2">
-            <div class="card">
-                <div class="card-header text-left">
-                    <h2>Personal Information</h2>
-                </div>
-                <div class="card-body">
-                    <!-- Profile Picture Section -->
-                    <div class="text-center mb-4">
-                        <img src="https://th.bing.com/th/id/OIP.qnBU1qkkbFfp4tQjrMVx9wHaHw?rs=1&pid=ImgDetMain" alt="Profile Picture" class="rounded-circle" width="120" height="120">
-                        <br />
-                        <button type="button" class="btn btn-secondary mt-3">Change picture</button>
-                        <p class="mt-2 text-muted">
-                            <small>Acceptable size: 512x512 pixels. Maximum file size: 2MB. Accepted formats: JPEG, PNG.</small>
-                        </p>
+        <!-- Main Sidebar Section (Left) -->
+        <div class="col-lg-3 col-md-4 bg-primary text-white vh-100 p-0">
+            <div class="d-flex flex-column align-items-center py-4">
+                <!-- Sidebar Header with Profile Picture -->
+                <img src="https://th.bing.com/th/id/OIP.qnBU1qkkbFfp4tQjrMVx9wHaHw?rs=1&pid=ImgDetMain" alt="Profile Picture" class="rounded-circle mb-3" width="70" height="70">
+                <h5>@Model.Name</h5>
+            </div>
+            <ul class="nav flex-column px-3" id="mainSidebar">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#" data-target="dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white active" href="#" data-target="profile">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#" data-target="settings">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Secondary Sidebar Section -->
+        <div class="col-lg-2 col-md-4 bg-light vh-100 p-0">
+            <div class="d-flex flex-column align-items-center py-4">
+                <h5 class="mb-4">Additional Settings</h5>
+            </div>
+            <ul class="nav flex-column px-3" id="secondarySidebar">
+                <!-- Dynamic content will be shown here based on the main sidebar selection -->
+            </ul>
+        </div>
+
+        <!-- Main Content Section -->
+        <div class="col-lg-7 col-md-8 py-5">
+            <div class="container">
+                <h4 class="mb-4">Edit Profile</h4>
+
+                <div class="row">
+                    <!-- Profile Picture and Form -->
+                    <div class="col-md-12">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body">
+                                <!-- Profile Picture Section -->
+                                <div class="text-center mb-4">
+                                    <img src="https://th.bing.com/th/id/OIP.qnBU1qkkbFfp4tQjrMVx9wHaHw?rs=1&pid=ImgDetMain" alt="Profile Picture" class="rounded-circle mb-3" width="100" height="100">
+                                    <br />
+                                    <button type="button" class="btn btn-outline-primary mt-2">Change picture</button>
+                                    <p class="mt-2 text-muted">
+                                        <small>Acceptable size: 512x512 pixels. Maximum file size: 2MB. Accepted formats: JPEG, PNG.</small>
+                                    </p>
+                                </div>
+
+                                <!-- Account Information Form -->
+                                <form asp-action="EditConsumerProfile" method="post" class="form-horizontal">
+                                    <div class="form-group row mb-3">
+                                        <label for="Name" class="col-sm-3 col-form-label">Name</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" asp-for="Name" class="form-control" placeholder="Enter your name" />
+                                            <span asp-validation-for="Name" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row mb-3">
+                                        <label for="Surname" class="col-sm-3 col-form-label">Surname</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" asp-for="Surname" class="form-control" placeholder="Enter your surname" />
+                                            <span asp-validation-for="Surname" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row mb-3">
+                                        <label for="Email" class="col-sm-3 col-form-label">Email</label>
+                                        <div class="col-sm-9">
+                                            <input type="email" asp-for="Email" class="form-control" placeholder="Enter your email" />
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row mb-3">
+                                        <label for="PhoneNumber" class="col-sm-3 col-form-label">Phone Number</label>
+                                        <div class="col-sm-9">
+                                            <input type="tel" asp-for="PhoneNumber" class="form-control" placeholder="Enter your phone number" />
+                                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Save Button -->
+                                    <div class="row">
+                                        <div class="col-sm-9 offset-sm-3">
+                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- Account Information Form -->
-                    <form asp-action="EditConsumerProfile" method="post" class="form-horizontal">
-                        <!-- Name Field -->
-                        <div class="form-group row">
-                            <label for="Name" class="col-sm-2 col-form-label">Name</label>
-                            <div class="col-sm-10">
-                                <input type="text" asp-for="Name" class="form-control" placeholder="Enter your name" />
-                                <span asp-validation-for="Name" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <!-- Surname Field -->
-                        <div class="form-group row">
-                            <label for="Surname" class="col-sm-2 col-form-label">Surname</label>
-                            <div class="col-sm-10">
-                                <input type="text" asp-for="Surname" class="form-control" placeholder="Enter your surname" />
-                                <span asp-validation-for="Surname" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <!-- Email Field -->
-                        <div class="form-group row mt-3">
-                            <label for="Email" class="col-sm-2 col-form-label">Email</label>
-                            <div class="col-sm-10">
-                                <input type="email" asp-for="Email" class="form-control" placeholder="Enter your email" />
-                                <span asp-validation-for="Email" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <!-- Add more fields as necessary -->
-                        <!-- Phone Field -->
-                        <div class="form-group row mt-3">
-                            <label for="Phone" class="col-sm-2 col-form-label">Phone Number</label>
-                            <div class="col-sm-10">
-                                <input type="tel" asp-for="PhoneNumber" class="form-control" placeholder="Enter your phone number" />
-                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                            </div>
-                        </div>
-
-                        <!-- Save Changes Button -->
-                        <div class="text-end mt-4">
-                            <button type="submit" class="btn btn-success">Save Changes</button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
 @section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" crossorigin="anonymous"></script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        const mainSidebar = document.getElementById('mainSidebar');
+        const secondarySidebar = document.getElementById('secondarySidebar');
+
+        const options = {
+            profile: [
+                { text: 'Personal Info', icon: 'fas fa-info-circle' },
+                { text: 'Notifications', icon: 'fas fa-bell' },
+                { text: 'Privacy', icon: 'fas fa-lock' }
+            ],
+            settings: [
+                { text: 'General Settings', icon: 'fas fa-cog' },
+                { text: 'Account Security', icon: 'fas fa-shield-alt' }
+            ],
+            dashboard: [
+                { text: 'Overview', icon: 'fas fa-chart-line' }
+            ]
+        };
+
+        function updateMainActiveLink(targetLink) {
+            const allLinks = mainSidebar.querySelectorAll('a.nav-link');
+            allLinks.forEach(link => link.classList.remove('active'));
+            targetLink.classList.add('active');
+        }
+
+        function updateSecondarySidebar(target) {
+            secondarySidebar.innerHTML = '';
+            if (options[target]) {
+                options[target].forEach(option => {
+                    const li = document.createElement('li');
+                    li.classList.add('nav-item');
+                    li.innerHTML = `<a class="nav-link text-dark" href="#"><i class="${option.icon}"></i> ${option.text}</a>`;
+                    secondarySidebar.appendChild(li);
+                });
+            }
+            const firstLink = secondarySidebar.querySelector('a.nav-link');
+            if (firstLink) {
+                firstLink.classList.add('active');
+            }
+        }
+
+        mainSidebar.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const targetLink = e.target;
+                const target = targetLink.getAttribute('data-target');
+                updateMainActiveLink(targetLink);
+                updateSecondarySidebar(target);
+            }
+        });
+
+        secondarySidebar.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const allSecondaryLinks = secondarySidebar.querySelectorAll('a.nav-link');
+                allSecondaryLinks.forEach(link => link.classList.remove('active'));
+                e.target.classList.add('active');
+            }
+        });
+    </script>
 }
