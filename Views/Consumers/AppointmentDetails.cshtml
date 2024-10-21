@@ -66,7 +66,7 @@
                     </tbody>
                 </table>
 
-                <table id="past-appointments-table" class="table table-bordered" style="display:none;">
+                <table id="past-appointments-table" class="table table-bordered table-hover" style="display:none;">
                     <thead>
                         <tr>
                             <th>Appointment ID</th>
@@ -136,30 +136,19 @@
             document.getElementById('upcoming-btn').classList.add('active');
         }
 
-        function showAppointmentDetails(appointmentId) {
+        function showAppointmentDetails(appointmentId, businessname, firstname, surname, email, phone, servicetype, date, status) {
             // Fetch appointment details based on appointmentId from your data source
-            // For demonstration, I will use dummy data
-            var appointment = {
-                ID: appointmentId,
-                BusinessName: "Business Name Here", // Replace with actual data
-                FirstName: "John", // Replace with actual data
-                Surname: "Doe", // Replace with actual data
-                Email: "john.doe@example.com", // Replace with actual data
-                Phone: "123-456-7890", // Replace with actual data
-                ServiceType: "Consultation", // Replace with actual data
-                Date: "2024-10-20", // Replace with actual data
-                Status: "Scheduled" // Replace with actual data
-            };
-
+       
             // Set the details in the corresponding HTML elements
             document.getElementById("detailAppointmentId").innerText = appointment.ID;
-            document.getElementById("detailBusinessName").innerText = appointment.BusinessName;
-            document.getElementById("detailFirstName").innerText = appointment.FirstName;
-            document.getElementById("detailSurname").innerText = appointment.Surname;
-            document.getElementById("detailEmail").innerText = appointment.Email;
-            document.getElementById("detailPhone").innerText = appointment.Phone;
-            document.getElementById("detailServiceType").innerText = appointment.ServiceType;
-            document.getElementById("detailDate").innerText = appointment.Date;
+            document.getElementById("detailBusinessName").innerText = businessname;
+            document.getElementById("detailFirstName").innerText = firstname;
+            document.getElementById("detailSurname").innerText = surname;
+            document.getElementById("detailEmail").innerText = email;
+            document.getElementById("detailPhone").innerText = phone;
+            document.getElementById("detailServiceType").innerText = servicetype;
+            document.getElementById("detailDate").innerText = date;
+            document.getElementById("detailStatusBadge").innerText = status;
 
             // Set the status badge
             var statusBadge = document.getElementById("detailStatusBadge");
