@@ -37,8 +37,56 @@ namespace EmpowerU.Controllers
 
         public IActionResult Dashboard()
         {
-            return View();
+            // Assuming you're getting the business ID dynamically (session or logged-in user)
+            int businessId = 1;  // Replace with actual logic to get the logged-in business ID
+
+            // Fetch the business details
+            var business = _context.Businesses
+                                   .FirstOrDefault(b => b.Id == businessId);
+
+            if (business == null)
+            {
+                return NotFound("Business not found.");
+            }
+
+            // Fetch total number of distinct customers for this business
+            int totalCustomers = _context.Appointments
+                                          .Where(a => a.BusinessID == businessId)
+                                          .Select(a => a.ConsumerID)
+                                          .Distinct()
+                                          .Count();
+
+            // Fetch total income for this business
+            decimal totalIncome = _context.Payments
+                                          .Where(p => p.BusinessID == businessId)
+                                          .Sum(p => (decimal?)p.Amount) ?? 0;
+
+            // Fetch total number of appointments booked for this business
+            int totalAppointments = _context.Appointments
+                                            .Where(a => a.BusinessID == businessId)
+                                            .Count();
+
+            // Fetch today's appointments for the business
+            var today = DateTime.Today;
+            var todayAppointments = _context.Appointments
+                                             .Where(a => a.BusinessID == businessId && a.DateTime.Date == today)
+                                             .Select(a => new
+                                             {
+                                                 Name = a.Consumer.Name,
+                                                 DateTime = a.DateTime
+                                             })
+                                             .ToList<object>(); // Cast to List<object> instead of List<dynamic>
+
+            // Pass the data to the View using ViewBag
+            ViewBag.TotalCustomers = totalCustomers;
+            ViewBag.TotalIncome = totalIncome;
+            ViewBag.TotalAppointments = totalAppointments;
+            ViewBag.TodayAppointments = todayAppointments; // Add today's appointments to ViewBag
+
+            return View(business);  // Pass the business model to the view
         }
+
+
 
         // GET: Businesses/Details/5
         public IActionResult Details(int id)

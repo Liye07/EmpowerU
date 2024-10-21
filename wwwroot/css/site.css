@@ -98,3 +98,28 @@ body {
         font-weight: bold; /* Make active link bold */
         background-color: #495057; /* Slightly darker background for active link */
     }
+
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .main-content {
+        padding: 20px;
+        margin-left: 0;
+    }
+
+    .content-section {
+        flex-direction: column;
+    }
+
+    .left-column {
+        margin-bottom: 20px;
+    }
+
+    .today-appointments, .balance-card {
+        margin-top: 20px; /* Adds space in mobile view */
+    }
+}
+    

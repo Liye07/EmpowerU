@@ -2,264 +2,259 @@
 
 @{
     ViewBag.Title = "Business Dashboard";
-    Layout = "~/Views/Shared/_Layout.cshtml";  // Assuming you're using a shared layout
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Assuming you're using a shared layout
+    var todayAppointments = ViewBag.TodayAppointments as List<dynamic>;
 }
 
-<div class="dashboard-container">
-    <div class="sidebar">
-        <div class="logo">
-            <img src="/images/logo.png" alt="Logo" />
-            <h2>Business Dashboard</h2>
+<div class="dashboard-container d-flex">
+    <!-- Main Sidebar Section -->
+    <div class="col-lg-3 col-md-4 bg-primary text-white vh-100 p-0">
+        <div class="d-flex flex-column align-items-center py-4">
+            <!-- Sidebar Header with Logo -->
+            <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg" alt="Logo" class="rounded-circle mb-3" width="70" height="70">
+            <h5>@Model.Name</h5>
         </div>
-        <ul class="menu">
-            <li><a href="#" class="active">Summary</a></li>
-            <li><a href="#">Transaction</a></li>
-            <li><a href="#">Statistics</a></li>
-            <li><a href="#">Product</a></li>
-            <li><a href="#">Category</a></li>
+        <ul class="nav flex-column px-3" id="mainSidebar">
+            <li class="nav-item">
+                <a class="nav-link text-white active" href="@Model.Id" data-target="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="Details/@Model.Id" data-target="profile">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="ManageAppointments/@Model.Id" data-target="appointments">
+                    <i class="fas fa-calendar"></i> Appointments
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#" data-target="services">
+                    <i class="fas fa-briefcase"></i> Services
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#" data-target="settings">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </li>
         </ul>
-        <div class="user-profile">
-            <img src="/images/profile-pic.jpg" alt="Sally Hawkins" />
-            <p>Sally Hawkins</p>
-            <button class="upgrade-button">Upgrade</button>
-        </div>
     </div>
 
-    <div class="main-content">
-        <div class="header">
-            <h1>Business Dashboard</h1>
+    <!-- Main Content Section -->
+    <div class="main-content col-lg-9 col-md-8 py-5 ms-4">
+        <!-- Added ms-4 for spacing -->
+        <!-- Header -->
+        <div class="header d-flex justify-content-between align-items-center mb-4">
+            <h1 style="font-size: 24px;">Business Dashboard</h1> <!-- Adjusted font size -->
             <div class="header-actions">
                 <button class="action-btn"> <i class="fa fa-bell"></i></button>
                 <button class="action-btn"> <i class="fa fa-cog"></i></button>
             </div>
         </div>
 
-        <div class="stats-cards">
-            <div class="stat-card">
-                <h3>Customers</h3>
-                <p>54,235</p>
+        <!-- Statistics Cards -->
+        <div class="stats-cards d-flex justify-content-between mb-4">
+            <div class="stat-card flex-fill">
+                <h3 style="font-size: 18px;">Customers</h3> <!-- Adjusted font size -->
+                <p>@ViewBag.TotalCustomers</p>  <!-- Dynamic total customers -->
             </div>
-            <div class="stat-card">
-                <h3>Income</h3>
-                <p>$980,632</p>
+            <div class="stat-card flex-fill">
+                <h3 style="font-size: 18px;">Income</h3> <!-- Adjusted font size -->
+                <p>$@ViewBag.TotalIncome</p>  <!-- Dynamic total income -->
             </div>
-            <div class="stat-card">
-                <h3>Appointments Booked</h3>
-                <p>5,490</p>
+            <div class="stat-card flex-fill">
+                <h3 style="font-size: 18px;">Appointments Booked</h3> <!-- Adjusted font size -->
+                <p>@ViewBag.TotalAppointments</p>  <!-- Dynamic total appointments -->
             </div>
         </div>
 
-        <div class="content-section">
-            <div class="left-column">
-                <div class="marketplace-card">
-                    <h3>Data Analytics Overview</h3>
-                    <p>See how your account grew and how you can boost it.</p>
-                    <button class="start-button">Start</button>
+        <!-- Content Section with Pie Chart and Today's Appointments -->
+        <div class="content-section d-flex flex-wrap">
+            <div class="left-column flex-fill me-4 mb-4" style="max-width: 400px;">
+                <!-- Pie Chart Section -->
+                <div class="marketplace-card p-3 mb-4 shadow">
+                    <h3>Business Overview</h3>
+                    <canvas id="empoweruPieChart" style="max-width: 100%; height: auto;"></canvas>
                 </div>
-
-                <div class="recent-orders">
-                    <h3>Recent Orders</h3>
-                    <table>
+            </div>
+            
+            <!-- Today's Appointments Section -->
+            <div class="today-appointments flex-fill p-3 mb-4 shadow" style="cursor: pointer;" onclick="window.location.href='/Businesses/ManageAppointments/@Model.Id'">
+                <h3>Today's Appointments</h3>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Order ID</th>
-                                <th>Item</th>
-                                <th>Price</th>
-                                <th>Status</th>
-                                <th>Date</th>
+                                <th>Name</th>
+                                <th>Time</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>#1234565</td>
-                                <td>DJI Mavic Pro 2</td>
-                                <td>$42.00</td>
-                                <td class="status delivered">Delivered</td>
-                                <td>Sep 16, 2021</td>
-                            </tr>
-                            <tr>
-                                <td>#1235468</td>
-                                <td>iPad Pro 2017 Model</td>
-                                <td>$932.00</td>
-                                <td class="status cancelled">Cancelled</td>
-                                <td>Sep 15, 2021</td>
-                            </tr>
+                            @if (ViewBag.TodayAppointments != null && ((List<object>)ViewBag.TodayAppointments).Any())
+                            {
+                                int count = 0; // Counter to limit to 5 appointments
+                                foreach (var appointment in (List<object>)ViewBag.TodayAppointments)
+                                {
+                                    if (count++ >= 5) break; // Limit to 5 appointments
+                                    {
+                                        // Cast to dynamic to access properties
+                                        var app = (dynamic)appointment;
+                                        <tr>
+                                            <td>@app.Name</td>
+                                            <td>@app.DateTime.ToString("hh:mm tt")</td>
+                                        </tr>
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2" class="text-center">No appointments scheduled for today.</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
             </div>
-
-            <div class="right-column">
-                <div class="balance-card">
+            <!-- Right Column with Balance -->
+            <div class="right-column flex-fill mb-4">
+                <div class="balance-card shadow p-3">
                     <h3>Your Balance</h3>
-                    <p>$10,632.00</p>
-                    <div class="balance-details">
-                        <p class="positive-change">+ $3,250.07</p>
-                        <p class="negative-change">- $1,062.90</p>
-                    </div>
-                </div>
-
-                <div class="top-categories-card">
-                    <h3>Top Categories</h3>
-                    <div class="category">
-                        <span>Footwear</span>
-                        <p>18,941 units</p>
-                    </div>
-                    <div class="category">
-                        <span>Accessories</span>
-                        <p>26,061 units</p>
-                    </div>
+                    <p>$@ViewBag.TotalIncome</p> <!-- Using total income as balance here -->
+                  @*   <button class="btn btn-primary">Add Funds</button> <!-- Button for additional functionality --> *@
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-    .dashboard-container {
-        display: flex;
-        height: 100vh;
-    }
-
-    .sidebar {
-        width: 250px;
-        background-color: #f5f6fa;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .logo img {
-        width: 40px;
-        margin-bottom: 10px;
-    }
-
-    .menu {
-        list-style: none;
-        padding: 0;
-    }
-
-        .menu li {
-            margin: 15px 0;
-        }
-
-        .menu a {
-            text-decoration: none;
-            color: #333;
-            font-size: 16px;
-            display: block;
-        }
-
-            .menu a.active {
-                font-weight: bold;
-                color: #007bff;
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Initialize your pie chart here using Chart.js
+        const ctx = document.getElementById('empoweruPieChart').getContext('2d');
+        const empoweruPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Label1', 'Label2', 'Label3'],  // Replace with your data labels
+                datasets: [{
+                    data: [10, 20, 30],  // Replace with your data values
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Allow it to resize
             }
+        });
+    </script>
+}
 
-    .user-profile {
-        text-align: center;
-    }
-
-        .user-profile img {
-            width: 60px;
-            border-radius: 50%;
-        }
-
-    .upgrade-button {
-        background-color: #ff3860;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        margin-top: 10px;
-        cursor: pointer;
+<style>
+    /* Custom Styles for the Dashboard */
+    .dashboard-container {
+        background: #f8f9fa;
+        height: auto; /* Ensure it covers the full height */
     }
 
     .main-content {
-        flex-grow: 1;
+        background: #f8f9fa; /* Ensure the grey background covers the whole content */
         padding: 20px;
-        background-color: #f0f2f5;
+        min-height: 100vh; /* Ensure it covers the full viewport height */
     }
-
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .stats-cards {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-
-    .stat-card {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        flex: 1;
-        margin: 0 10px;
-        text-align: center;
-    }
-
-        .stat-card h3 {
-            font-size: 16px;
-            margin-bottom: 10px;
-            color: #6b7280;
-        }
 
     .content-section {
         display: flex;
+        gap: 20px; /* Adds space between the two blocks */
     }
 
-    .left-column, .right-column {
-        flex: 1;
-        padding: 10px;
+    .left-column,
+    .right-column,
+    .today-appointments {
+        flex-basis: 20%; /* Ensures the blocks take up appropriate width */
+        min-width: 20%;
     }
 
-    .marketplace-card, .finance-card, .recent-orders, .balance-card, .activity-card, .top-categories-card {
-        background-color: #fff;
-        padding: 20px;
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .stat-card {
+        background: #fff;
         border-radius: 8px;
-        margin-bottom: 20px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s;
     }
 
-    .start-button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        cursor: pointer;
-        margin-top: 10px;
+    .stat-card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
-    .recent-orders table {
+    .marketplace-card,
+    .today-appointments,
+    .balance-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .today-appointments table {
         width: 100%;
         border-collapse: collapse;
     }
 
-    .recent-orders th, .recent-orders td {
+    .today-appointments th,
+    .today-appointments td {
         padding: 10px;
-        border-bottom: 1px solid #f0f2f5;
-        text-align: left;
-    }
-
-    .status.delivered {
-        color: green;
-    }
-
-    .status.cancelled {
-        color: red;
-    }
-
-    .chart-placeholder {
-        height: 100px;
-        background-color: #f0f2f5;
         text-align: center;
-        line-height: 100px;
-        color: #aaa;
     }
-</style>
 
-<!-- Add relevant Font Awesome CDN for icons -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    .today-appointments th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .today-appointments td {
+        border: 1px solid #ddd;
+    }
+
+    .header {
+        margin-bottom: 20px;
+    }
+
+    .header-actions .action-btn {
+        background: transparent;
+        border: none;
+        color: #000;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .header-actions .action-btn:hover {
+        color: #007bff;
+    }
+
+    .balance-card {
+        text-align: center;
+    }
+
+    .balance-card button {
+        margin-top: 10px;
+    }
+
+    .marketplace-card {
+        position: relative; /* Add this */
+        overflow: hidden; /* Add this to contain the chart */
+        max-height: 500px; /* Set a maximum height */
+    }
+
+</style>
