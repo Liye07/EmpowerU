@@ -9,12 +9,21 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Search for businesses..." aria-label="Search">
-                <div class="input-group-append">
-                    <span class="input-group-text">
-                        <i class="fas fa-search"></i>
-                    </span>
+            <div class="container mt-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="input-group mb-3">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search for businesses..." aria-label="Search">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div id="searchResultsContainer">
+                            <!-- Search results will be injected here -->
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="mb-3">
@@ -67,39 +76,34 @@
 </div>
 
 <!-- Footer Section -->
-<footer class="bg-light text-center text-lg-start mt-4">
-    <div class="container p-4">
-        <div class="row">
-            <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
-                <h5 class="text-uppercase">Contact Us</h5>
-                <p>
-                    Phone: +1 234 567 890<br>
-                    Email: support@empoweru.com<br>
-                    Address: 123 EmpowerU St, City, Country
-                </p>
-            </div>
-            <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
-                <h5 class="text-uppercase">About Us</h5>
-                <p>
-                    EmpowerU connects consumers with top-rated service providers in beauty and wellness.
-                    Our goal is to streamline the process of discovering and booking appointments.
-                </p>
-            </div>
-            <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
-                <h5 class="text-uppercase">Follow Us</h5>
-                <a href="#" class="text-dark">Facebook</a><br>
-                <a href="#" class="text-dark">Instagram</a><br>
-                <a href="#" class="text-dark">Twitter</a>
-            </div>
-        </div>
-    </div>
-    <div class="text-center p-3">
-        © 2024 EmpowerU. All rights reserved.
-    </div>
-</footer>
+
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#searchInput').on('input', function () {
+                var searchTerm = $(this).val();
+
+                $.ajax({
+                    url: '@Url.Action("Search", "Home")',
+                    type: 'POST',
+                    data: { searchTerm: searchTerm },
+                    success: function (data) {
+                        $('#searchResultsContainer').html(data);
+                    },
+                    error: function () {
+                        console.log("Error occurred while searching.");
+                    }
+                });
+            });
+        });
+    </script>
+
+
+
 }
 
 <style>
