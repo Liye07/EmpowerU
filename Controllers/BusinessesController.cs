@@ -269,6 +269,9 @@ namespace EmpowerU.Controllers
                 return NotFound();
             }
 
+            // Remove password from model state validation for updates
+            ModelState.Remove("Password");
+
             if (ModelState.IsValid)
             {
                 try

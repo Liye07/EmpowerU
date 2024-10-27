@@ -66,24 +66,28 @@
                         <input type="hidden" asp-for="LocationService.Suburb" id="suburb" />
 
 
-                        <div class="form-group">
+                        <div class="form-group custom-dropdown">
                             <label asp-for="BusinessCategory" class="control-label">Category</label>
-                            <select asp-for="BusinessCategory" class="form-control" required>
-                                <option value="">Select business category</option>
-                                <option value="Salon">Salon</option>
-                                <option value="Spa">Spa</option>
-                                <option value="Nail Bar">Nail Bar</option>
-                                <option value="Massage Therapy">Massage Therapy</option>
-                                <option value="Barber Shop">Barber Shop</option>
-                                <option value="Skincare Clinic">Skincare Clinic</option>
-                                <option value="Yoga Studio">Yoga Studio</option>
-                                <option value="Hair Removal Service">Hair Removal Service</option>
-                                <option value="Fitness Studio">Fitness Studio</option>
-                                <option value="Tanning Salon">Tanning Salon</option>
-                                <!-- Add more business categories as needed -->
-                            </select>
+                            <div class="custom-select-dropdown" onclick="toggleDropdown()">
+                                <input type="text" id="category-display" class="form-control" placeholder="Select business category" required>
+                                <input type="hidden" id="category-value" name="BusinessCategory" />
+                                <i id="dropdown-arrow" class="fas fa-chevron-down"></i> <!-- Arrow icon -->
+                            </div>
+                            <ul id="category-options" class="list-group position-absolute" style="display: none; max-height: 200px; overflow-y: auto;">
+                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Salon')">Salon</li>
+                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Spa')">Spa</li>
+                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Nail Bar')">Nail Bar</li>
+                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Massage Therapy')">Massage Therapy</li>
+                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Barber Shop')">Barber Shop</li>
+                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Skincare Clinic')">Skincare Clinic</li>
+                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Yoga Studio')">Yoga Studio</li>
+                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Hair Removal Service')">Hair Removal Service</li>
+                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Fitness Studio')">Fitness Studio</li>
+                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Tanning Salon')">Tanning Salon</li>
+                            </ul>
                             <span asp-validation-for="BusinessCategory" class="text-danger"></span>
                         </div>
+
 
                         <div class="form-group">
                             <label asp-for="Password" class="control-label"></label>
@@ -166,6 +170,21 @@
         document.getElementById('address-input').focus(); // Focus on input after selection
     }
 
+
+
+     function toggleDropdown() {
+        const dropdown = document.getElementById("category-options");
+        const arrow = document.getElementById("dropdown-arrow");
+        dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+        arrow.classList.toggle("rotate"); // Add or remove the rotation class
+    }
+
+    function selectCategory(category) {
+        document.getElementById("category-display").value = category;
+        document.getElementById("category-value").value = category;
+        document.getElementById("category-options").style.display = "none";
+    }
+
 </script>
 
 <style>
@@ -217,7 +236,35 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for depth */
     }
 
+     .custom-select-dropdown {
+        position: relative;
+        cursor: pointer;
+    }
 
+    #category-options {
+        z-index: 1000;
+        background-color: white;
+        border: 1px solid #ccc;
+        width: 100%;
+        padding: 0;
+        list-style: none;
+    }
+
+    .list-group-item:hover {
+        background-color: #f1f1f1;
+    }
+
+    #dropdown-arrow {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: transform 0.3s ease; /* Smooth rotation */
+    }
+
+    .rotate {
+        transform: translateY(-50%) rotate(180deg); /* Rotate when dropdown is open */
+    }
 
 </style>
 
