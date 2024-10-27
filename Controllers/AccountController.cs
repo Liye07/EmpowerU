@@ -278,6 +278,10 @@ namespace EmpowerU.Controllers
             return View(business);
         }
 
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
 
 
     }
