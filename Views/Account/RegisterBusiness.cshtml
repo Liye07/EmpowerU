@@ -100,10 +100,6 @@
             </div>
         </div>
     </div>
-
-    <div class="text-center mt-3">
-        <a asp-action="Index">Back to List</a>
-    </div>
 </div>
 
 @section Scripts {
@@ -163,9 +159,13 @@
         document.getElementById('suburb').value = addressComponents.suburb || addressComponents.neighbourhood || ""; // Use 'neighbourhood' if 'suburb' is not available
 
         // Clear suggestions
-        document.getElementById('suggestion-list').innerHTML = '';
-        document.getElementById('suggestion-list').style.display = 'none';
+        document.getElementById('suggestion-list').innerHTML = ''; // Clear suggestion items
+        document.getElementById('suggestion-list').style.display = 'none'; // Hide the suggestion list
+
+        // OPTIONAL: Focus back on the address input field (for better user experience)
+        document.getElementById('address-input').focus(); // Focus on input after selection
     }
+
 </script>
 
 <style>
