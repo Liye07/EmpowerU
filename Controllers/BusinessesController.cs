@@ -262,7 +262,7 @@ namespace EmpowerU.Controllers
         // POST: Businesses/EditBusinessProfile/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditBusinessProfile(int id, [Bind("Description,LocationID,Rating,Id,Name,Email,PhoneNo,Password,Role,LastLogin,LocationService")] Business business)
+        public async Task<IActionResult> EditBusinessProfile(int id, [Bind("Description,LocationID,Rating,Id,Name,Email,PhoneNumber,Password,Role,LastLogin,LocationService")] Business business)
         {
             if (id != business.Id)
             {
@@ -276,7 +276,7 @@ namespace EmpowerU.Controllers
                     // Update the LocationService if it exists or create a new one
                     if (business.LocationService != null)
                     {
-                        var locationService = await _context.LocationServices.FindAsync(business.LocationID);
+                        var locationService = await _context.LocationServices.FindAsync(business.LocationService.LocationID);
 
                         if (locationService != null)
                         {
@@ -295,6 +295,7 @@ namespace EmpowerU.Controllers
 
                     _context.Update(business);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -307,8 +308,17 @@ namespace EmpowerU.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
+                {
+                    Console.WriteLine(error.ErrorMessage); // Or use a logger to capture the output
+                }
+            }
+
 
             ViewData["LocationID"] = new SelectList(_context.LocationServices, "LocationID", "Address", business.LocationID);
             return View(business);

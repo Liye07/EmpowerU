@@ -75,7 +75,7 @@ namespace EmpowerU.Controllers
         // POST: Consumers/EditConsumerProfile/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditConsumerProfile(int id, [Bind("PreferredCategories,Id,Name,Surname,Email,PhoneNo,Password,Role,LastLogin")] Consumer consumer)
+        public async Task<IActionResult> EditConsumerProfile(int id, [Bind("PreferredCategories,Id,Name,Surname,Email,PhoneNumber,Password,Role,LastLogin")] Consumer consumer)
         {
             if (id != consumer.Id)
             {

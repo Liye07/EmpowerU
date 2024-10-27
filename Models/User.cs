@@ -8,7 +8,7 @@ namespace EmpowerU.Models
 {
     public class User : IdentityUser<int>
     {
-        [Required]
+        [Required(ErrorMessage = "Name is required.")]
         [StringLength(45)]
         public string Name { get; set; }
 

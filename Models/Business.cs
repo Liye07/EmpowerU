@@ -13,6 +13,7 @@ public class Business : User
     [Column(TypeName = "decimal(5,2)")]
     public decimal? Rating { get; set; }
 
+    [Required(ErrorMessage = "Business Category is required.")]
     public List<string> BusinessCategory { get; set; }
 
     [ForeignKey(nameof(LocationID))]
