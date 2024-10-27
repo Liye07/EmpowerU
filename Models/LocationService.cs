@@ -21,5 +21,17 @@ namespace EmpowerU.Models
         [Required(ErrorMessage = "Address is required.")]
         [StringLength(255)]
         public string Address { get; set; }
+
+        [StringLength(20, ErrorMessage = "Postal Code cannot exceed 20 characters.")]
+        public string PostalCode { get; set; }
+
+        [StringLength(100, ErrorMessage = "Suburb name cannot exceed 100 characters.")]
+        public string Suburb { get; set; }
+
+        [StringLength(100, ErrorMessage = "Country name cannot exceed 100 characters.")]
+        public string Country { get; set; }
+
+        [StringLength(100, ErrorMessage = "City name cannot exceed 100 characters.")]
+        public string City { get; set; }
     }
 }

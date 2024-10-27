@@ -50,16 +50,21 @@
                         </div>
 
                         <div class="form-group position-relative">
-                            <label for="address-input" class="control-label">Address</label>
+                            <label for="address-input" class="control-label">Street Address</label>
                             <input id="address-input" name="LocationService.Address" class="form-control" placeholder="Enter business address" oninput="getSuggestions(event)" required />
-                            <span class="text-danger"></span>
+                            <span asp-validation-for="LocationService.Address" class="text-danger"></span>
                             <ul id="suggestion-list" class="list-group position-absolute" style="max-height: 200px; overflow-y: auto; display: none;"></ul>
                             <div id="loading-indicator" style="display: none;">Loading...</div> <!-- Loading indicator -->
                         </div>
 
-                        <input type="hidden" asp-for="LocationService.Latitude" id="latitude"step="any" />
-
+                        <!-- Hidden fields to store other address components -->
+                        <input type="hidden" asp-for="LocationService.Latitude" id="latitude" step="any" />
                         <input type="hidden" asp-for="LocationService.Longitude" id="longitude" step="any" />
+                        <input type="hidden" asp-for="LocationService.City" id="city" />
+                        <input type="hidden" asp-for="LocationService.PostalCode" id="postalCode" />
+                        <input type="hidden" asp-for="LocationService.Country" id="country" />
+                        <input type="hidden" asp-for="LocationService.Suburb" id="suburb" />
+
 
                         <div class="form-group">
                             <label asp-for="BusinessCategory" class="control-label">Category</label>
@@ -142,16 +147,27 @@
     }
 
     function selectAddress(result) {
-        document.getElementById('address-input').value = result.display_name;
+        // Extract the street address and populate the address input
+        const addressComponents = result.address;
+        const streetAddress = addressComponents.road || addressComponents.street || ""; // Get street information
+        document.getElementById('address-input').value = streetAddress; // Show only the street address
+
+        // Update latitude and longitude fields
         document.getElementById('latitude').value = result.lat.replace('.', ',');
         document.getElementById('longitude').value = result.lon.replace('.', ',');
+
+        // Extract and populate other location details
+        document.getElementById('city').value = addressComponents.city || addressComponents.town || addressComponents.village || "";
+        document.getElementById('postalCode').value = addressComponents.postcode || "";
+        document.getElementById('country').value = addressComponents.country || "";
+        document.getElementById('suburb').value = addressComponents.suburb || addressComponents.neighbourhood || ""; // Use 'neighbourhood' if 'suburb' is not available
 
         // Clear suggestions
         document.getElementById('suggestion-list').innerHTML = '';
         document.getElementById('suggestion-list').style.display = 'none';
     }
-
 </script>
+
 <style>
     body {
         background-color: #f8f9fa;
