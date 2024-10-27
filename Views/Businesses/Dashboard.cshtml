@@ -4,6 +4,7 @@
     ViewBag.Title = "Business Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml"; // Assuming you're using a shared layout
     var todayAppointments = ViewBag.TodayAppointments as List<dynamic>;
+    var notifications = ViewBag.Notifications as List<Notification>;
 }
 
 <div class="dashboard-container d-flex">
@@ -16,31 +17,32 @@
         </div>
         <ul class="nav flex-column px-3" id="mainSidebar">
             <li class="nav-item">
-                <a class="nav-link text-white active" href="@Model.Id" data-target="dashboard">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Dashboard" ? "active" : "")" href="@Model.Id" data-target="dashboard">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="Details/@Model.Id" data-target="profile">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "EditBusinessProfile" ? "active" : "")" href="@Url.Action("EditBusinessProfile", "Businesses")/@Model.Id" data-target="profile">
                     <i class="fas fa-user"></i> Profile
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="ManageAppointments/@Model.Id" data-target="appointments">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "ManageAppointments" ? "active" : "")" href="@Url.Action("ManageAppointments", "Businesses")/@Model.Id" data-target="appointments">
                     <i class="fas fa-calendar"></i> Appointments
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="#" data-target="services">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Services" ? "active" : "")" href="#" data-target="services">
                     <i class="fas fa-briefcase"></i> Services
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="#" data-target="settings">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Settings" ? "active" : "")" href="#" data-target="settings">
                     <i class="fas fa-cog"></i> Settings
                 </a>
             </li>
         </ul>
+
     </div>
 
     <!-- Main Content Section -->
@@ -48,25 +50,33 @@
         <!-- Added ms-4 for spacing -->
         <!-- Header -->
         <div class="header d-flex justify-content-between align-items-center mb-4">
-            <h1 style="font-size: 24px;">Business Dashboard</h1> <!-- Adjusted font size -->
+            <h1 style="font-size: 40px;"><strong>Dashboard</strong></h1>
             <div class="header-actions">
-                <button class="action-btn"> <i class="fa fa-bell"></i></button>
+                <!-- Notification Icon with Link -->
+                <button class="action-btn" onclick="window.location.href='/Notifications/Index/@Model.Id'">
+                    <i class="fa fa-bell"></i>
+                    <!-- Show notification count if there are any -->
+                    @if (notifications != null && notifications.Any())
+                    {
+                        <span class="notification-count">@notifications.Count</span>
+                    }
+                </button>
                 <button class="action-btn"> <i class="fa fa-cog"></i></button>
             </div>
         </div>
 
         <!-- Statistics Cards -->
         <div class="stats-cards d-flex justify-content-between mb-4">
-            <div class="stat-card flex-fill">
-                <h3 style="font-size: 18px;">Customers</h3> <!-- Adjusted font size -->
-                <p>@ViewBag.TotalCustomers</p>  <!-- Dynamic total customers -->
+            <div class="balance-card shadow p-3">
+                <h3 style="font-size: 20px;">Your Balance</h3>
+                <p>R@(ViewBag.TotalIncome.ToString("N2"))</p> 
             </div>
-            <div class="stat-card flex-fill">
-                <h3 style="font-size: 18px;">Income</h3> <!-- Adjusted font size -->
-                <p>$@ViewBag.TotalIncome</p>  <!-- Dynamic total income -->
+            <div class="stat-card flex-fill shadow p-3">
+                <h3 style="font-size: 20px;">@ViewBag.CurrentMonth's Income</h3>
+                <p>R@(ViewBag.MonthlyIncome.ToString("N2"))</p>
             </div>
-            <div class="stat-card flex-fill">
-                <h3 style="font-size: 18px;">Appointments Booked</h3> <!-- Adjusted font size -->
+            <div class="stat-card flex-fill shadow p-3">
+                <h3 style="font-size: 20px;">Total No. of Appointments Booked</h3> <!-- Adjusted font size -->
                 <p>@ViewBag.TotalAppointments</p>  <!-- Dynamic total appointments -->
             </div>
         </div>
@@ -76,14 +86,14 @@
             <div class="left-column flex-fill me-4 mb-4" style="max-width: 400px;">
                 <!-- Pie Chart Section -->
                 <div class="marketplace-card p-3 mb-4 shadow">
-                    <h3>Business Overview</h3>
+                    <h3 style="font-size: 20px;">Appointments by Service Category</h3>
                     <canvas id="empoweruPieChart" style="max-width: 100%; height: auto;"></canvas>
                 </div>
             </div>
             
             <!-- Today's Appointments Section -->
             <div class="today-appointments flex-fill p-3 mb-4 shadow" style="cursor: pointer;" onclick="window.location.href='/Businesses/ManageAppointments/@Model.Id'">
-                <h3>Today's Appointments</h3>
+                <h3 style="font-size: 20px;" >Today's Appointments</h3>
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead>
@@ -113,19 +123,18 @@
                             else
                             {
                                 <tr>
-                                    <td colspan="2" class="text-center">No appointments scheduled for today.</td>
+                                    <td colspan="2" class="text-center" style="font-size: 12px;">No appointments scheduled for today.</td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
             </div>
-            <!-- Right Column with Balance -->
+
             <div class="right-column flex-fill mb-4">
-                <div class="balance-card shadow p-3">
-                    <h3>Your Balance</h3>
-                    <p>$@ViewBag.TotalIncome</p> <!-- Using total income as balance here -->
-                  @*   <button class="btn btn-primary">Add Funds</button> <!-- Button for additional functionality --> *@
+                <div class="stat-card flex-fill shadow p-3">
+                    <h3 style="font-size: 20px;"> Total No. of Customers</h3> <!-- Adjusted font size -->
+                    <p>@ViewBag.TotalCustomers</p>  <!-- Dynamic total customers -->
                 </div>
             </div>
         </div>
@@ -255,6 +264,26 @@
         position: relative; /* Add this */
         overflow: hidden; /* Add this to contain the chart */
         max-height: 500px; /* Set a maximum height */
+        text-align: center;
+    }
+
+    .action-btn {
+        position: relative;
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .notification-count {
+        position: absolute;
+        top: -5px; /* Adjust as needed */
+        right: -5px; /* Adjust as needed */
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
     }
 
 </style>

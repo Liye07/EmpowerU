@@ -59,6 +59,8 @@ body {
     .form-control option {
         display: block; /* Ensure options are block elements */
     }
+
+
 /* Style for larger viewports */
 @media (min-width: 768px) {
     .form-control {
@@ -94,11 +96,6 @@ body {
     color: #ffffff; /* White color for links */
 }
 
-    .navbar-nav .nav-link.active {
-        font-weight: bold; /* Make active link bold */
-        background-color: #495057; /* Slightly darker background for active link */
-    }
-
 
 @media (max-width: 768px) {
     .dashboard-container {
@@ -122,4 +119,26 @@ body {
         margin-top: 20px; /* Adds space in mobile view */
     }
 }
+
+.navbar-nav .nav-link.active {
+    font-weight: bold; /* Make active link bold */
+    background-color: #495057; /* Slightly darker background for active link */
+}
+
+.nav-link.active {
+    background-color: #54a2f5; /* Change this to your desired active color */
+    color: #fff; /* Adjust text color */
+    font-weight: bold; /* Optional: make the text bold */
+    border-radius: 4px; /* Optional: add rounded corners */
+}
+
+.nav-link {
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+    .nav-link:hover {
+        background-color: #0056b4; /* Optional: hover effect color */
+    }
+
+
     
