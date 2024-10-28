@@ -94,10 +94,13 @@ namespace EmpowerU.Controllers
                                                         p.PaymentDate <= endOfMonth)
                                             .Sum(p => (decimal?)p.Amount) ?? 0;
 
-            // **New Notifications code**
             var notifications = _context.Notifications
                                         .Where(n => n.UserID == business.Id && !n.IsRead)
                                         .ToList();
+
+            var unreadMessages = _context.Messages
+                             .Where(m => m.ReceiverID == business.Id && !m.IsRead)
+                             .ToList();
 
             // Pass the data to the View using ViewBag
             ViewBag.TotalCustomers = totalCustomers;
@@ -107,6 +110,7 @@ namespace EmpowerU.Controllers
             ViewBag.MonthlyIncome = monthlyIncome; // Add monthly income to ViewBag
             ViewBag.CurrentMonth = currentMonth;
             ViewBag.Notifications = notifications;
+            ViewBag.UnreadMessages = unreadMessages;
 
             return View(business);  // Pass the business model to the view
         }

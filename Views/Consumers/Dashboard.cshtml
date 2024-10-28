@@ -2,9 +2,9 @@
 
 @{
     ViewBag.Title = "Consumer Dashboard";
-    Layout = "~/Views/Shared/_Layout.cshtml";  // Assuming you're using a shared layout
     var todayAppointments = ViewBag.TodayAppointments as List<dynamic>;
     var notifications = ViewBag.Notifications as List<Notification>;
+    var unreadMessages = ViewBag.UnreadMessages as List<Message>;
 }
 
 <div class="dashboard-container d-flex">
@@ -61,35 +61,35 @@
                         <span class="notification-count">@notifications.Count</span>
                     }
                 </button>
-                <button class="action-btn"> <i class="fa fa-cog"></i></button>
+
+                <button class="action-btn" onclick="window.location.href='/Messages/Index/@Model.Id'">
+                    <i class="fa fa-envelope"></i>
+                    <!-- Show unread message count if there are any -->
+                    @if (unreadMessages != null && unreadMessages.Any())
+                    {
+                        <span class="notification-count">@unreadMessages.Count</span>
+                    }
+                </button>
+
             </div>
         </div>
 
-        <!-- Statistics Cards -->
-        <div class="stats-cards d-flex justify-content-between mb-4">
-            <div class="balance-card shadow p-3">
-                <h3 style="font-size: 20px;">Your Balance</h3>
-                <p>R@(ViewBag.TotalIncome.ToString("N2"))</p> 
-            </div>
-            <div class="stat-card flex-fill shadow p-3">
-                <h3 style="font-size: 20px;">@ViewBag.CurrentMonth's Income</h3>
-                <p>R@(ViewBag.MonthlyIncome.ToString("N2"))</p>
-            </div>
-            <div class="stat-card flex-fill shadow p-3">
-                <h3 style="font-size: 20px;">Total No. of Appointments Booked</h3> <!-- Adjusted font size -->
-                <p>@ViewBag.TotalAppointments</p>  <!-- Dynamic total appointments -->
+        <!-- Personalized Calendar Section -->
+        <div class="personal-calendar flex-fill p-3 mb-4 shadow">
+            <h3 style="font-size: 20px;">Your Calendar</h3>
+            <div class="calendar-content">
+                <p>View and manage your upcoming appointments, tasks, and reminders here.</p>
+                <button class="btn btn-primary" onclick="window.location.href='/Calendar/View'">Go to Calendar</button>
             </div>
         </div>
 
-        <!-- Content Section with Pie Chart and Today's Appointments -->
-        <div class="content-section d-flex flex-wrap">
-            <div class="left-column flex-fill me-4 mb-4" style="max-width: 400px;">
-                <!-- Pie Chart Section -->
-                <div class="marketplace-card p-3 mb-4 shadow">
-                    <h3 style="font-size: 20px;">Appointments by Service Category</h3>
-                    <canvas id="empoweruPieChart" style="max-width: 100%; height: auto;"></canvas>
-                </div>
-            </div>
+        <!-- Social History Section -->
+        <div class="social-history flex-fill p-3 mb-4 shadow">
+            <h3 style="font-size: 20px;">Your Activity History</h3>
+            <p>See recent appointments, cancellations, and any other past interactions here.</p>
+            <button class="btn btn-secondary" onclick="window.location.href='/History/View'">View History</button>
+        </div>
+
             
             <!-- Today's Appointments Section -->
             <div class="today-appointments flex-fill p-3 mb-4 shadow" style="cursor: pointer;" onclick="window.location.href='/Consumers/AppointmentDetails/@Model.Id'">
@@ -130,16 +130,8 @@
                     </table>
                 </div>
             </div>
-
-            <div class="right-column flex-fill mb-4">
-                <div class="stat-card flex-fill shadow p-3">
-                    <h3 style="font-size: 20px;"> Total No. of Customers</h3> <!-- Adjusted font size -->
-                    <p>@ViewBag.TotalCustomers</p>  <!-- Dynamic total customers -->
-                </div>
-            </div>
         </div>
     </div>
-</div>
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" crossorigin="anonymous"></script>
@@ -284,6 +276,21 @@
         border-radius: 50%;
         padding: 2px 6px;
         font-size: 12px;
+    }
+
+    .header-actions .action-btn {
+        position: relative;
+        margin-left: 10px; /* Adjust spacing as needed */
+    }
+
+    .message-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        font-size: 0.75rem;
+        padding: 2px 5px;
+        border-radius: 50%;
+        color: white;
     }
 
 </style>

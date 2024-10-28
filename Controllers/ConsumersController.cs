@@ -54,23 +54,6 @@ namespace EmpowerU.Controllers
             // Get current month name
             string currentMonth = DateTime.Now.ToString("MMMM");
 
-            // Fetch total number of distinct customers for this consumer
-            int totalCustomers = _context.Appointments
-                                          .Where(a => a.ConsumerID == consumer.Id)
-                                          .Select(a => a.ConsumerID)
-                                          .Distinct()
-                                          .Count();
-
-            // Fetch total income for this consumer
-            decimal totalIncome = _context.Payments
-                                          .Where(p => p.ConsumerID == consumer.Id)
-                                          .Sum(p => (decimal?)p.Amount) ?? 0;
-
-            // Fetch total number of appointments booked for this consumer
-            int totalAppointments = _context.Appointments
-                                            .Where(a => a.ConsumerID == consumer.Id)
-                                            .Count();
-
             // Fetch today's appointments for the consumer
             var today = DateTime.Today;
             var todayAppointments = _context.Appointments
@@ -82,29 +65,19 @@ namespace EmpowerU.Controllers
                                              })
                                              .ToList<object>(); // Cast to List<object> instead of List<dynamic>
 
-            // Calculate monthly income
-            DateTime startOfMonth = new DateTime(today.Year, today.Month, 1);
-            DateTime endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
-
-            decimal monthlyIncome = _context.Payments
-                                            .Where(p => p.ConsumerID == consumer.Id &&
-                                                        p.PaymentDate >= startOfMonth &&
-                                                        p.PaymentDate <= endOfMonth)
-                                            .Sum(p => (decimal?)p.Amount) ?? 0;
-
             // **New Notifications code**
             var notifications = _context.Notifications
                                         .Where(n => n.UserID == consumer.Id && !n.IsRead)
                                         .ToList();
 
-            // Pass the data to the View using ViewBag
-            ViewBag.TotalCustomers = totalCustomers;
-            ViewBag.TotalIncome = totalIncome;
-            ViewBag.TotalAppointments = totalAppointments;
-            ViewBag.TodayAppointments = todayAppointments; // Add today's appointments to ViewBag
-            ViewBag.MonthlyIncome = monthlyIncome; // Add monthly income to ViewBag
+            var unreadMessages = _context.Messages
+                                   .Where(m => m.ReceiverID == consumer.Id && !m.IsRead)
+                                   .ToList();
+
+            ViewBag.TodayAppointments = todayAppointments;
             ViewBag.CurrentMonth = currentMonth;
             ViewBag.Notifications = notifications;
+            ViewBag.UnreadMessages = unreadMessages; 
 
             return View(consumer);  // Pass the consumer model to the view
         }
