@@ -3,266 +3,290 @@
 @{
     ViewBag.Title = "Consumer Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";  // Assuming you're using a shared layout
+    var todayAppointments = ViewBag.TodayAppointments as List<dynamic>;
+    var notifications = ViewBag.Notifications as List<Notification>;
 }
 
-<div class="dashboard-container">
-    <div class="sidebar">
-        <div class="logo">
-            <img src="/images/logo.png" alt="Logo" />
-            <h2>Consumer Dashboard</h2>
+<div class="dashboard-container d-flex">
+    <!-- Main Sidebar Section -->
+    <div class="col-lg-3 col-md-4 bg-primary text-white vh-100 p-0">
+        <div class="d-flex flex-column align-items-center py-4">
+            <!-- Sidebar Header with Logo -->
+            <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg" alt="Logo" class="rounded-circle mb-3" width="70" height="70">
+            <h5>@Model.Name</h5>
         </div>
-        <ul class="menu">
-            <li><a href="#" class="active">Dashboard</a></li>
-            <li><a href="#">Orders</a></li>
-            <li><a href="#">Wishlist</a></li>
-            <li><a href="#">Account</a></li>
-            <li><a href="#">Settings</a></li>
+        <ul class="nav flex-column px-3" id="mainSidebar">
+            <li class="nav-item">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Dashboard" ? "active" : "")" href="@Model.Id" data-target="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "EditConsumerProfile" ? "active" : "")" href="@Url.Action("EditConsumerProfile", "Consumers")/@Model.Id" data-target="profile">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "AppointmentDetails" ? "active" : "")" href="@Url.Action("AppointmentDetails", "Consumers")/@Model.Id" data-target="appointments">
+                    <i class="fas fa-calendar"></i> Appointments
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Services" ? "active" : "")" href="#" data-target="services">
+                    <i class="fas fa-briefcase"></i> Services
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Settings" ? "active" : "")" href="#" data-target="settings">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </li>
         </ul>
-        <div class="user-profile">
-            <img src="/images/profile-pic.jpg" alt="User Image" />
-            <p>John Doe</p>
-            <button class="upgrade-button">Upgrade</button>
-        </div>
+
     </div>
 
-    <div class="main-content">
-        <div class="header">
-            <h1>Consumer Dashboard</h1>
+    <!-- Main Content Section -->
+    <div class="main-content col-lg-9 col-md-8 py-5 ms-4">
+        <!-- Added ms-4 for spacing -->
+        <!-- Header -->
+        <div class="header d-flex justify-content-between align-items-center mb-4">
+            <h1 style="font-size: 40px;"><strong>Dashboard</strong></h1>
             <div class="header-actions">
-                <button class="action-btn"> <i class="fa fa-bell"></i></button>
+                <!-- Notification Icon with Link -->
+                <button class="action-btn" onclick="window.location.href='/Notifications/Index/@Model.Id'">
+                    <i class="fa fa-bell"></i>
+                    <!-- Show notification count if there are any -->
+                    @if (notifications != null && notifications.Any())
+                    {
+                        <span class="notification-count">@notifications.Count</span>
+                    }
+                </button>
                 <button class="action-btn"> <i class="fa fa-cog"></i></button>
             </div>
         </div>
 
-        <div class="balance-section">
-            <div class="balance-card">
-                <h3>Your Balance</h3>
-                <p>$2,350.50</p>
-                <div class="balance-details">
-                    <p class="positive-change">+ $350.00</p>
-                    <p class="negative-change">- $120.50</p>
-                </div>
+        <!-- Statistics Cards -->
+        <div class="stats-cards d-flex justify-content-between mb-4">
+            <div class="balance-card shadow p-3">
+                <h3 style="font-size: 20px;">Your Balance</h3>
+                <p>R@(ViewBag.TotalIncome.ToString("N2"))</p> 
+            </div>
+            <div class="stat-card flex-fill shadow p-3">
+                <h3 style="font-size: 20px;">@ViewBag.CurrentMonth's Income</h3>
+                <p>R@(ViewBag.MonthlyIncome.ToString("N2"))</p>
+            </div>
+            <div class="stat-card flex-fill shadow p-3">
+                <h3 style="font-size: 20px;">Total No. of Appointments Booked</h3> <!-- Adjusted font size -->
+                <p>@ViewBag.TotalAppointments</p>  <!-- Dynamic total appointments -->
             </div>
         </div>
 
-        <div class="content-section">
-            <div class="left-column">
-                <div class="orders-card">
-                    <h3>Recent Orders</h3>
-                    <table>
+        <!-- Content Section with Pie Chart and Today's Appointments -->
+        <div class="content-section d-flex flex-wrap">
+            <div class="left-column flex-fill me-4 mb-4" style="max-width: 400px;">
+                <!-- Pie Chart Section -->
+                <div class="marketplace-card p-3 mb-4 shadow">
+                    <h3 style="font-size: 20px;">Appointments by Service Category</h3>
+                    <canvas id="empoweruPieChart" style="max-width: 100%; height: auto;"></canvas>
+                </div>
+            </div>
+            
+            <!-- Today's Appointments Section -->
+            <div class="today-appointments flex-fill p-3 mb-4 shadow" style="cursor: pointer;" onclick="window.location.href='/Consumers/AppointmentDetails/@Model.Id'">
+                <h3 style="font-size: 20px;" >Today's Appointments</h3>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Order ID</th>
-                                <th>Item</th>
-                                <th>Price</th>
-                                <th>Status</th>
-                                <th>Date</th>
+                                <th>Name</th>
+                                <th>Time</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>#987654</td>
-                                <td>iPhone 12</td>
-                                <td>$1,000.00</td>
-                                <td class="status delivered">Delivered</td>
-                                <td>Oct 12, 2023</td>
-                            </tr>
-                            <tr>
-                                <td>#123456</td>
-                                <td>Nike Shoes</td>
-                                <td>$120.00</td>
-                                <td class="status pending">Pending</td>
-                                <td>Oct 10, 2023</td>
-                            </tr>
+                            @if (ViewBag.TodayAppointments != null && ((List<object>)ViewBag.TodayAppointments).Any())
+                            {
+                                int count = 0; // Counter to limit to 5 appointments
+                                foreach (var appointment in (List<object>)ViewBag.TodayAppointments)
+                                {
+                                    if (count++ >= 5) break; // Limit to 5 appointments
+                                    {
+                                        // Cast to dynamic to access properties
+                                        var app = (dynamic)appointment;
+                                        <tr>
+                                            <td>@app.Name</td>
+                                            <td>@app.DateTime.ToString("hh:mm tt")</td>
+                                        </tr>
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2" class="text-center" style="font-size: 12px;">No appointments scheduled for today.</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
-
-                <div class="activity-card">
-                    <h3>Recent Activity</h3>
-                    <ul class="activity-list">
-                        <li><strong>Order Placed</strong> - iPhone 12 - $1,000.00</li>
-                        <li><strong>Payment Processed</strong> - Nike Shoes - $120.00</li>
-                    </ul>
-                </div>
             </div>
 
-            <div class="right-column">
-                <div class="popular-categories-card">
-                    <h3>Popular Categories</h3>
-                    <div class="category">
-                        <span>Electronics</span>
-                        <p>12,345 items</p>
-                    </div>
-                    <div class="category">
-                        <span>Fashion</span>
-                        <p>8,910 items</p>
-                    </div>
-                </div>
-
-                <div class="wishlist-card">
-                    <h3>Wishlist</h3>
-                    <ul class="wishlist-list">
-                        <li><strong>MacBook Air</strong> - $999.00</li>
-                        <li><strong>Apple Watch</strong> - $399.00</li>
-                    </ul>
+            <div class="right-column flex-fill mb-4">
+                <div class="stat-card flex-fill shadow p-3">
+                    <h3 style="font-size: 20px;"> Total No. of Customers</h3> <!-- Adjusted font size -->
+                    <p>@ViewBag.TotalCustomers</p>  <!-- Dynamic total customers -->
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-    .dashboard-container {
-        display: flex;
-        height: 100vh;
-    }
-
-    .sidebar {
-        width: 250px;
-        background-color: #f5f6fa;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .logo img {
-        width: 40px;
-        margin-bottom: 10px;
-    }
-
-    .menu {
-        list-style: none;
-        padding: 0;
-    }
-
-        .menu li {
-            margin: 15px 0;
-        }
-
-        .menu a {
-            text-decoration: none;
-            color: #333;
-            font-size: 16px;
-            display: block;
-        }
-
-            .menu a.active {
-                font-weight: bold;
-                color: #007bff;
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Initialize your pie chart here using Chart.js
+        const ctx = document.getElementById('empoweruPieChart').getContext('2d');
+        const empoweruPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Label1', 'Label2', 'Label3'],  // Replace with your data labels
+                datasets: [{
+                    data: [10, 20, 30],  // Replace with your data values
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Allow it to resize
             }
+        });
+    </script>
+}
 
-    .user-profile {
-        text-align: center;
-    }
-
-        .user-profile img {
-            width: 60px;
-            border-radius: 50%;
-        }
-
-    .upgrade-button {
-        background-color: #ff3860;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        margin-top: 10px;
-        cursor: pointer;
+<style>
+    /* Custom Styles for the Dashboard */
+    .dashboard-container {
+        background: #f8f9fa;
+        height: auto; /* Ensure it covers the full height */
     }
 
     .main-content {
-        flex-grow: 1;
+        background: #f8f9fa; /* Ensure the grey background covers the whole content */
         padding: 20px;
-        background-color: #f0f2f5;
-    }
-
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .balance-section {
-        margin-bottom: 20px;
-    }
-
-    .balance-card {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        text-align: center;
-    }
-
-        .balance-card h3 {
-            font-size: 16px;
-            margin-bottom: 10px;
-            color: #6b7280;
-        }
-
-    .balance-details {
-        display: flex;
-        justify-content: space-around;
-        margin-top: 10px;
-    }
-
-    .positive-change {
-        color: green;
-    }
-
-    .negative-change {
-        color: red;
+        min-height: 100vh; /* Ensure it covers the full viewport height */
     }
 
     .content-section {
         display: flex;
+        gap: 20px; /* Adds space between the two blocks */
     }
 
-    .left-column, .right-column {
-        flex: 1;
-        padding: 10px;
+    .left-column,
+    .right-column,
+    .today-appointments {
+        flex-basis: 20%; /* Ensures the blocks take up appropriate width */
+        min-width: 20%;
     }
 
-    .orders-card, .activity-card, .wishlist-card, .popular-categories-card {
-        background-color: #fff;
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .stat-card {
+        background: #fff;
+        border-radius: 8px;
         padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s;
+    }
+
+    .stat-card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .marketplace-card,
+    .today-appointments,
+    .balance-card {
+        background: #fff;
         border-radius: 8px;
-        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-        .orders-card table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .orders-card th, .orders-card td {
-            padding: 10px;
-            border-bottom: 1px solid #f0f2f5;
-            text-align: left;
-        }
-
-    .status.delivered {
-        color: green;
+    .today-appointments table {
+        width: 100%;
+        border-collapse: collapse;
     }
 
-    .status.pending {
-        color: orange;
-    }
-
-    .activity-list, .wishlist-list {
-        list-style: none;
-        padding: 0;
-    }
-
-    .category {
-        background-color: #f5f6fa;
-        padding: 15px;
-        margin-bottom: 10px;
-        border-radius: 8px;
+    .today-appointments th,
+    .today-appointments td {
+        padding: 10px;
         text-align: center;
     }
 
+    .today-appointments th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .today-appointments td {
+        border: 1px solid #ddd;
+    }
+
+    .header {
+        margin-bottom: 20px;
+    }
+
+    .header-actions .action-btn {
+        background: transparent;
+        border: none;
+        color: #000;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+
+    .header-actions .action-btn:hover {
+        color: #007bff;
+    }
+
+    .balance-card {
+        text-align: center;
+    }
+
+    .balance-card button {
+        margin-top: 10px;
+    }
+
+    .marketplace-card {
+        position: relative; /* Add this */
+        overflow: hidden; /* Add this to contain the chart */
+        max-height: 500px; /* Set a maximum height */
+        text-align: center;
+    }
+
+    .action-btn {
+        position: relative;
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .notification-count {
+        position: absolute;
+        top: -5px; /* Adjust as needed */
+        right: -5px; /* Adjust as needed */
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+    }
+
 </style>
+
 <!-- Add relevant Font Awesome CDN for icons -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
