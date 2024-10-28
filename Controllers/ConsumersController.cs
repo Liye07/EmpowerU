@@ -128,12 +128,30 @@ namespace EmpowerU.Controllers
                 return NotFound();
             }
 
+            // Remove password from model state validation for updates
+            ModelState.Remove("Password");
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(consumer);
+                    // Fetch the existing consumer record from the database
+                    var existingConsumer = await _context.Consumers.FindAsync(id);
+                    if (existingConsumer == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Update the existing consumer's properties
+                    existingConsumer.Name = consumer.Name;
+                    existingConsumer.Surname = consumer.Surname;
+                    existingConsumer.Email = consumer.Email;
+                    existingConsumer.PhoneNumber = consumer.PhoneNumber;
+                    existingConsumer.PreferredCategories = consumer.PreferredCategories;
+
+                    // Save changes to the database
                     await _context.SaveChangesAsync();
+                    return RedirectToAction("Dashboard", "Consumers", new { id = consumer.Id });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -143,31 +161,16 @@ namespace EmpowerU.Controllers
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError(string.Empty, "The record you attempted to edit was modified by another user. Please try again.");
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(consumer);
+
+            // If we got this far, something failed; redisplay form with current data
+            var existingConsumerData = await _context.Consumers.FindAsync(id);
+            return View(existingConsumerData);
         }
 
-        // GET: Consumers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var consumer = await _context.Consumers
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (consumer == null)
-            {
-                return NotFound();
-            }
-
-            return View(consumer);
-        }
 
         // POST: Consumers/Delete/5
         [HttpPost, ActionName("Delete")]

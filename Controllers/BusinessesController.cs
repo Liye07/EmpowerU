@@ -340,7 +340,7 @@ namespace EmpowerU.Controllers
                     // Save changes to the business
                     _context.Update(existingBusiness);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction("Dashboard", "Businesses");
+                    return RedirectToAction("Dashboard", "Businesses", new { id = business.Id });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -350,7 +350,7 @@ namespace EmpowerU.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "The record you attempted to edit was modified by another user. Please try again.");
+                        throw new Exception();
                     }
                 }
             }
