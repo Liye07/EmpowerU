@@ -105,7 +105,7 @@
                                         <label asp-for="BusinessCategory" class="col-sm-3 col-form-label">Category</label>
                                         <div class="col-sm-9 position-relative">
                                             <div class="custom-select-dropdown" onclick="toggleDropdown()">
-                                                <input type="text" category-display" class="form-control" placeholder="Select business category" required>
+                                                <input type="text" id="category-display" class="form-control" placeholder="Select business category" required>
                                                 <input type="hidden" id="category-value" name="BusinessCategory" />
                                                 <i id="dropdown-arrow" class="fas fa-chevron-down"></i> <!-- Arrow icon -->
                                             </div>
@@ -349,6 +349,7 @@
         if (addressInput) addressInput.focus();
     }
 
+
     function toggleDropdown() {
         const dropdown = document.getElementById("category-options");
         const arrow = document.getElementById("dropdown-arrow");
@@ -371,7 +372,6 @@
             document.getElementById("dropdown-arrow").classList.remove("rotate");
         }
     });
-
 
 
 </script>
