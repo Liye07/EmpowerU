@@ -86,7 +86,7 @@
                                     </div>
 
                                     <div class="form-group row mb-3">
-                                        <label for="PhoneNumber" class="col-sm-3 col-form-label">Phone No.</label>
+                                        <label for="PhoneNumber" class="col-sm-3 col-form-label">Phone Number</label>
                                         <div class="col-sm-9">
                                             <input type="tel" asp-for="PhoneNumber" class="form-control" placeholder="Enter phone number" />
                                             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
@@ -105,8 +105,8 @@
                                         <label asp-for="BusinessCategory" class="col-sm-3 col-form-label">Category</label>
                                         <div class="col-sm-9 position-relative">
                                             <div class="custom-select-dropdown" onclick="toggleDropdown()">
-                                                <input type="text" id="category-display" class="form-control" placeholder="Select business category" required>
-                                                <input type="hidden" id="category-value" name="BusinessCategory" />
+                                                <input type="text" id="category-display" class="form-control" placeholder="Select business category" required value="@Model.BusinessCategory" />
+                                                <input type="hidden" id="category-value" name="BusinessCategory" value="@Model.BusinessCategory" />
                                                 <i id="dropdown-arrow" class="fas fa-chevron-down"></i> <!-- Arrow icon -->
                                             </div>
 
@@ -144,30 +144,28 @@
                                     <div class="form-group row mb-3">
                                         <label for="Suburb" class="col-sm-3 col-form-label">Suburb</label>
                                         <div class="col-sm-9">
-                                            <input type="tel" asp-for="LocationService.Suburb" class="form-control" readonly />
+                                            <input type="text" asp-for="LocationService.Suburb" id="suburb" class="form-control" readonly />
                                         </div>
                                     </div>
-
                                     <div class="form-group row mb-3">
                                         <label for="City" class="col-sm-3 col-form-label">City</label>
                                         <div class="col-sm-9">
-                                            <input type="tel" asp-for="LocationService.City" class="form-control" readonly />
+                                            <input type="text" asp-for="LocationService.City" id="city" class="form-control" readonly />
                                         </div>
                                     </div>
-
                                     <div class="form-group row mb-3">
-                                        <label for="PostalCode" class="col-sm-3 col-form-label">PostalCode</label>
+                                        <label for="PostalCode" class="col-sm-3 col-form-label">Postal Code</label>
                                         <div class="col-sm-9">
-                                            <input type="tel" asp-for="LocationService.PostalCode" class="form-control" readonly />
+                                            <input type="text" asp-for="LocationService.PostalCode" id="postalCode" class="form-control" readonly />
                                         </div>
                                     </div>
-
                                     <div class="form-group row mb-3">
                                         <label for="Country" class="col-sm-3 col-form-label">Country</label>
                                         <div class="col-sm-9">
-                                            <input type="tel" asp-for="LocationService.Country" class="form-control" readonly />
+                                            <input type="text" asp-for="LocationService.Country" id="country" class="form-control" readonly />
                                         </div>
                                     </div>
+
 
                                     <input type="hidden" asp-for="LocationService.Latitude" id="latitude" step="any" />
                                     <input type="hidden" asp-for="LocationService.Longitude" id="longitude" step="any" />
@@ -310,35 +308,37 @@
             }
         }
     }
-
     function selectAddress(result) {
-     
-        // Extract the street address
         const addressComponents = result.address;
-        const streetAddress = addressComponents.road || addressComponents.street || "";
-        const addressInput = document.getElementById('address-input');
-        if (addressInput) addressInput.value = streetAddress;
 
-        // Update latitude and longitude
+        // Update the street address
+        const addressInput = document.getElementById('address-input');
+        if (addressInput) addressInput.value = addressComponents.road || addressComponents.street || "";
+
+        // Update latitude and longitude with console logging
         const latitude = document.getElementById('latitude');
         const longitude = document.getElementById('longitude');
-        if (latitude) latitude.value = result.lat.replace('.', ',');
-        if (longitude) longitude.value = result.lon.replace('.', ',');
 
-        // Extract and populate other location details
-        const city = document.getElementById('city');
-        if (city) city.value = addressComponents.city || addressComponents.town || addressComponents.village || "";
+        if (latitude) {
+            const formattedLat = result.lat.replace('.', ',');
+            console.log("Formatted Latitude:", formattedLat); // Log formatted latitude
+            latitude.value = formattedLat;
+            latitude.dispatchEvent(new Event('input')); // Trigger update event
+        }
+        if (longitude) {
+            const formattedLon = result.lon.replace('.', ',');
+            console.log("Formatted Longitude:", formattedLon); // Log formatted longitude
+            longitude.value = formattedLon;
+            longitude.dispatchEvent(new Event('input')); // Trigger update event
+        }
 
-        const postalCode = document.getElementById('postalCode');
-        if (postalCode) postalCode.value = addressComponents.postcode || "";
+        // Update city, postal code, country, and suburb
+        document.getElementById('city').value = addressComponents.city || addressComponents.town || addressComponents.village || "";
+        document.getElementById('postalCode').value = addressComponents.postcode || "";
+        document.getElementById('country').value = addressComponents.country || "";
+        document.getElementById('suburb').value = addressComponents.suburb || addressComponents.neighbourhood || "";
 
-        const country = document.getElementById('country');
-        if (country) country.value = addressComponents.country || "";
-
-        const suburb = document.getElementById('suburb');
-        if (suburb) suburb.value = addressComponents.suburb || addressComponents.neighbourhood || "";
-
-        // Clear suggestions
+        // Clear suggestions list
         const suggestionList = document.getElementById('suggestion-list');
         if (suggestionList) {
             suggestionList.innerHTML = '';
@@ -348,6 +348,8 @@
         // OPTIONAL: Focus back on the address input field
         if (addressInput) addressInput.focus();
     }
+
+
 
 
     function toggleDropdown() {
@@ -372,7 +374,6 @@
             document.getElementById("dropdown-arrow").classList.remove("rotate");
         }
     });
-
 
 </script>
 

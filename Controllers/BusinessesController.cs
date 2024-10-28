@@ -280,29 +280,67 @@ namespace EmpowerU.Controllers
             {
                 try
                 {
-                    // Update the LocationService if it exists or create a new one
+                    // Load the existing business from the database to ensure we have the latest values
+                    var existingBusiness = await _context.Businesses
+                        .Include(b => b.LocationService)
+                        .FirstOrDefaultAsync(b => b.Id == id);
+
+                    if (existingBusiness == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Update properties from the model
+                    existingBusiness.Description = business.Description;
+                    existingBusiness.Rating = business.Rating;
+                    existingBusiness.Name = business.Name;
+                    existingBusiness.Email = business.Email;
+                    existingBusiness.PhoneNumber = business.PhoneNumber;
+                    existingBusiness.BusinessCategory = business.BusinessCategory;
+
+                    // Update LocationService if it exists, otherwise create a new one
                     if (business.LocationService != null)
                     {
-                        var locationService = await _context.LocationServices.FindAsync(business.LocationService.LocationID);
-
-                        if (locationService != null)
+                        if (existingBusiness.LocationService != null)
                         {
                             // Update existing LocationService
-                            locationService.Address = business.LocationService.Address;
-                            _context.Update(locationService);
+                            existingBusiness.LocationService.Address = business.LocationService.Address;
+                            existingBusiness.LocationService.Suburb = business.LocationService.Suburb;
+                            existingBusiness.LocationService.City = business.LocationService.City;
+                            existingBusiness.LocationService.PostalCode = business.LocationService.PostalCode;
+                            existingBusiness.LocationService.Country = business.LocationService.Country;
+
+                            // Ensure the entity is marked as modified
+                            _context.Entry(existingBusiness.LocationService).State = EntityState.Modified;
                         }
                         else
                         {
-                            // Create a new LocationService
-                            _context.LocationServices.Add(business.LocationService);
+                            // Create a new LocationService and assign the new ID to business.LocationID
+                            var newLocationService = new LocationService
+                            {
+                                Address = business.LocationService.Address,
+                                Suburb = business.LocationService.Suburb,
+                                City = business.LocationService.City,
+                                PostalCode = business.LocationService.PostalCode,
+                                Country = business.LocationService.Country
+                            };
+                            _context.LocationServices.Add(newLocationService);
                             await _context.SaveChangesAsync();
-                            business.LocationID = business.LocationService.LocationID; // Assign the new ID
+
+                            // Link new LocationService ID to the business
+                            existingBusiness.LocationID = newLocationService.LocationID;
                         }
                     }
+                    else
+                    {
+                        // If LocationService is null, ensure LocationID is null as well
+                        existingBusiness.LocationID = null;
+                    }
 
-                    _context.Update(business);
+                    // Save changes to the business
+                    _context.Update(existingBusiness);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Dashboard", "Businesses");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -312,24 +350,16 @@ namespace EmpowerU.Controllers
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError(string.Empty, "The record you attempted to edit was modified by another user. Please try again.");
                     }
                 }
             }
 
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var error in errors)
-                {
-                    Console.WriteLine(error.ErrorMessage); // Or use a logger to capture the output
-                }
-            }
-
-
+            // If we get here, something failed; redisplay the form.
             ViewData["LocationID"] = new SelectList(_context.LocationServices, "LocationID", "Address", business.LocationID);
             return View(business);
         }
+
 
 
         // GET: Businesses/Delete/5
