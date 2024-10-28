@@ -20,6 +20,9 @@ namespace EmpowerU.Models
         public string MessageContent { get; set; }
 
         [Required]
+        public bool IsRead { get; set; }
+
+        [Required]
         public DateTime Timestamp { get; set; }
 
         [ForeignKey(nameof(SenderID))]

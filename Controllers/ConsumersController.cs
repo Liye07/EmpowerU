@@ -32,10 +32,56 @@ namespace EmpowerU.Controllers
             return View(await _context.Consumers.ToListAsync());
         }
 
-        public IActionResult Dashboard()
+
+        public IActionResult Dashboard(int? id)
         {
-            return View();
+            // Check if the id parameter is provided
+            if (id == null)
+            {
+                return NotFound("Consumer ID is required.");
+            }
+
+            // Fetch the business details using the provided id
+            var consumer = _context.Consumers
+                                   .FirstOrDefault(b => b.Id == id);
+
+            // Check if the Consumer exists
+            if (consumer == null)
+            {
+                return NotFound("Consumer not found.");
+            }
+
+            // Get current month name
+            string currentMonth = DateTime.Now.ToString("MMMM");
+
+            // Fetch today's appointments for the consumer
+            var today = DateTime.Today;
+            var todayAppointments = _context.Appointments
+                                             .Where(a => a.ConsumerID == consumer.Id && a.DateTime.Date == today)
+                                             .Select(a => new
+                                             {
+                                                 Name = a.Consumer.Name,
+                                                 DateTime = a.DateTime
+                                             })
+                                             .ToList<object>(); // Cast to List<object> instead of List<dynamic>
+
+            // **New Notifications code**
+            var notifications = _context.Notifications
+                                        .Where(n => n.UserID == consumer.Id && !n.IsRead)
+                                        .ToList();
+
+            var unreadMessages = _context.Messages
+                                   .Where(m => m.ReceiverID == consumer.Id && !m.IsRead)
+                                   .ToList();
+
+            ViewBag.TodayAppointments = todayAppointments;
+            ViewBag.CurrentMonth = currentMonth;
+            ViewBag.Notifications = notifications;
+            ViewBag.UnreadMessages = unreadMessages; 
+
+            return View(consumer);  // Pass the consumer model to the view
         }
+
 
         // GET: Consumers/Details/5
         public async Task<IActionResult> Details(int? id)

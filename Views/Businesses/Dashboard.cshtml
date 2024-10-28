@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml"; // Assuming you're using a shared layout
     var todayAppointments = ViewBag.TodayAppointments as List<dynamic>;
     var notifications = ViewBag.Notifications as List<Notification>;
+    var unreadMessages = ViewBag.UnreadMessages as List<Message>;
 }
 
 <div class="dashboard-container d-flex">
@@ -61,7 +62,15 @@
                         <span class="notification-count">@notifications.Count</span>
                     }
                 </button>
-                <button class="action-btn"> <i class="fa fa-cog"></i></button>
+
+                <button class="action-btn" onclick="window.location.href='/Messages/Index/@Model.Id'">
+                    <i class="fa fa-envelope"></i>
+                    <!-- Show unread message count if there are any -->
+                    @if (unreadMessages != null && unreadMessages.Any())
+                    {
+                        <span class="notification-count">@unreadMessages.Count</span>
+                    }
+                </button>
             </div>
         </div>
 
