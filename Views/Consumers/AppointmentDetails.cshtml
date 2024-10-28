@@ -22,23 +22,23 @@
                         <th>Appointment ID</th>
                         <th>Business Name</th>
                         <th>Service Type</th>
-                        <th>Date</th>
+                        <th>Date & Time</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var appointment in upcomingAppointments)
                     {
-                        <tr onclick="showAppointmentDetails(@appointment.AppointmentID)">
+                        <tr onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
                             <td>@appointment.AppointmentID</td>
                             <td>@appointment.Business.Name</td>
                             <td>@appointment.ServiceType</td>
-                            <td>@appointment.DateTime.ToLongDateString()</td>
+                            <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
                             <td>
                                 <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
-                                                        appointment.Status == "Pending" ? "bg-warning" :
-                                                        appointment.Status == "Scheduled" ? "bg-primary" :
-                                                        appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
+                                appointment.Status == "Pending" ? "bg-warning" :
+                                appointment.Status == "Scheduled" ? "bg-primary" :
+                                appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
                                     @appointment.Status
                                 </span>
                             </td>
@@ -52,7 +52,7 @@
                     <tr>
                         <th>Appointment ID</th>
                         <th>Business Name</th>
-                        <th>Date</th>
+                        <th>Date & Time</th>
                         <th>Service Type</th>
                         <th>Status</th>
                     </tr>
@@ -60,16 +60,16 @@
                 <tbody>
                     @foreach (var appointment in pastAppointments)
                     {
-                        <tr onclick="showAppointmentDetails(@appointment.AppointmentID)">
+                        <tr onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
                             <td>@appointment.AppointmentID</td>
                             <td>@appointment.Business.Name</td>
-                            <td>@appointment.DateTime.ToLongDateString()</td>
                             <td>@appointment.ServiceType</td>
+                            <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
                             <td>
                                 <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
-                                                        appointment.Status == "Pending" ? "bg-warning" :
-                                                        appointment.Status == "Scheduled" ? "bg-primary" :
-                                                        appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
+                                appointment.Status == "Pending" ? "bg-warning" :
+                                appointment.Status == "Scheduled" ? "bg-primary" :
+                                appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
                                     @appointment.Status
                                 </span>
                             </td>
@@ -82,18 +82,18 @@
         <div class="col-md-4">
             <h2 class="h5 mb-3">Appointment Details</h2>
             <div id="appointmentDetails" class="card p-3 mb-3" style="display: none;">
-                <p><strong>Appointment ID: </strong><span id="detailAppointmentId">@Model.AppointmentID</span></p>
-                <p><strong>Business Name: </strong><span id="detailBusinessName">@Model.Business.Name</span></p>
-                <p><strong>First Name: </strong><span id="detailFirstName">@Model.Consumer.Name</span></p>
-                <p><strong>Surname: </strong><span id="detailSurname">@Model.Consumer.Surname</span></p>
-                <p><strong>Email: </strong><span id="detailEmail">@Model.Consumer.Email</span></p>
-                <p><strong>Phone No.: </strong><span id="detailPhone">@Model.Consumer.PhoneNumber</span></p>
-                <p><strong>Service Type: </strong><span id="detailServiceType">@Model.ServiceType</span></p>
-                <p><strong>Date: </strong><span id="detailDate">@Model.DateTime.ToString("g")</span></p>
-                <p><strong>Status: </strong><span class="badge" id="detailStatusBadge">@Model.Status</span></p>
+                <p><strong>Appointment ID: </strong><span id="detailAppointmentId"></span></p>
+                <p><strong>Business Name: </strong><span id="detailBusinessName"></span></p>
+                <p><strong>First Name: </strong><span id="detailFirstName"></span></p>
+                <p><strong>Surname: </strong><span id="detailSurname"></span></p>
+                <p><strong>Email: </strong><span id="detailEmail"></span></p>
+                <p><strong>Phone No.: </strong><span id="detailPhone"></span></p>
+                <p><strong>Service Type: </strong><span id="detailServiceType"></span></p>
+                <p><strong>Date & Time: </strong><span id="detailDate"></span></p>
+                <p><strong>Status: </strong><span class="badge" id="detailStatusBadge"></span></p>
 
                 <button class="btn btn-primary mt-2">Leave a Review</button>
-                <button class="btn btn-danger mt-2">Pay Now</button>
+                <button class="btn btn-success mt-2">Pay Now</button>
             </div>
             <div id="noAppointmentSelected" class="alert alert-info" style="display: block;">
                 No appointment selected.

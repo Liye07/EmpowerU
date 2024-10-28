@@ -199,7 +199,7 @@ namespace EmpowerU.Controllers
 
         public IActionResult AppointmentDetails()
         {
-            return View();  // This will render the Search view.
+            return View();
         }
 
         [Route("Consumers/AppointmentDetails/{id?}")]

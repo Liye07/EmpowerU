@@ -2,8 +2,8 @@
 
 @{
     ViewBag.Title = "Manage Appointments";
-    var business = ViewBag.Business as Business;
-    var appointments = ViewBag.Appointments as List<Appointment>;
+    var pastAppointments = ViewBag.PastAppointments as List<Appointment>;
+    var upcomingAppointments = ViewBag.UpcomingAppointments as List<Appointment>;
 }
 
 <div class="container mt-4">
@@ -11,6 +11,10 @@
     <div class="row mb-4">
         <div class="col-md-8">
             <h2 class="h4 mb-3">Manage Appointments</h2>
+        </div>
+        <div class="tab-buttons mb-4">
+            <button id="past-btn" class="btn btn-secondary" onclick="showPastAppointments()">Past</button>
+            <button id="upcoming-btn" class="btn btn-primary active" onclick="showUpcomingAppointments()">Upcoming</button>
         </div>
         <div class="col-md-4 text-right">
             <input type="text" class="form-control" placeholder="Search by name or service..." />
@@ -21,7 +25,7 @@
     <section class="row">
         <!-- Appointments Table -->
         <div class="col-md-8">
-            <table class="table table-bordered table-hover">
+            <table id="upcoming-appointments-table" class="table table-bordered table-hover">
                 <thead>
                     <tr>
                         <th>Appointment ID</th>
@@ -29,43 +33,55 @@
                         <th>Service</th>
                         <th>Date & Time</th>
                         <th>Status</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if (appointments != null && appointments.Any())
+                    @foreach (var appointment in upcomingAppointments)
                     {
-                        foreach (var appointment in appointments)
-                        {
-                            <tr onclick="showAppointmentDetails(@appointment.AppointmentID)">
-                                <td>@appointment.AppointmentID</td>
-                                <td>@appointment.Consumer.Name</td>
-                                <td>@appointment.ServiceType</td>
-                                <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
-                                <td>
-                                    <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
-                                                appointment.Status == "Pending" ? "bg-warning" :
-                                                appointment.Status == "Scheduled" ? "bg-primary" :
-                                                appointment.Status == "Cancelled" ? "bg-danger" :"bg-secondary")">
-                                        @appointment.Status
-                                    </span>
-                                </td>
-
-
-                                <td>
-                                    <div class="d-flex">
-                                        <a href="/Appointments/Details/@appointment.AppointmentID" class="btn btn-sm btn-outline-info me-2">View</a>
-                                        <button class="btn btn-sm btn-outline-primary me-2" onclick="rescheduleAppointment(@appointment.AppointmentID)">Reschedule</button>
-                                        <button class="btn btn-sm btn-outline-danger" onclick="cancelAppointment(@appointment.AppointmentID)">Cancel</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
+                        <tr onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Consumer.Name','@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
+                            <td>@appointment.AppointmentID</td>
+                            <td>@appointment.Consumer.Name</td>
+                            <td>@appointment.ServiceType</td>
+                            <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
+                            <td>
+                                <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
+                                                        appointment.Status == "Pending" ? "bg-warning" :
+                                                        appointment.Status == "Scheduled" ? "bg-primary" :
+                                                        appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
+                                    @appointment.Status
+                                </span>
+                            </td>
+                        </tr>
                     }
-                    else
+                </tbody>
+            </table>
+
+            <table id="past-appointments-table" class="table table-bordered table-hover" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>Appointment ID</th>
+                        <th>Name</th>
+                        <th>Date & Time</th>
+                        <th>Service Type</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var appointment in pastAppointments)
                     {
-                        <tr>
-                            <td colspan="6" class="text-center">No appointments available</td>
+                        <tr onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Consumer.Name','@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
+                            <td>@appointment.AppointmentID</td>
+                            <td>@appointment.Consumer.Name</td>
+                            <td>@appointment.ServiceType</td>
+                            <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
+                            <td>
+                                <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
+                                appointment.Status == "Pending" ? "bg-warning" :
+                                appointment.Status == "Scheduled" ? "bg-primary" :
+                                appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
+                                    @appointment.Status
+                                </span>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -86,8 +102,9 @@
                     <strong>Status:</strong>
                     <span id="appointmentStatus" class="badge"></span>
                 </p>
+                <button class="btn btn-primary mt-2">Reschedule</button>
+                <button class="btn btn-danger mt-2">Cancel</button>
             </div>
-            <button class="btn btn-primary btn-block" id="editAppointmentButton" style="display: none;">Edit Appointment</button>
             <div id="noAppointmentSelected" class="alert alert-info" style="display: block;">
                 No appointment selected.
             </div>
@@ -98,6 +115,21 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+
+    function showPastAppointments() {
+        document.getElementById('upcoming-appointments-table').style.display = 'none';
+        document.getElementById('past-appointments-table').style.display = 'table';
+        document.getElementById('past-btn').classList.add('active');
+        document.getElementById('upcoming-btn').classList.remove('active');
+    }
+
+    function showUpcomingAppointments() {
+        document.getElementById('upcoming-appointments-table').style.display = 'table';
+        document.getElementById('past-appointments-table').style.display = 'none';
+        document.getElementById('past-btn').classList.remove('active');
+        document.getElementById('upcoming-btn').classList.add('active');
+    }
+
     function showAppointmentDetails(id, name, email, phone, service, dateTime, status) {
         document.getElementById("appointmentId").innerText = id;
         document.getElementById("appointmentName").innerText = name;
@@ -106,19 +138,15 @@
         document.getElementById("appointmentService").innerText = service;
         document.getElementById("appointmentDateTime").innerText = dateTime;
 
-        // Update the status badge
         var statusBadge = document.getElementById("appointmentStatus");
         statusBadge.innerText = status;
         statusBadge.className = "badge " + (status === "Completed" ? "bg-success" :
             status === "Pending" ? "bg-warning" :
                 status === "Scheduled" ? "bg-primary" :
-                    status === "Cancelled" ? "bg-danger" :
-                        "bg-secondary");
+                    status === "Cancelled" ? "bg-danger" : "bg-secondary");
 
-        // Show the appointment details card and hide the no appointment message
         document.getElementById("appointmentDetails").style.display = "block";
         document.getElementById("noAppointmentSelected").style.display = "none";
-        document.getElementById("editAppointmentButton").style.display = "block"; // Show the edit button
     }
 
     function rescheduleAppointment(appointmentID) {
@@ -134,5 +162,14 @@
 <style>
     .table-hover tbody tr:hover {
         background-color: #f0f8ff; /* Light blue background on hover */
+    }
+
+    
+    .appointment-details {
+        display: none; /* Initially hidden */
+    }
+
+    .table td, .table th {
+        white-space: nowrap; /* Prevent text wrapping */
     }
 </style>

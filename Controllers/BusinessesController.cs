@@ -418,18 +418,29 @@ namespace EmpowerU.Controllers
                 return NotFound();
             }
 
-            // Retrieve all appointments for the business
             var appointments = await _context.Appointments
-                .Where(a => a.BusinessID == id)
-                .Include(a => a.Consumer)  // Eager load the Consumer
+                .Where(a => a.BusinessID == business.Id)
+                .Include(a => a.Business)
+                .Include(a => a.Consumer) // Ensure Consumer data is loaded
                 .ToListAsync();
 
-            // Pass appointments and business to the view
-            ViewBag.Business = business;
-            ViewBag.Appointments = appointments;
+            var currentDate = DateTime.Now;
 
-            return View();
+            ViewBag.PastAppointments = appointments
+                .Where(a => a.DateTime < currentDate)
+                .OrderByDescending(a => a.DateTime)
+                .ToList();
+
+            ViewBag.UpcomingAppointments = appointments
+                .Where(a => a.DateTime >= currentDate)
+                .OrderBy(a => a.DateTime)
+                .ToList();
+
+            ViewBag.BusinessNames = appointments.Select(a => a.Business?.Description).Distinct().ToList();
+
+            return View(business); // Pass the business object to the view
         }
+
 
         public class UpdateAppointmentStatusDto
         {
