@@ -1,53 +1,106 @@
 ﻿@model IEnumerable<EmpowerU.Models.Subscription>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Manage Subscriptions";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Use your shared layout
 }
 
-<h1>Index</h1>
+<div class="dashboard-container d-flex">
+    <!-- Main Sidebar Section -->
+    <div class="col-lg-3 col-md-4 bg-primary text-white vh-100 p-0">
+        <div class="d-flex flex-column align-items-center py-4">
+            <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg" alt="Logo" class="rounded-circle mb-3" width="70" height="70">
+            <h5>Your Business Name</h5> <!-- Replace with actual user/business name -->
+        </div>
+        <ul class="nav flex-column px-3" id="mainSidebar">
+            <li class="nav-item">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Index" ? "active" : "")" href="@Url.Action("Index", "Subscriptions")">
+                    <i class="fas fa-list"></i> Manage Subscriptions
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="@Url.Action("Create", "Subscriptions")">
+                    <i class="fas fa-plus"></i> Add Subscription
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="@Url.Action("Index", "Businesses")">
+                    <i class="fas fa-briefcase"></i> Manage Businesses
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="@Url.Action("Index", "Notifications")">
+                    <i class="fas fa-bell"></i> Notifications
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="@Url.Action("Index", "Settings")">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </li>
+        </ul>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SubscriptionType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubscriptionType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Email)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.SubscriptionID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.SubscriptionID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.SubscriptionID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <!-- Main Content Section -->
+    <div class="main-content col-lg-9 col-md-8 py-5 ms-4">
+        <div class="header d-flex justify-content-between align-items-center mb-4">
+            <h1 style="font-size: 40px;"><strong>Subscriptions</strong></h1>
+            <p>
+                <a asp-action="Create" class="btn btn-primary">Create New Subscription</a>
+            </p>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().StartDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().EndDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().SubscriptionType)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().User.Email)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StartDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.EndDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SubscriptionType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.User.Email)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.SubscriptionID" class="btn btn-secondary btn-sm">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.SubscriptionID" class="btn btn-info btn-sm">Details</a> |
+                                <a asp-action="Delete" asp-route-id="@item.SubscriptionID" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center">No subscriptions found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
