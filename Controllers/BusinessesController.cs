@@ -262,7 +262,7 @@ namespace EmpowerU.Controllers
         // POST: Businesses/EditBusinessProfile/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditBusinessProfile(int id, [Bind("Description,LocationID,Rating,Id,Name,Email,PhoneNumber,Password,Role,LastLogin,LocationService")] Business business)
+        public async Task<IActionResult> EditBusinessProfile(int id, [Bind("Description,LocationID,Rating,Id,Name,Email,PhoneNumber,Password,Role,LastLogin,BusinessCategory,LocationService")] Business business)
         {
             if (id != business.Id)
             {

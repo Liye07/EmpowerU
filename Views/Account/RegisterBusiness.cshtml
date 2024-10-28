@@ -27,7 +27,7 @@
 
                         <div class="form-group">
                             <label asp-for="UserName" class="control-label">Username</label>
-                            <input asp-for="UserName" class="form-control" placeholder="Enter username" required />
+                            <input asp-for="UserName" class="form-control" placeholder="Enter business username" required />
                             <span asp-validation-for="UserName" class="text-danger"></span>
                         </div>
 
@@ -51,7 +51,7 @@
 
                         <div class="form-group position-relative">
                             <label for="address-input" class="control-label">Street Address</label>
-                            <input id="address-input" name="LocationService.Address" class="form-control" placeholder="Enter business address" oninput="getSuggestions(event)" required />
+                            <input id="address-input" name="LocationService.Address" class="form-control" placeholder="Enter street address" oninput="getSuggestions(event)" required />
                             <span asp-validation-for="LocationService.Address" class="text-danger"></span>
                             <ul id="suggestion-list" class="list-group position-absolute" style="max-height: 200px; overflow-y: auto; display: none;"></ul>
                             <div id="loading-indicator" style="display: none;">Loading...</div> <!-- Loading indicator -->
@@ -184,6 +184,16 @@
         document.getElementById("category-value").value = category;
         document.getElementById("category-options").style.display = "none";
     }
+
+    // Close dropdown if clicked outside
+    document.addEventListener("click", function (event) {
+        const dropdown = document.getElementById("category-options");
+        const display = document.getElementById("category-display");
+        if (!display.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.style.display = "none";
+            document.getElementById("dropdown-arrow").classList.remove("rotate");
+        }
+    });
 
 </script>
 

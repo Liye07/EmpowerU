@@ -102,6 +102,34 @@
                                     </div>
 
                                     <div class="form-group row mb-3">
+                                        <label asp-for="BusinessCategory" class="col-sm-3 col-form-label">Category</label>
+                                        <div class="col-sm-9 position-relative">
+                                            <div class="custom-select-dropdown" onclick="toggleDropdown()">
+                                                <input type="text" category-display" class="form-control" placeholder="Select business category" required>
+                                                <input type="hidden" id="category-value" name="BusinessCategory" />
+                                                <i id="dropdown-arrow" class="fas fa-chevron-down"></i> <!-- Arrow icon -->
+                                            </div>
+
+                                            <ul id="category-options" class="list-group position-absolute w-100" style="display: none; max-height: 200px; overflow-y: auto; z-index: 1000;">
+                                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Salon')">Salon</li>
+                                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Spa')">Spa</li>
+                                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Nail Bar')">Nail Bar</li>
+                                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Massage Therapy')">Massage Therapy</li>
+                                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Barber Shop')">Barber Shop</li>
+                                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Skincare Clinic')">Skincare Clinic</li>
+                                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Yoga Studio')">Yoga Studio</li>
+                                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Hair Removal Service')">Hair Removal Service</li>
+                                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Fitness Studio')">Fitness Studio</li>
+                                                <li class="list-group-item list-group-item-action" onclick="selectCategory('Tanning Salon')">Tanning Salon</li>
+                                            </ul>
+
+                                            <span asp-validation-for="BusinessCategory" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="form-group row mb-3">
                                         <label for="address-input" class="col-sm-3 col-form-label">Street Address</label>
                                         <div class="col-sm-9 position-relative">
                                             <!-- Make parent position relative -->
@@ -321,6 +349,28 @@
         if (addressInput) addressInput.focus();
     }
 
+    function toggleDropdown() {
+        const dropdown = document.getElementById("category-options");
+        const arrow = document.getElementById("dropdown-arrow");
+        dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+        arrow.classList.toggle("rotate"); // Add or remove the rotation class
+    }
+
+    function selectCategory(category) {
+        document.getElementById("category-display").value = category;
+        document.getElementById("category-value").value = category;
+        document.getElementById("category-options").style.display = "none";
+    }
+
+    // Close dropdown if clicked outside
+    document.addEventListener("click", function (event) {
+        const dropdown = document.getElementById("category-options");
+        const display = document.getElementById("category-display");
+        if (!display.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.style.display = "none";
+            document.getElementById("dropdown-arrow").classList.remove("rotate");
+        }
+    });
 
 
 
@@ -354,6 +404,36 @@
         padding: 5px; /* Padding for aesthetics */
         border-radius: 5px; /* Rounded corners */
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    }
+
+         .custom-select-dropdown {
+        position: relative;
+        cursor: pointer;
+    }
+
+    #category-options {
+        z-index: 1000;
+        background-color: white;
+        border: 1px solid #ccc;
+        width: 100%;
+        padding: 0;
+        list-style: none;
+    }
+
+    .list-group-item:hover {
+        background-color: #f1f1f1;
+    }
+
+    #dropdown-arrow {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: transform 0.3s ease; /* Smooth rotation */
+    }
+
+    .rotate {
+        transform: translateY(-50%) rotate(180deg); /* Rotate when dropdown is open */
     }
 
 </style>
