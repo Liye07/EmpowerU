@@ -251,21 +251,54 @@ namespace EmpowerU.Controllers
 
         [HttpPost]
         [Route("appointments/reschedule/{appointmentId}")]
-        public IActionResult Reschedule(int appointmentId, [FromBody] JsonElement data)
+        public JsonResult Reschedule(int appointmentId, [FromBody] Appointment request)
         {
-            if (data.TryGetProperty("newDate", out JsonElement newDateElement))
+            try
             {
-                var newDate = newDateElement.GetString();
                 var appointment = _context.Appointments.Find(appointmentId);
-                if (appointment == null || string.IsNullOrEmpty(newDate)) return Json(new { success = false });
+                if (appointment != null)
+                {
+                    // Check if the appointment status allows rescheduling
+                    if (appointment.Status == "Scheduled" || appointment.Status == "Pending")
+                    {
+                        // Validate the new DateTime
+                        if (request.DateTime < DateTime.UtcNow)
+                        {
+                            return Json(new { success = false, message = "The new appointment time must be in the future." });
+                        }
 
-                appointment.DateTime = DateTime.Parse(newDate);
-                _context.SaveChanges();
-                return Json(new { success = true });
+                        //// Check for appointment overlap
+                        //bool hasConflict = _context.Appointments.Any(a =>
+                        //    a.AppointmentID != appointmentId &&
+                        //    a.DateTime == request.DateTime &&
+                        //    (a.Status == "Scheduled" || a.Status == "Pending"));
+
+                        //if (hasConflict)
+                        //{
+                        //    return Json(new { success = false, message = "The new appointment time conflicts with an existing appointment." });
+                        //}
+
+                        // Update the appointment
+                        appointment.DateTime = request.DateTime;
+                        _context.SaveChanges();
+
+                        return Json(new { success = true });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "Only scheduled or pending appointments can be rescheduled." });
+                    }
+                }
+                return Json(new { success = false, message = "Appointment not found." });
             }
-
-            return Json(new { success = false });
+            catch (Exception ex)
+            {
+                // Log the exception (use your logging framework of choice)
+                Console.WriteLine(ex.Message); // Replace with proper logging
+                return Json(new { success = false, message = "An unexpected error occurred. Please try again later." });
+            }
         }
+
 
 
         [HttpPost]

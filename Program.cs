@@ -68,25 +68,4 @@ async Task CreateRoles(RoleManager<IdentityRole<int>> roleManager, UserManager<U
             await roleManager.CreateAsync(new IdentityRole<int> { Name = role });
         }
     }
-
-    // Optionally, you can create a default admin user and assign them a role
-    var defaultAdminEmail = "admin@empoweru.com";
-    var adminUser = await userManager.FindByEmailAsync(defaultAdminEmail);
-
-    if (adminUser == null)
-    {
-        var newAdmin = new User
-        {
-            Name = defaultAdminEmail,
-            Email = defaultAdminEmail,
-            EmailConfirmed = true
-        };
-
-        var result = await userManager.CreateAsync(newAdmin, "Admin@123"); // Set a default password
-
-        if (result.Succeeded)
-        {
-            await userManager.AddToRoleAsync(newAdmin, "Business"); // Assign admin to "Business" role
-        }
-    }
 }

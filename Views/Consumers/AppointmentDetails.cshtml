@@ -29,7 +29,7 @@
                 <tbody>
                     @foreach (var appointment in upcomingAppointments)
                     {
-                        <tr onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Consumer.Name', '@appointment.Consumer.Surname','@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
+                        <tr onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
                             <td>@appointment.AppointmentID</td>
                             <td>@appointment.Business.Name</td>
                             <td>@appointment.ServiceType</td>
@@ -60,7 +60,7 @@
                 <tbody>
                     @foreach (var appointment in pastAppointments)
                     {
-                        <tr onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Consumer.Name','@appointment.Consumer.Surname','@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
+                        <tr onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
                             <td>@appointment.AppointmentID</td>
                             <td>@appointment.Business.Name</td>
                             <td>@appointment.ServiceType</td>
@@ -92,10 +92,12 @@
                 <p><strong>Date & Time: </strong><span id="detailDate"></span></p>
                 <p><strong>Status: </strong><span class="badge" id="detailStatusBadge"></span></p>
 
-                <button id="leaveReviewButton" class="btn btn-primary mt-2">Leave a Review</button>
-                <button class="btn btn-warning mt-2" onclick="rescheduleAppointment()">Reschedule</button>
-                <button id="payNowButton" class="btn btn-success mt-2">Pay Now</button>
-                <button class="btn btn-danger mt-2" onclick="cancelAppointment()">Cancel</button>
+                <div class="button-container">
+                    <button id="cancelButton" class="btn btn-danger mt-2" style="display: none;" onclick="cancelAppointment()">Cancel</button>
+                    <button id="leaveReviewButton" class="btn btn-primary mt-2" style="display: none;">Leave a Review</button>
+                    <button id="rescheduleButton" class="btn btn-warning mt-2" onclick="rescheduleAppointment()">Reschedule</button>
+                    <button id="payNowButton" class="btn btn-success mt-2" style="display: none;">Pay Now</button>
+                </div>
             </div>
             <div id="noAppointmentSelected" class="alert alert-info" style="display: block;">
                 No appointment selected.
@@ -143,17 +145,19 @@
                 <div id="rescheduleConfirmationMessage" class="d-none">
                     <p class="text-success">Appointment successfully rescheduled!</p>
                 </div>
-                <p>Are you sure you want to reschedule this appointment?</p>
-                <p><strong>Appointment ID:</strong> <span id="rescheduleAppointmentId"></span></p>
-                <p><strong>Business Name:</strong> <span id="rescheduleBusinessName"></span></p>
-                <p><strong>Service Type:</strong> <span id="rescheduleServiceType"></span></p>
-                <p><strong>Date & Time:</strong> <span id="rescheduleDateTime"></span></p>
-                <div class="mb-3">
-                    <label for="newDateTime" class="form-label">New Date & Time:</label>
-                    <input type="datetime-local" class="form-control" id="newDateTime">
+                <div id="rescheduleConfirmationPrompt">
+                    <p>Are you sure you want to reschedule this appointment?</p>
+                    <p><strong>Appointment ID:</strong> <span id="rescheduleAppointmentId"></span></p>
+                    <p><strong>Business Name:</strong> <span id="rescheduleBusinessName"></span></p>
+                    <p><strong>Service Type:</strong> <span id="rescheduleServiceType"></span></p>
+                    <p><strong>Date & Time:</strong> <span id="rescheduleDateTime"></span></p>
+                    <div class="mb-3">
+                        <label for="newDateTime" class="form-label">New Date & Time:</label>
+                        <input type="datetime-local" class="form-control" id="newDateTime">
+                    </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" id="modalFooter2">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-warning" onclick="confirmReschedule()">Confirm Reschedule</button>
             </div>
@@ -206,151 +210,139 @@
         document.getElementById("cancelConfirmationMessage").classList.add("d-none");
         document.getElementById("modalFooter").style.display = "block"; // Show footer buttons again
 
-        // Select buttons
-       var leaveReviewButton = document.getElementById("leaveReviewButton");
-       var payNowButton = document.getElementById("payNowButton");
-       
-       if (status.trim() === "Completed") 
-       {
-           leaveReviewButton.style.display = "inline-block";
-           console.log("Leave Review button should be visible.");
-       }
-       else 
-       {
-           leaveReviewButton.style.display = "none";
-       }
-       
-       if (status.trim() === "Scheduled") 
-       {
-           payNowButton.style.display = "inline-block";
-           console.log("Pay Now button should be visible.");
-       } 
-       else 
-       {
-           payNowButton.style.display = "none";
-       }
-
+        document.getElementById("leaveReviewButton").style.display = (status === "Completed") ? 'block' : 'none';
+        document.getElementById("payNowButton").style.display = (status === "Scheduled") ? 'block' : 'none';
+        document.getElementById("rescheduleButton").style.display = (status === "Scheduled") ? 'block' : 'none';
+        document.getElementById("cancelButton").style.display = (status === "Scheduled") ? 'block' : 'none';
     }
 
- 
+    function rescheduleAppointment() {
+        const appointmentId = document.getElementById("detailAppointmentId").innerText;
+        const businessName = document.getElementById("detailBusinessName").innerText;
+        const serviceType = document.getElementById("detailServiceType").innerText;
+        const appointmentDate = document.getElementById("detailDate").innerText;
 
-function rescheduleAppointment() {
-    const appointmentId = document.getElementById("detailAppointmentId").innerText;
-    const businessName = document.getElementById("detailBusinessName").innerText;
-    const serviceType = document.getElementById("detailServiceType").innerText;
-    const appointmentDate = document.getElementById("detailDate").innerText;
+        // Populate the reschedule modal with appointment details
+        document.getElementById("rescheduleAppointmentId").innerText = appointmentId;
+        document.getElementById("rescheduleBusinessName").innerText = businessName;
+        document.getElementById("rescheduleServiceType").innerText = serviceType;
+        document.getElementById("rescheduleDateTime").innerText = appointmentDate;
 
-    // Populate the reschedule modal with appointment details
-    document.getElementById("rescheduleAppointmentId").innerText = appointmentId;
-    document.getElementById("rescheduleBusinessName").innerText = businessName;
-    document.getElementById("rescheduleServiceType").innerText = serviceType;
-    document.getElementById("rescheduleDateTime").innerText = appointmentDate;
-
-    // Show the reschedule modal
-    const modal = new bootstrap.Modal(document.getElementById('rescheduleModal'));
-    modal.show();
-}
-
-function confirmReschedule() {
-    const appointmentId = document.getElementById("rescheduleAppointmentId").innerText;
-    const newDateTime = document.getElementById("newDateTime").value;
-
-    if (!newDateTime) {
-        alert("Please enter a new date and time.");
-        return;
+        // Show the reschedule modal
+        const modal = new bootstrap.Modal(document.getElementById('rescheduleModal'));
+        modal.show();
     }
 
-    // Here you would typically send the reschedule request to your server
-    // For demonstration purposes, we'll just simulate success
-    // Simulate successful rescheduling
-    document.getElementById("rescheduleModal").style.display = "none"; // Hide the modal
+    function confirmReschedule() {
+        const newDateTime = document.getElementById("newDateTime").value;
+        const appointmentId = document.getElementById("rescheduleAppointmentId").innerText;
 
-    // Hide appointment details
-    document.getElementById("appointmentDetails").style.display = "none"; // Hide the appointment details
+        if (newDateTime) {
+            fetch(`/appointments/reschedule/${appointmentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ DateTime: newDateTime })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Hide the prompt and modal footer
+                        document.getElementById("rescheduleConfirmationPrompt").classList.add("d-none");
+                        document.getElementById("modalFooter2").style.display = "none";
 
-    // Show the success message
-    const successMessage = document.getElementById("rescheduleSuccessMessage");
-    successMessage.classList.remove("d-none"); // Show success message
+                        // Show success message in the modal
+                        document.getElementById("rescheduleConfirmationMessage").classList.remove("d-none");
+                        document.getElementById("successMessage").innerText = "Appointment rescheduled successfully!";
 
-    // Optionally, you can reset the modal and any other elements
-    const modal = new bootstrap.Modal(document.getElementById('rescheduleModal'));
-    modal.hide(); // Hide the modal
-}
-
-
-
-function cancelAppointment() {
-    const appointmentId = document.getElementById("detailAppointmentId").innerText;
-    const businessName = document.getElementById("detailBusinessName").innerText;
-    const serviceType = document.getElementById("detailServiceType").innerText;
-    const appointmentDate = document.getElementById("detailDate").innerText;
-
-    // Populate the modal with appointment details
-    document.getElementById("cancelAppointmentId").innerText = appointmentId;
-    document.getElementById("cancelBusinessName").innerText = businessName;
-    document.getElementById("cancelServiceType").innerText = serviceType;
-    document.getElementById("cancelDateTime").innerText = appointmentDate;
-
-    // Show the modal
-    const modal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
-    modal.show();
-}
-
-function confirmCancellation() {
-    const appointmentId = document.getElementById("cancelAppointmentId").innerText;
-
-    // Call the backend to cancel the appointment
-    fetch(`/appointments/cancel/${appointmentId}`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Hide the prompt and modal footer
-            document.getElementById("cancelConfirmationPrompt").style.display = "none"; 
-            document.getElementById("modalFooter").style.display = "none"; 
-
-            // Show success message in the modal
-            document.getElementById("cancelConfirmationMessage").classList.remove("d-none");
-            document.getElementById("successMessage").innerText = "Appointment canceled successfully!";
-            
-            // Use setTimeout to hide the message after a few seconds
-            setTimeout(() => {
-                document.getElementById("cancelConfirmationMessage").classList.add("d-none");
-                resetAppointmentDetails();
-                // You might also want to reload or refresh the appointment list here
-                location.reload();
-            }, 3000); // Hide after 3 seconds (3000 milliseconds)
-
+                        // Use setTimeout to hide the message after a few seconds
+                        setTimeout(() => {
+                            document.getElementById("rescheduleConfirmationMessage").classList.add("d-none");
+                            resetAppointmentDetails();
+                            // Reload the appointment list here
+                            location.reload();
+                        }, 3000); // Hide after 3 seconds (3000 milliseconds)
+                    } else {
+                        // Display error message based on response
+                        alert(data.message || "Failed to reschedule appointment. Please try again.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
         } else {
-            alert("Failed to cancel appointment."); // Handle cancellation failure
+            alert("Please select a valid date and time for rescheduling.");
         }
-    })
-    .catch(error => console.error("Error:", error));
-}
-
-
-function resetAppointmentDetails() {
-    document.getElementById("detailAppointmentId").innerText = '';
-    document.getElementById("detailBusinessName").innerText = '';
-    document.getElementById("detailFirstName").innerText = '';
-    document.getElementById("detailSurname").innerText = '';
-    document.getElementById("detailEmail").innerText = '';
-    document.getElementById("detailPhone").innerText = '';
-    document.getElementById("detailServiceType").innerText = '';
-    document.getElementById("detailDate").innerText = '';
-    document.getElementById("detailStatusBadge").innerText = '';
-    document.getElementById("appointmentDetails").style.display = "none";
-    document.getElementById("noAppointmentSelected").style.display = "block"; // Show the no appointment selected message
-}
+    }
 
 
 
+    function cancelAppointment() {
+        const appointmentId = document.getElementById("detailAppointmentId").innerText;
+        const businessName = document.getElementById("detailBusinessName").innerText;
+        const serviceType = document.getElementById("detailServiceType").innerText;
+        const appointmentDate = document.getElementById("detailDate").innerText;
+
+        // Populate the modal with appointment details
+        document.getElementById("cancelAppointmentId").innerText = appointmentId;
+        document.getElementById("cancelBusinessName").innerText = businessName;
+        document.getElementById("cancelServiceType").innerText = serviceType;
+        document.getElementById("cancelDateTime").innerText = appointmentDate;
+
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
+        modal.show();
+    }
+
+    function confirmCancellation() {
+        const appointmentId = document.getElementById("cancelAppointmentId").innerText;
+
+        // Call the backend to cancel the appointment
+        fetch(`/appointments/cancel/${appointmentId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Hide the prompt and modal footer
+                    document.getElementById("cancelConfirmationPrompt").style.display = "none";
+                    document.getElementById("modalFooter").style.display = "none";
+
+                    // Show success message in the modal
+                    document.getElementById("cancelConfirmationMessage").classList.remove("d-none");
+                    document.getElementById("successMessage").innerText = "Appointment canceled successfully!";
+
+                    // Use setTimeout to hide the message after a few seconds
+                    setTimeout(() => {
+                        document.getElementById("cancelConfirmationMessage").classList.add("d-none");
+                        resetAppointmentDetails();
+                        // You might also want to reload or refresh the appointment list here
+                        location.reload();
+                    }, 3000); // Hide after 3 seconds (3000 milliseconds)
+
+                } else {
+                    alert("Failed to cancel appointment."); // Handle cancellation failure
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    }
 
 
+    function resetAppointmentDetails() {
+        document.getElementById("detailAppointmentId").innerText = '';
+        document.getElementById("detailBusinessName").innerText = '';
+        document.getElementById("detailFirstName").innerText = '';
+        document.getElementById("detailSurname").innerText = '';
+        document.getElementById("detailEmail").innerText = '';
+        document.getElementById("detailPhone").innerText = '';
+        document.getElementById("detailServiceType").innerText = '';
+        document.getElementById("detailDate").innerText = '';
+        document.getElementById("detailStatusBadge").innerText = '';
+        document.getElementById("appointmentDetails").style.display = "none";
+        document.getElementById("noAppointmentSelected").style.display = "block"; // Show the no appointment selected message
+    }
 
 </script>
 
@@ -366,4 +358,14 @@ function resetAppointmentDetails() {
     .table td, .table th {
         white-space: nowrap; /* Prevent text wrapping */
     }
+
+    .button-container {
+        display: flex; /* Enable flexbox */
+        flex-wrap: wrap; /* Allow wrapping */
+        gap: 10px; /* Space between buttons */
+    }
+
+        .button-container button {
+            min-width: 60px; /* Optional: Set a minimum width */
+        }
 </style>
