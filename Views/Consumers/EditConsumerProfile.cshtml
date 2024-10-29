@@ -100,8 +100,8 @@
                                         <label asp-for="PreferredCategories" class="col-sm-3 col-form-label">Preferred Category</label>
                                         <div class="col-sm-9 position-relative">
                                             <div class="custom-select-dropdown" onclick="toggleDropdown()">
-                                                <input type="text" id="category-display" class="form-control" placeholder="Select preferred category" required>
-                                                <input type="hidden" id="category-value" name="PreferredCategories" />
+                                                <input type="text" id="category-display" class="form-control" placeholder="Select preferred category" required value="@Model.PreferredCategories" />
+                                                <input type="hidden" id="category-value" name="PreferredCategories" value="@Model.PreferredCategories" />
                                                 <i id="dropdown-arrow" class="fas fa-chevron-down"></i>
                                             </div>
 

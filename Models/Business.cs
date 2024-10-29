@@ -14,7 +14,8 @@ public class Business : User
     public decimal? Rating { get; set; }
 
     [Required(ErrorMessage = "Business Category is required.")]
-    public List<string> BusinessCategory { get; set; }
+    [StringLength(30)]
+    public string BusinessCategory { get; set; }
 
     [ForeignKey(nameof(LocationID))]
     public LocationService LocationService { get; set; }

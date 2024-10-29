@@ -13,7 +13,10 @@
     <div class="col-lg-3 col-md-4 bg-primary text-white vh-100 p-0">
         <div class="d-flex flex-column align-items-center py-4">
             <!-- Sidebar Header with Logo -->
-            <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg" alt="Logo" class="rounded-circle mb-3" width="70" height="70">
+            <a href="@Url.Action("Details", "Businesses", new { id = Model.Id })">
+                <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg"
+                     alt="Logo" class="rounded-circle mb-3" width="70" height="70">
+            </a>
             <h5>@Model.Name</h5>
         </div>
         <ul class="nav flex-column px-3" id="mainSidebar">
