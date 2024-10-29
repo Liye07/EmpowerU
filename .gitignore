@@ -368,3 +368,5 @@ FodyWeavers.xsd
 /Views/Appointments/Book.cshtml
 /Views/Appointments/Confirm.cshtml
 /Models/Appointment.cs
+/Views/Consumers/AppointmentDetails.cshtml
+/Views/Consumers/AppointmentDetails.cshtml
