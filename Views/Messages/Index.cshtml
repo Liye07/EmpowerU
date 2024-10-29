@@ -1,59 +1,81 @@
 ﻿@model IEnumerable<EmpowerU.Models.Message>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Messages Index";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Left Sidebar: List of Messages -->
+        <div class="col-md-4 border-end">
+            <h4 class="text-primary mb-3">Messages</h4>
+            <ul class="list-group">
+                @foreach (var message in Model)
+                {
+                    <li class="list-group-item list-group-item-action"
+                        onclick="loadMessage('@message.MessageID', '@message.Sender.Name', '@message.ReceiverID', '@message.MessageContent')">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>
+                                <!-- Icon indicating read/unread status -->
+                                @if (message.IsRead)
+                                {
+                                    <i class="fas fa-envelope-open text-success"></i> <!-- Open envelope for read -->
+                                }
+                                else
+                                {
+                                    <i class="fas fa-envelope text-warning"></i> <!-- Closed envelope for unread -->
+                                }
+                                @(message.MessageContent.Length > 20 ? message.MessageContent.Substring(0, 20) + "..." : message.MessageContent)
+                            </span>
+                            <small class="text-muted">@message.Timestamp.ToString("HH:mm")</small>
+                        </div>
+                    </li>
+                }
+        </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.MessageContent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsRead)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Timestamp)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sender)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Receiver)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.MessageContent)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsRead)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Timestamp)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sender.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Receiver.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MessageID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MessageID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MessageID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <!-- Main Chat Area: Display Selected Message -->
+        <div class="col-md-8 d-flex flex-column" style="height: 80vh;">
+            <div class="chat-header p-3 border-bottom bg-light">
+                <h5 class="mb-0" id="messageSender">Message Details</h5> <!-- Placeholder for sender name -->
+            </div>
+
+            <div id="chatMessages" class="chat-messages p-3 flex-grow-1 overflow-auto" style="background-color: #e5ddd5;">
+                <!-- Details of the selected message will be loaded here -->
+                <p class="text-muted text-center">Select a message to view details.</p>
+            </div>
+
+            <!-- Reply Box -->
+            <div class="p-3 border-top">
+                <div id="replyHeader" class="text-muted mb-2" style="display:none;"></div> <!-- For displaying receiver's name -->
+                <form asp-action="SendMessage" method="post">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Type a message" id="replyInput" name="MessageContent" required />
+                        <input type="hidden" id="receiverId" name="ReceiverID" value="" /> <!-- Set the receiver ID dynamically -->
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadMessage(messageId, senderName, receiverName, messageContent) {
+        // Display the selected message in the chat area
+        document.getElementById("chatMessages").innerHTML = `
+                <div class="message text-start">
+                    <div class="p-2 my-1 rounded" style="background-color: #dcf8c6;">
+                        <p class="mb-1">${messageContent}</p>
+                        <small class="text-muted">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+                    </div>
+                </div>
+            `;
+
+        // Update the message sender header
+        document.getElementById("messageSender").innerText = `Message from: ${senderName}`; // Set the sender's name
+        // Set the receiverId based on the selected message
+        document.getElementById("receiverId").value = receiverName; // Set the actual receiver ID
+        document.getElementById("replyHeader").innerText = `Replying to: ${senderName}`; // Display sender's name for replying
+        document.getElementById("replyHeader").style.display = "block"; // Show the reply header
+    }
+</script>

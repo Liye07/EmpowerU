@@ -21,5 +21,7 @@ namespace EmpowerU.Models
         [DataType(DataType.Password)]
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters long.")]
         public string Password { get; set; }
+
+        public byte[]? ProfilePicture { get; set; }
     }
 }

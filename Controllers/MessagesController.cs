@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmpowerU.Models;
 using EmpowerU.Models.Data;
+using System.Security.Claims;
 
 namespace EmpowerU.Controllers
 {
@@ -166,5 +167,82 @@ namespace EmpowerU.Controllers
         {
             return _context.Messages.Any(e => e.MessageID == id);
         }
+
+
+        //Luyanda
+
+        [HttpPost]
+        public IActionResult SendMessage(string messageContent, string receiverId)
+        {
+
+            if (string.IsNullOrWhiteSpace(receiverId))
+            {
+                return BadRequest("Receiver ID is null or empty.");
+            }
+
+            // Attempt to parse the receiver ID
+            if (!int.TryParse(receiverId, out int parsedReceiverId)) // Rename variable here
+            {
+                return BadRequest($"Invalid receiver ID: {receiverId}"); // This will give you the actual string that caused the issue
+            }
+
+
+            // Validate the input
+            if (string.IsNullOrWhiteSpace(messageContent) || string.IsNullOrWhiteSpace(receiverId))
+            {
+                return BadRequest("Message content or receiver ID cannot be empty.");
+            }
+
+            // Convert receiverId from string to int
+            if (!int.TryParse(receiverId, out int receiverIdInt))
+            {
+                return BadRequest("Invalid receiver ID.");
+            }
+
+            // Assuming SenderID is obtained from User claims
+            int senderIdInt;
+            if (!int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out senderIdInt))
+            {
+                return BadRequest("Invalid sender ID.");
+            }
+
+            // Create the message object
+            var message = new Message
+            {
+                MessageContent = messageContent,
+                ReceiverID = receiverIdInt, // This should now be an int
+                SenderID = senderIdInt, // Ensure this is also an int
+                Timestamp = DateTime.Now,
+                IsRead = false // Mark as unread by default
+            };
+
+            // Save the message to the database
+            _context.Messages.Add(message);
+            _context.SaveChanges();
+
+            // Redirect to the messages index or wherever you need
+            return RedirectToAction("Index");
+
+          
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

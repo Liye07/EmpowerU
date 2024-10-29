@@ -22,8 +22,11 @@ namespace EmpowerU.Controllers
             _context = context; // Initialize DbContext
         }
 
-
-
+        public string GetImageBase64(byte[] imageBytes)
+        {
+            if (imageBytes == null || imageBytes.Length == 0) return null;
+            return $"data:image/png;base64,{Convert.ToBase64String(imageBytes)}";
+        }
 
 
 
@@ -33,12 +36,13 @@ namespace EmpowerU.Controllers
 
             // Fetch featured businesses
             var featuredBusinesses = await _context.Businesses
-                .Where(b => b.Rating > 4) // Adjust this condition as needed
+                .Where(b => b.Rating > 1) // Adjust this condition as needed
                 .OrderByDescending(b => b.Rating)
                 .Take(3) // Limit to top 3 businesses, change as needed
                 .ToListAsync();
 
             return View(featuredBusinesses); // Pass the list to the view
+
         }
 
         [HttpPost]

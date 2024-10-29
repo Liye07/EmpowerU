@@ -38,97 +38,92 @@
 
             <!-- Advertisement Section -->
             <div class="row mt-4">
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <img src="https://th.bing.com/th/id/OIP.H89kYH0lwAh-iZEtH0RG4wHaId?rs=1&pid=ImgDetMain/200" class="card-img-top" alt="Business 1">
-                        <div class="card-body">
-                            <h5 class="card-title">Business Name 1</h5>
-                            <p class="card-text">Description of the first business, highlighting its services and offerings. Specializes in quality.</p>
-                            <a href="#" class="btn btn-primary">View Details</a>
-                        </div>
-                    </div>
-                </div>
+                @foreach (var business in Model) // Loop through each business
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <img src="@business.ProfilePicture" class="card-img-top" alt="@business.Description"> <!-- You need an ImageUrl property -->
+                            <div class="card-body">
+                                <h5 class="card-title">@business.Description</h5> <!-- Adjust based on your model -->
+                                <p class="card-text">Category: @business.BusinessCategory</p> <!-- Display BusinessCategory -->
+                                <h5>Rating</h5>
+                                <p>
+                                    @for (var i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= @business.Rating)
+                                        {
+                                            <span class="fas fa-star" style="color: #FFD700;"></span> <!-- Filled star -->
+                                        }
+                                        else
+                                        {
+                                            <span class="far fa-star" style="color: #D3D3D3;"></span> <!-- Empty star -->
+                                        }
+                                    }
 
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <img src="https://th.bing.com/th/id/OIP.5zMEKzL6uRClRnbtl9kjWgHaIN?rs=1&pid=ImgDetMain/200" class="card-img-top" alt="Business 2">
-                        <div class="card-body">
-                            <h5 class="card-title">Business Name 2</h5>
-                            <p class="card-text">Description of the second business, focusing on haircuts and styling. Offers a range of services for all hair types.</p>
-                            <a href="#" class="btn btn-primary">View Details</a>
+                              
+                            </div>
+                            <a href="@Url.Action("Details", "Businesses", new { id = business.Id })" class="btn btn-primary">View Details</a> <!-- Adjust Action and Controller based on your application structure -->
                         </div>
                     </div>
-                </div>
-
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <img src="https://th.bing.com/th/id/OIP.VAzkpbCmRi8g4OPPbCMZdQAAAA?w=350&h=350&rs=1&pid=ImgDetMain/200" class="card-img-top" alt="Business 3">
-                        <div class="card-body">
-                            <h5 class="card-title">Business Name 3</h5>
-                            <p class="card-text">Description of the third business, specializing in manicures and pedicures. Experience luxury nail care in a relaxing environment.</p>
-                            <a href="#" class="btn btn-primary">View Details</a>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- Footer Section -->
-
-
-@section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+            <!-- Footer Section -->
+            @section Scripts {
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
 
 
-    <script>
-        $(document).ready(function () {
-            $('#searchInput').on('input', function () {
-                var searchTerm = $(this).val();
+                <script>
+                    $(document).ready(function () {
+                        $('#searchInput').on('input', function () {
+                            var searchTerm = $(this).val();
 
-                $.ajax({
-                    url: '@Url.Action("Search", "Home")',
-                    type: 'POST',
-                    data: { searchTerm: searchTerm },
-                    success: function (data) {
-                        $('#searchResultsContainer').html(data);
-                    },
-                    error: function () {
-                        console.log("Error occurred while searching.");
-                    }
-                });
-            });
-        });
-    </script>
+                            $.ajax({
+                                url: '@Url.Action("Search", "Home")',
+                                type: 'POST',
+                                data: { searchTerm: searchTerm },
+                                success: function (data) {
+                                    $('#searchResultsContainer').html(data);
+                                },
+                                error: function () {
+                                    console.log("Error occurred while searching.");
+                                }
+                            });
+                        });
+                    });
+                </script>
 
 
 
-}
+            }
 
-<style>
-    body {
-        background-color: #f8f9fa;
-        font-family: Arial, sans-serif;
-    }
+            <style>
+                body {
+                    background-color: #f8f9fa;
+                    font-family: Arial, sans-serif;
+                }
 
-    .btn-outline-primary {
-        width: 120px;
-    }
+                .btn-outline-primary {
+                    width: 120px;
+                }
 
-    .card {
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
+                .card {
+                    border-radius: 10px;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                }
 
-    .card-title {
-        font-size: 1.5rem;
-    }
+                .card-title {
+                    font-size: 1.5rem;
+                }
 
-    footer {
-        background-color: #f8f9fa;
-    }
-</style>
+                footer {
+                    background-color: #f8f9fa;
+                }
 
-<!-- Font Awesome for icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+                .fa-star {
+                    font-size: 16px;
+                }
+            </style>
+
+            <!-- Font Awesome for icons -->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
