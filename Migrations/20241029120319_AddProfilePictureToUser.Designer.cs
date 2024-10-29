@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmpowerU.Migrations
 {
     [DbContext(typeof(EmpowerUContext))]
-    [Migration("20241029112310_AddProfilePictureToUser")]
+    [Migration("20241029120319_AddProfilePictureToUser")]
     partial class AddProfilePictureToUser
     {
         /// <inheritdoc />
@@ -451,9 +451,8 @@ namespace EmpowerU.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ProfilePicture")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<byte[]>("ProfilePicture")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
