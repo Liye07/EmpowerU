@@ -192,10 +192,7 @@ namespace EmpowerU.Controllers
             return _context.Consumers.Any(e => e.Id == id);
         }
 
-        public IActionResult Search()
-        {
-            return View();  // This will render the Search view.
-        }
+   
 
         public IActionResult AppointmentDetails()
         {
@@ -248,6 +245,17 @@ namespace EmpowerU.Controllers
             return View(firstAppointment); // Pass the first appointment or adjust as needed
         }
 
+
+        public async Task<IActionResult> Search(string searchTerm = "")
+        {
+            // Fetch businesses matching the search term
+            var businesses = await _context.Businesses
+                .Where(b => b.Name.Contains(searchTerm) || b.Description.Contains(searchTerm))
+                .OrderByDescending(b => b.Rating) // Sort by rating
+                .ToListAsync();
+
+            return View(businesses); // Pass businesses to the view
+        }
 
 
 

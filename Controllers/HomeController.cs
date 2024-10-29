@@ -22,14 +22,7 @@ namespace EmpowerU.Controllers
             _context = context; // Initialize DbContext
         }
 
-        public string GetImageBase64(byte[] imageBytes)
-        {
-            if (imageBytes == null || imageBytes.Length == 0) return null;
-            return $"data:image/png;base64,{Convert.ToBase64String(imageBytes)}";
-        }
-
-
-
+  
         public async Task<IActionResult> Index()
         {
             ViewData["ActivePage"] = "Home"; // Set active page for Home
@@ -41,9 +34,15 @@ namespace EmpowerU.Controllers
                 .Take(3) // Limit to top 3 businesses, change as needed
                 .ToListAsync();
 
+
+
             return View(featuredBusinesses); // Pass the list to the view
 
+
         }
+
+
+      
 
         [HttpPost]
         public async Task<IActionResult> Search(string searchTerm)
