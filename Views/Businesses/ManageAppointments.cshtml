@@ -1,4 +1,4 @@
-﻿@model Business
+﻿@model Appointment
 
 @{
     ViewBag.Title = "Manage Appointments";
@@ -22,9 +22,9 @@
     </div>
 
     <!-- Appointments Section -->
-    <section class="row">
+    <div class="row">
         <!-- Appointments Table -->
-        <div class="col-md-8">
+        <div class="col-md-6">
             <table id="upcoming-appointments-table" class="table table-bordered table-hover">
                 <thead>
                     <tr>
@@ -35,19 +35,19 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="upcoming-appointments-body">
                     @foreach (var appointment in upcomingAppointments)
                     {
-                        <tr onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Consumer.Name','@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
+                        <tr class="appointment-row upcoming-row" onclick="showAppointmentDetails(@appointment.AppointmentID, '@appointment.Consumer.Name', '@appointment.Consumer.Email', '@appointment.Consumer.PhoneNumber', '@appointment.ServiceType', '@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")', '@appointment.Status')">
                             <td>@appointment.AppointmentID</td>
                             <td>@appointment.Consumer.Name</td>
                             <td>@appointment.ServiceType</td>
                             <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
                             <td>
                                 <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
-                                                        appointment.Status == "Pending" ? "bg-warning" :
-                                                        appointment.Status == "Scheduled" ? "bg-primary" :
-                                                        appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
+                                            appointment.Status == "Pending" ? "bg-warning" :
+                                            appointment.Status == "Scheduled" ? "bg-primary" :
+                                            appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
                                     @appointment.Status
                                 </span>
                             </td>
@@ -56,7 +56,9 @@
                 </tbody>
             </table>
 
-            <table id="past-appointments-table" class="table table-bordered table-hover" style="display:none;">
+
+
+            <table id="past-appointments-table" class="table table-bordered table-hover">
                 <thead>
                     <tr>
                         <th>Appointment ID</th>
@@ -66,19 +68,20 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="past-appointments-body">
+                    <!-- Rows will be dynamically shown by JavaScript -->
                     @foreach (var appointment in pastAppointments)
                     {
-                        <tr onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Consumer.Name','@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
+                        <tr class="appointment-row past-row" onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Consumer.Name','@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
                             <td>@appointment.AppointmentID</td>
                             <td>@appointment.Consumer.Name</td>
                             <td>@appointment.ServiceType</td>
                             <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
                             <td>
                                 <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
-                                appointment.Status == "Pending" ? "bg-warning" :
-                                appointment.Status == "Scheduled" ? "bg-primary" :
-                                appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
+                                                appointment.Status == "Pending" ? "bg-warning" :
+                                                appointment.Status == "Scheduled" ? "bg-primary" :
+                                                appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
                                     @appointment.Status
                                 </span>
                             </td>
@@ -86,14 +89,23 @@
                     }
                 </tbody>
             </table>
+
+            <div id="pagination-controls" class="pagination-controls mt-3">
+                <span id="page-indicator">Page: </span>
+                <button onclick="changePage(-1)">Previous</button>
+                <span id="page-numbers"></span>
+                <button onclick="changePage(1)">Next</button>
+            </div>
         </div>
+    </div>
+
 
         <!-- Appointment Details Section -->
-        <div class="col-md-4">
+        <div class="col-md-8">
             <h2 class="h5 mb-3">Appointment Details</h2>
             <div id="appointmentDetails" class="card p-3 mb-3" style="display: none;">
                 <p><strong>Appointment ID:</strong> <span id="appointmentId"></span></p>
-                <p><strong>Full Name:</strong> <span id="appointmentName"></span></p>
+                <p><strong>Name:</strong> <span id="appointmentName"></span></p>
                 <p><strong>Email:</strong> <span id="appointmentEmail"></span></p>
                 <p><strong>Phone:</strong> <span id="appointmentPhone"></span></p>
                 <p><strong>Service:</strong> <span id="appointmentService"></span></p>
@@ -102,32 +114,102 @@
                     <strong>Status:</strong>
                     <span id="appointmentStatus" class="badge"></span>
                 </p>
-                <button class="btn btn-primary mt-2">Reschedule</button>
-                <button class="btn btn-danger mt-2">Cancel</button>
+                <div class="button-container">
+                    <button id="cancelButton" class="btn btn-danger mt-2" style="display: none;" onclick="cancelAppointment()">Cancel</button>
+                    <button id="leaveReviewButton" class="btn btn-primary mt-2" style="display: none;">Leave a Review</button>
+                    <button id="rescheduleButton" class="btn btn-warning mt-2" onclick="rescheduleAppointment()">Reschedule</button>
+                    <button id="payNowButton" class="btn btn-success mt-2" style="display: none;">Pay Now</button>
+                </div>
             </div>
             <div id="noAppointmentSelected" class="alert alert-info" style="display: block;">
                 No appointment selected.
             </div>
         </div>
-    </section>
+    </div>
 </div>
+
+<div class="modal fade" id="cancelConfirmationModal" tabindex="-1" aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelConfirmationModalLabel">Confirm Cancellation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="cancelConfirmationMessage" class="d-none">
+                    <p class="text-success" id="successMessage"></p>
+                </div>
+                <div id="cancelConfirmationPrompt">
+                    <p>Are you sure you want to cancel this appointment?</p>
+                    <p><strong>Appointment ID:</strong> <span id="cancelAppointmentId"></span></p>
+                    <p><strong>Name:</strong> <span id="cancelConsumerName"></span></p>
+                    <p><strong>Service Type:</strong> <span id="cancelServiceType"></span></p>
+                    <p><strong>Date & Time:</strong> <span id="cancelDateTime"></span></p>
+                    <div class="mb-3">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmCancellation()">Confirm Cancellation</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rescheduleModalLabel">Reschedule Appointment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="rescheduleConfirmationMessage" class="d-none">
+                    <p class="text-success">Appointment successfully rescheduled!</p>
+                </div>
+                <div id="rescheduleConfirmationPrompt">
+                    <p>Are you sure you want to reschedule this appointment?</p>
+                    <p><strong>Appointment ID:</strong> <span id="rescheduleAppointmentId"></span></p>
+                    <p><strong>Name:</strong> <span id="rescheduleConsumerName"></span></p>
+                    <p><strong>Service Type:</strong> <span id="rescheduleServiceType"></span></p>
+                    <p><strong>Date & Time:</strong> <span id="rescheduleDateTime"></span></p>
+                    <div class="mb-3">
+                        <label for="newDateTime" class="form-label">New Date & Time:</label>
+                        <input type="datetime-local" class="form-control" id="newDateTime">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="modalFooter2">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" onclick="confirmReschedule()">Confirm Reschedule</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 
     function showPastAppointments() {
+        currentPage = 1; // Reset to first page
         document.getElementById('upcoming-appointments-table').style.display = 'none';
         document.getElementById('past-appointments-table').style.display = 'table';
         document.getElementById('past-btn').classList.add('active');
         document.getElementById('upcoming-btn').classList.remove('active');
+        loadAppointments('past');
     }
 
     function showUpcomingAppointments() {
+        currentPage = 1; // Reset to first page
         document.getElementById('upcoming-appointments-table').style.display = 'table';
         document.getElementById('past-appointments-table').style.display = 'none';
         document.getElementById('past-btn').classList.remove('active');
         document.getElementById('upcoming-btn').classList.add('active');
+        loadAppointments('upcoming');
     }
 
     function showAppointmentDetails(id, name, email, phone, service, dateTime, status) {
@@ -148,18 +230,204 @@
         document.getElementById("appointmentDetails").style.display = "block";
         document.getElementById("noAppointmentSelected").style.display = "none";
 
+        // Clear previous success message
+        document.getElementById("cancelConfirmationMessage").classList.add("d-none");
+        document.getElementById("modalFooter").style.display = "block"; // Show footer buttons again
+
+        document.getElementById("leaveReviewButton").style.display = (status === "Completed") ? 'block' : 'none';
+        document.getElementById("payNowButton").style.display = (status === "Scheduled") ? 'block' : 'none';
+        document.getElementById("rescheduleButton").style.display = (status === "Scheduled") ? 'block' : 'none';
+        document.getElementById("cancelButton").style.display = (status === "Scheduled") ? 'block' : 'none';
 
     }
 
-    function rescheduleAppointment(appointmentID) {
-        alert('Reschedule feature is under construction for Appointment ID: ' + appointmentID);
+    function rescheduleAppointment() {
+        const appointmentId = document.getElementById("appointmentId").innerText;
+        const businessName = document.getElementById("appointmentName").innerText;
+        const serviceType = document.getElementById("appointmentService").innerText;
+        const appointmentDate = document.getElementById("appointmentDateTime").innerText;
+
+        // Populate the reschedule modal with appointment details
+        document.getElementById("rescheduleAppointmentId").innerText = appointmentId;
+        document.getElementById("rescheduleConsumerName").innerText = businessName;
+        document.getElementById("rescheduleServiceType").innerText = serviceType;
+        document.getElementById("rescheduleDateTime").innerText = appointmentDate;
+
+        // Show the reschedule modal
+        const modal = new bootstrap.Modal(document.getElementById('rescheduleModal'));
+        modal.show();
     }
 
-    function cancelAppointment(appointmentID) {
-        if (confirm('Are you sure you want to cancel this appointment?')) {
-            alert('Appointment ID ' + appointmentID + ' has been canceled.');
+    function confirmReschedule() {
+        const newDateTime = document.getElementById("newDateTime").value;
+        const appointmentId = document.getElementById("rescheduleAppointmentId").innerText;
+
+        if (newDateTime) {
+            fetch(`/appointments/reschedule/${appointmentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ DateTime: newDateTime })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Hide the prompt and modal footer
+                        document.getElementById("rescheduleConfirmationPrompt").classList.add("d-none");
+                        document.getElementById("modalFooter2").style.display = "none";
+
+                        // Show success message in the modal
+                        document.getElementById("rescheduleConfirmationMessage").classList.remove("d-none");
+                        document.getElementById("successMessage").innerText = "Appointment rescheduled successfully!";
+
+                        // Use setTimeout to hide the message after a few seconds
+                        setTimeout(() => {
+                            document.getElementById("rescheduleConfirmationMessage").classList.add("d-none");
+                            resetAppointmentDetails();
+                            // Reload the appointment list here
+                            location.reload();
+                        }, 3000); // Hide after 3 seconds (3000 milliseconds)
+                    } else {
+                        // Display error message based on response
+                        alert(data.message || "Failed to reschedule appointment. Please try again.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        } else {
+            alert("Please select a valid date and time for rescheduling.");
         }
     }
+
+
+
+    function cancelAppointment() {
+        const appointmentId = document.getElementById("appointmentId").innerText;
+        const businessName = document.getElementById("appointmentName").innerText;
+        const serviceType = document.getElementById("appointmentService").innerText;
+        const appointmentDate = document.getElementById("appointmentDateTime").innerText;
+
+        // Populate the modal with appointment details
+        document.getElementById("cancelAppointmentId").innerText = appointmentId;
+        document.getElementById("cancelConsumerName").innerText = businessName;
+        document.getElementById("cancelServiceType").innerText = serviceType;
+        document.getElementById("cancelDateTime").innerText = appointmentDate;
+
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
+        modal.show();
+    }
+
+    function confirmCancellation() {
+        const appointmentId = document.getElementById("cancelAppointmentId").innerText;
+
+        // Call the backend to cancel the appointment
+        fetch(`/appointments/cancel/${appointmentId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Hide the prompt and modal footer
+                    document.getElementById("cancelConfirmationPrompt").style.display = "none";
+                    document.getElementById("modalFooter").style.display = "none";
+
+                    // Show success message in the modal
+                    document.getElementById("cancelConfirmationMessage").classList.remove("d-none");
+                    document.getElementById("successMessage").innerText = "Appointment canceled successfully!";
+
+                    // Use setTimeout to hide the message after a few seconds
+                    setTimeout(() => {
+                        document.getElementById("cancelConfirmationMessage").classList.add("d-none");
+                        resetAppointmentDetails();
+                        // You might also want to reload or refresh the appointment list here
+                        location.reload();
+                    }, 3000); // Hide after 3 seconds (3000 milliseconds)
+
+                } else {
+                    alert("Failed to cancel appointment."); // Handle cancellation failure
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    }
+
+
+    function resetAppointmentDetails() {
+        document.getElementById("appointmentId").innerText = '';
+        document.getElementById("appointmentName").innerText = '';
+        document.getElementById("appointmentEmail").innerText = '';
+        document.getElementById("appointmentPhone").innerText = '';
+        document.getElementById("appointmentService").innerText = '';
+        document.getElementById("appointmentDateTime").innerText = '';
+        document.getElementById("appointmentStatus").innerText = '';
+        document.getElementById("appointmentDetails").style.display = "none";
+        document.getElementById("noAppointmentSelected").style.display = "block"; // Show the no appointment selected message
+    }
+
+    let pageSize = 8; // Number of records per page
+    let currentPage = 1;
+
+    function loadAppointments(type) {
+        const allAppointments = type === 'upcoming' ? document.querySelectorAll('.upcoming-row') : document.querySelectorAll('.past-row');
+        const totalAppointments = allAppointments.length;
+        const totalPages = Math.ceil(totalAppointments / pageSize);
+
+        // Hide all appointments and then show the ones for the current page
+        allAppointments.forEach(appointment => appointment.style.display = 'none');
+
+        const start = (currentPage - 1) * pageSize;
+        const end = start + pageSize;
+        for (let i = start; i < end && i < totalAppointments; i++) {
+            allAppointments[i].style.display = 'table-row';
+        }
+
+        updatePaginationControls(totalPages);
+    }
+
+    function changePage(offset) {
+        const allAppointments = document.getElementById('upcoming-btn').classList.contains('active')
+            ? document.querySelectorAll('.upcoming-row')
+            : document.querySelectorAll('.past-row');
+
+        const totalAppointments = allAppointments.length;
+        const totalPages = Math.ceil(totalAppointments / pageSize);
+
+        if (currentPage + offset > 0 && currentPage + offset <= totalPages) {
+            currentPage += offset;
+            loadAppointments(document.getElementById('upcoming-btn').classList.contains('active') ? 'upcoming' : 'past');
+        }
+    }
+
+    function updatePaginationControls(totalPages) {
+        const pageNumbersContainer = document.getElementById('page-numbers');
+        pageNumbersContainer.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageNumber = document.createElement('span');
+            pageNumber.classList.add('page-number');
+            pageNumber.style.cursor = 'pointer';
+            pageNumber.innerText = i;
+            pageNumber.onclick = function () { goToPage(i); };
+            if (i === currentPage) {
+                pageNumber.classList.add('active');
+            }
+            pageNumbersContainer.appendChild(pageNumber);
+        }
+    }
+
+    function goToPage(pageNumber) {
+        currentPage = pageNumber;
+        loadAppointments(document.getElementById('upcoming-btn').classList.contains('active') ? 'upcoming' : 'past');
+    }
+   
+    document.addEventListener("DOMContentLoaded", function () {
+        loadAppointments('upcoming');
+    });
+
+
 </script>
 <style>
     .table-hover tbody tr:hover {
@@ -174,4 +442,17 @@
     .table td, .table th {
         white-space: nowrap; /* Prevent text wrapping */
     }
+
+
+    .button-container {
+        display: flex; /* Enable flexbox */
+        flex-wrap: wrap; /* Allow wrapping */
+        gap: 10px; /* Space between buttons */
+    }
+
+        .button-container button {
+            min-width: 60px; /* Optional: Set a minimum width */
+        }
+
+
 </style>

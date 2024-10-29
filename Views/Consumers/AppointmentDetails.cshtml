@@ -7,11 +7,17 @@
 }
 
 <div class="container mt-4">
-    <h2>Appointments</h2>
-
-    <div class="tab-buttons mb-4">
-        <button id="past-btn" class="btn btn-secondary" onclick="showPastAppointments()">Past</button>
-        <button id="upcoming-btn" class="btn btn-primary active" onclick="showUpcomingAppointments()">Upcoming</button>
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="h4 mb-3">Appointments</h2>
+        </div>
+        <div class="tab-buttons mb-4">
+            <button id="past-btn" class="btn btn-secondary" onclick="showPastAppointments()">Past</button>
+            <button id="upcoming-btn" class="btn btn-primary active" onclick="showUpcomingAppointments()">Upcoming</button>
+        </div>
+        <div class="col-md-4 text-right">
+            <input type="text" class="form-control" placeholder="Search by name or service..." />
+        </div>
     </div>
 
     <div class="row">
@@ -123,6 +129,8 @@
                     <p><strong>Business Name:</strong> <span id="cancelBusinessName"></span></p>
                     <p><strong>Service Type:</strong> <span id="cancelServiceType"></span></p>
                     <p><strong>Date & Time:</strong> <span id="cancelDateTime"></span></p>
+                    <div class="mb-3">
+                    </div>
                 </div>
             </div>
             <div class="modal-footer" id="modalFooter">

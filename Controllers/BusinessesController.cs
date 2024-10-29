@@ -427,18 +427,22 @@ namespace EmpowerU.Controllers
             var currentDate = DateTime.Now;
 
             ViewBag.PastAppointments = appointments
-                .Where(a => a.DateTime < currentDate)
-                .OrderByDescending(a => a.DateTime)
-                .ToList();
+               .Where(a => a.DateTime < currentDate &&
+                           (a.Status == "Completed" || a.Status == "Cancelled")) // Check both date and status
+               .OrderByDescending(a => a.DateTime)
+               .ToList();
 
             ViewBag.UpcomingAppointments = appointments
                 .Where(a => a.DateTime >= currentDate)
                 .OrderBy(a => a.DateTime)
                 .ToList();
 
+            ViewBag.Business = business; // Pass consumer details
+
             ViewBag.BusinessNames = appointments.Select(a => a.Business?.Description).Distinct().ToList();
 
-            return View(business); // Pass the business object to the view
+            var firstAppointment = appointments.FirstOrDefault();
+            return View(firstAppointment); // Pass the first appointment or adjust as needed
         }
 
 
@@ -468,7 +472,72 @@ namespace EmpowerU.Controllers
             return NoContent();
         }
 
-      
+        [HttpPost]
+        [Route("appointments/reschedule/{appointmentId}")]
+        public JsonResult Reschedule(int appointmentId, [FromBody] Appointment request)
+        {
+            try
+            {
+                var appointment = _context.Appointments.Find(appointmentId);
+                if (appointment != null)
+                {
+                    // Check if the appointment status allows rescheduling
+                    if (appointment.Status == "Scheduled" || appointment.Status == "Pending")
+                    {
+                        // Validate the new DateTime
+                        if (request.DateTime < DateTime.Now)
+                        {
+                            return Json(new { success = false, message = "The new appointment time must be in the future." });
+                        }
+
+                        //// Check for appointment overlap
+                        //bool hasConflict = _context.Appointments.Any(a =>
+                        //    a.AppointmentID != appointmentId &&
+                        //    a.DateTime == request.DateTime &&
+                        //    (a.Status == "Scheduled" || a.Status == "Pending"));
+
+                        //if (hasConflict)
+                        //{
+                        //    return Json(new { success = false, message = "The new appointment time conflicts with an existing appointment." });
+                        //}
+
+                        // Update the appointment
+                        appointment.DateTime = request.DateTime;
+                        _context.SaveChanges();
+
+                        return Json(new { success = true });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "Only scheduled or pending appointments can be rescheduled." });
+                    }
+                }
+                return Json(new { success = false, message = "Appointment not found." });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (use your logging framework of choice)
+                Console.WriteLine(ex.Message); // Replace with proper logging
+                return Json(new { success = false, message = "An unexpected error occurred. Please try again later." });
+            }
+        }
+
+
+        [HttpPost]
+        [Route("appointments/cancel/{appointmentId}")]
+        public IActionResult Cancel(int appointmentId)
+        {
+            var appointment = _context.Appointments.Find(appointmentId);
+            if (appointment == null) return Json(new { success = false });
+
+            appointment.Status = "Cancelled";
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+
+
+
 
     }
 }
