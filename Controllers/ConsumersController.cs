@@ -225,12 +225,14 @@ namespace EmpowerU.Controllers
             // Get the current date to filter appointments
             var currentDate = DateTime.Now;
 
-            // Filter past and upcoming appointments
+            // Filter past appointments: consider completed or cancelled status
             ViewBag.PastAppointments = appointments
-                .Where(a => a.DateTime < currentDate)
+                .Where(a => a.DateTime < currentDate &&
+                            (a.Status == "Completed" || a.Status == "Cancelled")) // Check both date and status
                 .OrderByDescending(a => a.DateTime)
                 .ToList();
 
+            // Filter upcoming appointments
             ViewBag.UpcomingAppointments = appointments
                 .Where(a => a.DateTime >= currentDate)
                 .OrderBy(a => a.DateTime)
@@ -238,13 +240,14 @@ namespace EmpowerU.Controllers
 
             ViewBag.Consumer = consumer; // Pass consumer details
 
-            // If you want to show business names, you could do something like this:
+            // Get distinct business names
             ViewBag.BusinessNames = appointments.Select(a => a.Business?.Description).Distinct().ToList();
 
             // Assuming you want to return the first appointment or handle differently based on your requirements
             var firstAppointment = appointments.FirstOrDefault();
             return View(firstAppointment); // Pass the first appointment or adjust as needed
         }
+
 
         [HttpPost]
         [Route("appointments/reschedule/{appointmentId}")]
@@ -259,7 +262,7 @@ namespace EmpowerU.Controllers
                     if (appointment.Status == "Scheduled" || appointment.Status == "Pending")
                     {
                         // Validate the new DateTime
-                        if (request.DateTime < DateTime.UtcNow)
+                        if (request.DateTime < DateTime.Now)
                         {
                             return Json(new { success = false, message = "The new appointment time must be in the future." });
                         }
