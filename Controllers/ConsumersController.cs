@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EmpowerU.Models.Data;
 using EmpowerU.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Text.Json;
 
 namespace EmpowerU.Controllers
 {
@@ -245,6 +246,23 @@ namespace EmpowerU.Controllers
             return View(firstAppointment); // Pass the first appointment or adjust as needed
         }
 
+        [HttpPost]
+        [Route("appointments/reschedule/{appointmentId}")]
+        public IActionResult Reschedule(int appointmentId, [FromBody] JsonElement data)
+        {
+            if (data.TryGetProperty("newDate", out JsonElement newDateElement))
+            {
+                var newDate = newDateElement.GetString();
+                var appointment = _context.Appointments.Find(appointmentId);
+                if (appointment == null || string.IsNullOrEmpty(newDate)) return Json(new { success = false });
+
+                appointment.DateTime = DateTime.Parse(newDate);
+                _context.SaveChanges();
+                return Json(new { success = true });
+            }
+
+            return Json(new { success = false });
+        }
 
         public async Task<IActionResult> Search(string searchTerm = "")
         {
@@ -258,6 +276,17 @@ namespace EmpowerU.Controllers
         }
 
 
+        [HttpPost]
+        [Route("appointments/cancel/{appointmentId}")]
+        public IActionResult Cancel(int appointmentId)
+        {
+            var appointment = _context.Appointments.Find(appointmentId);
+            if (appointment == null) return Json(new { success = false });
+
+            appointment.Status = "Cancelled";
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
 
     }
 }
