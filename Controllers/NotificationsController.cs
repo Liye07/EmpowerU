@@ -160,5 +160,7 @@ namespace EmpowerU.Controllers
         {
             return _context.Notifications.Any(e => e.NotificationID == id);
         }
+
+
     }
 }

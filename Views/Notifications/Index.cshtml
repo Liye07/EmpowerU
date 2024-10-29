@@ -1,70 +1,56 @@
-@model EmpowerU.Models.Notification
-
-@{
-    ViewData["Title"] = "Index";
-}
-
 <div class="container mt-4">
     <div class="row">
-        <!-- Left side: List of messages -->
-        <div class="col-md-4">
-            <h3 class="text-primary">Messages</h3>
-            <ul class="list-group mb-3">
-                @* Example list items *@
-                <li class="list-group-item list-group-item-action">Message 1</li>
-                <li class="list-group-item list-group-item-action">Message 2</li>
-                <li class="list-group-item list-group-item-action">Message 3</li>
+        <!-- Left Sidebar: List of Messages -->
+        <div class="col-md-4 border-end">
+            <h4 class="text-primary mb-3">Messages</h4>
+            <ul class="list-group">
+                @foreach (var message in Model)
+                {
+                    <li class="list-group-item list-group-item-action" onclick="loadMessage('@message.NotificationID')">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>@message.NotificationContent.Substring(0, 20) + "..."</span>
+                            <small class="text-muted">@message.Timestamp.ToString("HH:mm")</small>
+                        </div>
+                    </li>
+                }
             </ul>
-            <div>
-                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-                <a asp-action="Edit" asp-route-id="@Model?.NotificationID" class="btn btn-warning">Edit</a>
-            </div>
         </div>
 
-        <!-- Right side: Selected message view and reply space -->
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h4>Notification Details</h4>
-                </div>
-                <div class="card-body">
-                    <dl class="row">
-                        <dt class="col-sm-3 font-weight-bold">
-                            @Html.DisplayNameFor(model => model.NotificationContent)
-                        </dt>
-                        <dd class="col-sm-9">
-                            @Html.DisplayFor(model => model.NotificationContent)
-                        </dd>
-                        <dt class="col-sm-3 font-weight-bold">
-                            @Html.DisplayNameFor(model => model.IsRead)
-                        </dt>
-                        <dd class="col-sm-9">
-                            @Html.DisplayFor(model => model.IsRead)
-                        </dd>
-                        <dt class="col-sm-3 font-weight-bold">
-                            @Html.DisplayNameFor(model => model.Timestamp)
-                        </dt>
-                        <dd class="col-sm-9">
-                            @Html.DisplayFor(model => model.Timestamp)
-                        </dd>
-                        <dt class="col-sm-3 font-weight-bold">
-                            @Html.DisplayNameFor(model => model.User)
-                        </dt>
-                        <dd class="col-sm-9">
-                            @Html.DisplayFor(model => model.User.Email)
-                        </dd>
-                    </dl>
-                </div>
+        <!-- Main Chat Area -->
+        <div class="col-md-8 d-flex flex-column" style="height: 80vh;">
+            <div class="chat-header p-3 border-bottom bg-light">
+                <h5 class="mb-0">Chat with <span id="chatUser">User</span></h5>
             </div>
-            <div class="mt-4">
-                <h4 class="text-primary">Reply</h4>
-                <form>
-                    <div class="form-group">
-                        <textarea class="form-control" rows="3" placeholder="Type your reply here..."></textarea>
+
+            <div id="chatMessages" class="chat-messages p-3 flex-grow-1 overflow-auto" style="background-color: #e5ddd5;">
+                <!-- Messages will be dynamically loaded here when a message is clicked -->
+                <p class="text-muted text-center">Select a message to view details and reply.</p>
+            </div>
+
+            <!-- Reply Box -->
+            <div class="p-3 border-top">
+                <form asp-action="SendMessage">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Type a message" id="replyInput" />
+                        <button type="submit" class="btn btn-primary">Send</button>
                     </div>
-                    <button type="submit" class="btn btn-success mt-2">Send</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function loadMessage(notificationId) {
+        // Simulating loading the message details via AJAX (replace with actual server call if needed)
+        document.getElementById("chatMessages").innerHTML = `
+                <div class="message text-start">
+                    <div class="p-2 my-1 rounded" style="background-color: #dcf8c6;">
+                        <p class="mb-1">Here is the full content of the selected message.</p>
+                        <small class="text-muted">22:11</small>
+                    </div>
+                </div>
+            `;
+        document.getElementById("chatUser").innerText = "Selected User"; // Update with actual user data
+    }
+</script>
