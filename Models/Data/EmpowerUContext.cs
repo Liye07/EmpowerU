@@ -20,7 +20,7 @@ namespace EmpowerU.Models.Data
         public DbSet<Report> Reports { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<BookingHistory> BookingHistories { get; set; }
-        public DbSet<Payment> Payments { get; set; }
+        public DbSet<PaymentEmpowerU> Payments { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Message> Messages { get; set; }
@@ -129,14 +129,14 @@ namespace EmpowerU.Models.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Configure Payment entity
-            modelBuilder.Entity<Payment>()
+            modelBuilder.Entity<PaymentEmpowerU>()
                 .ToTable("Payment")
                 .HasOne(p => p.Consumer)
                 .WithMany()
                 .HasForeignKey(p => p.ConsumerID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Payment>()
+            modelBuilder.Entity<PaymentEmpowerU>()
                 .HasOne(p => p.Business)
                 .WithMany()
                 .HasForeignKey(p => p.BusinessID)

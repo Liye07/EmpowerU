@@ -59,7 +59,7 @@ namespace EmpowerU.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PaymentID,ConsumerID,BusinessID,Amount,PaymentDate,PaymentStatus")] Payment payment)
+        public async Task<IActionResult> Create([Bind("PaymentID,ConsumerID,BusinessID,Amount,PaymentDate,PaymentStatus")] PaymentEmpowerU payment)
         {
             if (ModelState.IsValid)
             {
@@ -95,7 +95,7 @@ namespace EmpowerU.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PaymentID,ConsumerID,BusinessID,Amount,PaymentDate,PaymentStatus")] Payment payment)
+        public async Task<IActionResult> Edit(int id, [Bind("PaymentID,ConsumerID,BusinessID,Amount,PaymentDate,PaymentStatus")] PaymentEmpowerU payment)
         {
             if (id != payment.PaymentID)
             {

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EmpowerU.Models
 {
-    public class Payment
+    public class PaymentEmpowerU
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
