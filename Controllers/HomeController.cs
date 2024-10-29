@@ -23,9 +23,7 @@ namespace EmpowerU.Controllers
         }
 
 
-
-
-
+  
 
         public async Task<IActionResult> Index()
         {
@@ -39,6 +37,7 @@ namespace EmpowerU.Controllers
                 .ToListAsync();
 
             return View(featuredBusinesses); // Pass the list to the view
+
         }
 
         [HttpPost]
