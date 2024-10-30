@@ -153,8 +153,8 @@
         document.getElementById('address-input').value = streetAddress; // Show only the street address
 
         // Update latitude and longitude fields
-        document.getElementById('latitude').value = result.lat;
-        document.getElementById('longitude').value = result.lon;
+        document.getElementById('latitude').value = result.lat.replace('.', ',');
+        document.getElementById('longitude').value = result.lon.replace('.', ',');
 
         // Extract and populate other location details
         document.getElementById('city').value = addressComponents.city || addressComponents.town || addressComponents.village || "";
