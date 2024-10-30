@@ -114,7 +114,7 @@
 
                     <div class="form-group mb-3">
                         <label for="Date" class="form-label">Pick Date</label>
-                        <input type="date" class="form-control" id="Date" name="BookingDate" required />
+                        <input type="datetime-local" class="form-control" id="Date" name="BookingDate" required />
                     </div>
 
                     <div class="text-center">
@@ -185,7 +185,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "@Url.Action("BookService", "YourControllerName")", // Update with your actual controller name
+                url: "@Url.Action("BookService", "BusinessesController")", // Update with your actual controller name
                 data: $(this).serialize(),
                 success: function (response) {
                     if (response.success) {
