@@ -21,87 +21,89 @@
         </div>
     </div>
 
-    <!-- Appointments Section -->
+    <!-- Appointments and Details Section -->
     <div class="row">
-        <!-- Appointments Table -->
-        <div class="col-md-6">
-            <table id="upcoming-appointments-table" class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>Appointment ID</th>
-                        <th>Full Name</th>
-                        <th>Service</th>
-                        <th>Date & Time</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="upcoming-appointments-body">
-                    @foreach (var appointment in upcomingAppointments)
-                    {
-                        <tr class="appointment-row upcoming-row" onclick="showAppointmentDetails(@appointment.AppointmentID, '@appointment.Consumer.Name', '@appointment.Consumer.Email', '@appointment.Consumer.PhoneNumber', '@appointment.ServiceType', '@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")', '@appointment.Status')">
-                            <td>@appointment.AppointmentID</td>
-                            <td>@appointment.Consumer.Name</td>
-                            <td>@appointment.ServiceType</td>
-                            <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
-                            <td>
-                                <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
-                                            appointment.Status == "Pending" ? "bg-warning" :
-                                            appointment.Status == "Scheduled" ? "bg-primary" :
-                                            appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
-                                    @appointment.Status
-                                </span>
-                            </td>
+        <!-- Appointments Tables -->
+        <div class="col-md-7">
+            <div id="upcoming-appointments-section">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Appointment ID</th>
+                            <th>Full Name</th>
+                            <th>Service</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var appointment in upcomingAppointments)
+                        {
+                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID, '@appointment.Consumer.Name', '@appointment.Consumer.Email', '@appointment.Consumer.PhoneNumber', '@appointment.ServiceType', '@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")', '@appointment.Status')">
+                                <td>@appointment.AppointmentID</td>
+                                <td>@appointment.Consumer.Name</td>
+                                <td>@appointment.ServiceType</td>
+                                <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
+                                <td>
+                                    <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
+                                                    appointment.Status == "Pending" ? "bg-warning" :
+                                                    appointment.Status == "Scheduled" ? "bg-primary" :
+                                                    appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
+                                        @appointment.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="pagination-controls">
+                    <button class="btn btn-secondary" onclick="previousPage()">Previous</button>
+                    <span id="page-number">Page 1</span>
+                    <button class="btn btn-secondary" onclick="nextPage()">Next</button>
+                </div>
+            </div>
 
-
-
-            <table id="past-appointments-table" class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>Appointment ID</th>
-                        <th>Name</th>
-                        <th>Date & Time</th>
-                        <th>Service Type</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="past-appointments-body">
-                    <!-- Rows will be dynamically shown by JavaScript -->
-                    @foreach (var appointment in pastAppointments)
-                    {
-                        <tr class="appointment-row past-row" onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Consumer.Name','@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
-                            <td>@appointment.AppointmentID</td>
-                            <td>@appointment.Consumer.Name</td>
-                            <td>@appointment.ServiceType</td>
-                            <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
-                            <td>
-                                <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
-                                                appointment.Status == "Pending" ? "bg-warning" :
-                                                appointment.Status == "Scheduled" ? "bg-primary" :
-                                                appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
-                                    @appointment.Status
-                                </span>
-                            </td>
+            <div id="past-appointments-section" style="display: none;">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Appointment ID</th>
+                            <th>Name</th>
+                            <th>Date & Time</th>
+                            <th>Service Type</th>
+                            <th>Status</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-
-            <div id="pagination-controls" class="pagination-controls mt-3">
-                <span id="page-indicator">Page: </span>
-                <button onclick="changePage(-1)">Previous</button>
-                <span id="page-numbers"></span>
-                <button onclick="changePage(1)">Next</button>
+                    </thead>
+                    <tbody>
+                        @foreach (var appointment in pastAppointments)
+                        {
+                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID, '@appointment.Consumer.Name', '@appointment.Consumer.Email', '@appointment.Consumer.PhoneNumber', '@appointment.ServiceType', '@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")', '@appointment.Status')">
+                                <td>@appointment.AppointmentID</td>
+                                <td>@appointment.Consumer.Name</td>
+                                <td>@appointment.ServiceType</td>
+                                <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
+                                <td>
+                                    <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
+                                                    appointment.Status == "Pending" ? "bg-warning" :
+                                                    appointment.Status == "Scheduled" ? "bg-primary" :
+                                                    appointment.Status == "Cancelled" ? "bg-danger" : "bg-secondary")">
+                                        @appointment.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="pagination-controls">
+                    <button class="btn btn-secondary" onclick="previousPage()">Previous</button>
+                    <span id="page-number">Page 1</span>
+                    <button class="btn btn-secondary" onclick="nextPage()">Next</button>
+                </div>
             </div>
         </div>
-    </div>
-
 
         <!-- Appointment Details Section -->
-        <div class="col-md-8">
+        <div class="col-md-5">
             <h2 class="h5 mb-3">Appointment Details</h2>
             <div id="appointmentDetails" class="card p-3 mb-3" style="display: none;">
                 <p><strong>Appointment ID:</strong> <span id="appointmentId"></span></p>
@@ -195,23 +197,22 @@
 <script>
 
     function showPastAppointments() {
-        currentPage = 1; // Reset to first page
-        document.getElementById('upcoming-appointments-table').style.display = 'none';
-        document.getElementById('past-appointments-table').style.display = 'table';
-        document.getElementById('past-btn').classList.add('active');
-        document.getElementById('upcoming-btn').classList.remove('active');
-        loadAppointments('past');
+        document.getElementById('past-appointments-section').style.display = 'block';
+        document.getElementById('upcoming-appointments-section').style.display = 'none';
+        document.getElementById('past-btn').classList.add('btn-primary');
+        document.getElementById('past-btn').classList.remove('btn-secondary');
+        document.getElementById('upcoming-btn').classList.remove('btn-primary');
+        document.getElementById('upcoming-btn').classList.add('btn-secondary');
     }
 
     function showUpcomingAppointments() {
-        currentPage = 1; // Reset to first page
-        document.getElementById('upcoming-appointments-table').style.display = 'table';
-        document.getElementById('past-appointments-table').style.display = 'none';
-        document.getElementById('past-btn').classList.remove('active');
-        document.getElementById('upcoming-btn').classList.add('active');
-        loadAppointments('upcoming');
+        document.getElementById('upcoming-appointments-section').style.display = 'block';
+        document.getElementById('past-appointments-section').style.display = 'none';
+        document.getElementById('upcoming-btn').classList.add('btn-primary');
+        document.getElementById('upcoming-btn').classList.remove('btn-secondary');
+        document.getElementById('past-btn').classList.remove('btn-primary');
+        document.getElementById('past-btn').classList.add('btn-secondary');
     }
-
     function showAppointmentDetails(id, name, email, phone, service, dateTime, status) {
         document.getElementById("appointmentId").innerText = id;
         document.getElementById("appointmentName").innerText = name;
@@ -367,65 +368,53 @@
         document.getElementById("noAppointmentSelected").style.display = "block"; // Show the no appointment selected message
     }
 
-    let pageSize = 8; // Number of records per page
     let currentPage = 1;
+    const rowsPerPage = 8;
 
-    function loadAppointments(type) {
-        const allAppointments = type === 'upcoming' ? document.querySelectorAll('.upcoming-row') : document.querySelectorAll('.past-row');
-        const totalAppointments = allAppointments.length;
-        const totalPages = Math.ceil(totalAppointments / pageSize);
+    // Initialize pagination for upcoming appointments
+    function paginateTable(tableId, rows) {
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
 
-        // Hide all appointments and then show the ones for the current page
-        allAppointments.forEach(appointment => appointment.style.display = 'none');
+        rows.forEach((row, index) => {
+            row.style.display = (index >= startIndex && index < endIndex) ? '' : 'none';
+        });
 
-        const start = (currentPage - 1) * pageSize;
-        const end = start + pageSize;
-        for (let i = start; i < end && i < totalAppointments; i++) {
-            allAppointments[i].style.display = 'table-row';
-        }
-
-        updatePaginationControls(totalPages);
+        document.getElementById('page-number').innerText = `Page ${currentPage} of ${totalPages}`;
     }
 
-    function changePage(offset) {
-        const allAppointments = document.getElementById('upcoming-btn').classList.contains('active')
-            ? document.querySelectorAll('.upcoming-row')
-            : document.querySelectorAll('.past-row');
+    // Move to the next page
+    function nextPage() {
+        const table = document.querySelector('#upcoming-appointments-section table tbody');
+        const rows = Array.from(table.querySelectorAll('tr'));
 
-        const totalAppointments = allAppointments.length;
-        const totalPages = Math.ceil(totalAppointments / pageSize);
-
-        if (currentPage + offset > 0 && currentPage + offset <= totalPages) {
-            currentPage += offset;
-            loadAppointments(document.getElementById('upcoming-btn').classList.contains('active') ? 'upcoming' : 'past');
+        if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+            currentPage++;
+            paginateTable('upcoming-appointments-section', rows);
         }
     }
 
-    function updatePaginationControls(totalPages) {
-        const pageNumbersContainer = document.getElementById('page-numbers');
-        pageNumbersContainer.innerHTML = '';
+    // Move to the previous page
+    function previousPage() {
+        const table = document.querySelector('#upcoming-appointments-section table tbody');
+        const rows = Array.from(table.querySelectorAll('tr'));
 
-        for (let i = 1; i <= totalPages; i++) {
-            const pageNumber = document.createElement('span');
-            pageNumber.classList.add('page-number');
-            pageNumber.style.cursor = 'pointer';
-            pageNumber.innerText = i;
-            pageNumber.onclick = function () { goToPage(i); };
-            if (i === currentPage) {
-                pageNumber.classList.add('active');
-            }
-            pageNumbersContainer.appendChild(pageNumber);
+        if (currentPage > 1) {
+            currentPage--;
+            paginateTable('upcoming-appointments-section', rows);
         }
     }
 
-    function goToPage(pageNumber) {
-        currentPage = pageNumber;
-        loadAppointments(document.getElementById('upcoming-btn').classList.contains('active') ? 'upcoming' : 'past');
-    }
-   
-    document.addEventListener("DOMContentLoaded", function () {
-        loadAppointments('upcoming');
+    // Initialize pagination on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        const upcomingTableRows = Array.from(document.querySelectorAll('#upcoming-appointments-section tbody tr'));
+        paginateTable('upcoming-appointments-section', upcomingTableRows);
+
+        const pastTableRows = Array.from(document.querySelectorAll('#past-appointments-section tbody tr'));
+        paginateTable('past-appointments-section', pastTableRows);
     });
+
 
 
 </script>
