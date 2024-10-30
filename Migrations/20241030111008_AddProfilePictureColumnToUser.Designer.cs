@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmpowerU.Migrations
 {
     [DbContext(typeof(EmpowerUContext))]
-    [Migration("20241029120319_AddProfilePictureToUser")]
-    partial class AddProfilePictureToUser
+    [Migration("20241030111008_AddProfilePictureColumnToUser")]
+    partial class AddProfilePictureColumnToUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

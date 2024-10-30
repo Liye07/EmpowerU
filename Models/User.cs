@@ -15,13 +15,12 @@ namespace EmpowerU.Models
         public string? Role { get; set; }
 
         public DateTime? LastLogin { get; set; }
+        public byte[]? ProfilePicture { get; set; }
 
         [NotMapped] // This prevents the password from being mapped to the database
         [Required(ErrorMessage = "Password is required.")]
         [DataType(DataType.Password)]
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters long.")]
         public string Password { get; set; }
-
-        public byte[]? ProfilePicture { get; set; }
     }
 }
