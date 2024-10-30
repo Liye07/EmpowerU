@@ -95,9 +95,9 @@
                     </tbody>
                 </table>
                 <div class="pagination-controls">
-                    <button class="btn btn-secondary" onclick="previousPage()">Previous</button>
-                    <span id="page-number">Page 1</span>
-                    <button class="btn btn-secondary" onclick="nextPage()">Next</button>
+                    <button class="btn btn-secondary" onclick="previousPage2()">Previous</button>
+                    <span id="page-number2">Page 1</span>
+                    <button class="btn btn-secondary" onclick="nextPage2()">Next</button>
                 </div>
             </div>
         </div>
@@ -213,6 +213,7 @@
         document.getElementById('past-btn').classList.remove('btn-primary');
         document.getElementById('past-btn').classList.add('btn-secondary');
     }
+
     function showAppointmentDetails(id, name, email, phone, service, dateTime, status) {
         document.getElementById("appointmentId").innerText = id;
         document.getElementById("appointmentName").innerText = name;
@@ -369,7 +370,9 @@
     }
 
     let currentPage = 1;
+    let currentPage2 = 1;
     const rowsPerPage = 8;
+    const rowsPerPage2 = 8;
 
     // Initialize pagination for upcoming appointments
     function paginateTable(tableId, rows) {
@@ -384,6 +387,17 @@
         document.getElementById('page-number').innerText = `Page ${currentPage} of ${totalPages}`;
     }
 
+    function paginateTable2(tableId, rows) {
+        const totalPages = Math.ceil(rows.length / rowsPerPage2);
+        const startIndex = (currentPage2 - 1) * rowsPerPage2;
+        const endIndex = startIndex + rowsPerPage;
+
+        rows.forEach((row, index) => {
+            row.style.display = (index >= startIndex && index < endIndex) ? '' : 'none';
+        });
+
+        document.getElementById('page-number2').innerText = `Page ${currentPage2} of ${totalPages}`;
+    }
     // Move to the next page
     function nextPage() {
         const table = document.querySelector('#upcoming-appointments-section table tbody');
@@ -406,13 +420,36 @@
         }
     }
 
+
+    // Move to the next page
+    function nextPage2() {
+        const table = document.querySelector('#past-appointments-section table tbody');
+        const rows = Array.from(table.querySelectorAll('tr'));
+
+        if (currentPage2 < Math.ceil(rows.length / rowsPerPage2)) {
+            currentPage2++;
+            paginateTable2('past-appointments-section', rows);
+        }
+    }
+
+    // Move to the previous page
+    function previousPage2() {
+        const table = document.querySelector('#past-appointments-section table tbody');
+        const rows = Array.from(table.querySelectorAll('tr'));
+
+        if (currentPage2 > 1) {
+            currentPage2--;
+            paginateTable2('past-appointments-section', rows);
+        }
+    }
+
     // Initialize pagination on page load
     document.addEventListener('DOMContentLoaded', function () {
         const upcomingTableRows = Array.from(document.querySelectorAll('#upcoming-appointments-section tbody tr'));
         paginateTable('upcoming-appointments-section', upcomingTableRows);
 
         const pastTableRows = Array.from(document.querySelectorAll('#past-appointments-section tbody tr'));
-        paginateTable('past-appointments-section', pastTableRows);
+        paginateTable2('past-appointments-section', pastTableRows);
     });
 
 

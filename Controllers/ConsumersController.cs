@@ -223,7 +223,7 @@ namespace EmpowerU.Controllers
                 .ToListAsync();
 
             // Get the current date to filter appointments
-            var currentDate = DateTime.Now;
+            var currentDate = DateTime.UtcNow;
 
             // Filter past appointments: consider completed or cancelled status
             ViewBag.PastAppointments = appointments
@@ -234,7 +234,7 @@ namespace EmpowerU.Controllers
 
             // Filter upcoming appointments
             ViewBag.UpcomingAppointments = appointments
-                .Where(a => a.DateTime >= currentDate)
+                .Where(a => a.DateTime >= currentDate || a.Status == "Pending")
                 .OrderBy(a => a.DateTime)
                 .ToList();
 

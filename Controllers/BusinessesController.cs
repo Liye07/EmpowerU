@@ -424,7 +424,7 @@ namespace EmpowerU.Controllers
                 .Include(a => a.Consumer) // Ensure Consumer data is loaded
                 .ToListAsync();
 
-            var currentDate = DateTime.Now;
+            var currentDate = DateTime.UtcNow;
 
             ViewBag.PastAppointments = appointments
                .Where(a => a.DateTime < currentDate &&
@@ -433,7 +433,7 @@ namespace EmpowerU.Controllers
                .ToList();
 
             ViewBag.UpcomingAppointments = appointments
-                .Where(a => a.DateTime >= currentDate)
+                .Where(a => a.DateTime >= currentDate || a.Status == "Pending")
                 .OrderBy(a => a.DateTime)
                 .ToList();
 
