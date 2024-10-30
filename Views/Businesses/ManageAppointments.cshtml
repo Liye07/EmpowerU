@@ -265,7 +265,7 @@
         const appointmentId = document.getElementById("rescheduleAppointmentId").innerText;
 
         if (newDateTime) {
-            fetch(`/appointments/reschedule/${appointmentId}`, {
+            fetch(`/appointments/b_reschedule/${appointmentId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -324,7 +324,7 @@
         const appointmentId = document.getElementById("cancelAppointmentId").innerText;
 
         // Call the backend to cancel the appointment
-        fetch(`/appointments/cancel/${appointmentId}`, {
+        fetch(`/appointments/b_cancel/${appointmentId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

@@ -243,6 +243,7 @@
     }
 
     function rescheduleAppointment() {
+        console.log("Reschedule button clicked.");
         const appointmentId = document.getElementById("detailAppointmentId").innerText;
         const businessName = document.getElementById("detailBusinessName").innerText;
         const serviceType = document.getElementById("detailServiceType").innerText;
@@ -303,6 +304,7 @@
 
 
     function cancelAppointment() {
+        console.log("Cancel button clicked.");
         const appointmentId = document.getElementById("detailAppointmentId").innerText;
         const businessName = document.getElementById("detailBusinessName").innerText;
         const serviceType = document.getElementById("detailServiceType").innerText;

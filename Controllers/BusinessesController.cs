@@ -473,8 +473,8 @@ namespace EmpowerU.Controllers
         }
 
         [HttpPost]
-        [Route("appointments/reschedule/{appointmentId}")]
-        public JsonResult Reschedule(int appointmentId, [FromBody] Appointment request)
+        [Route("appointments/b_reschedule/{appointmentId}")]
+        public JsonResult B_Reschedule(int appointmentId, [FromBody] Appointment request)
         {
             try
             {
@@ -524,8 +524,8 @@ namespace EmpowerU.Controllers
 
 
         [HttpPost]
-        [Route("appointments/cancel/{appointmentId}")]
-        public IActionResult Cancel(int appointmentId)
+        [Route("appointments/b_cancel/{appointmentId}")]
+        public IActionResult B_Cancel(int appointmentId)
         {
             var appointment = _context.Appointments.Find(appointmentId);
             if (appointment == null) return Json(new { success = false });
