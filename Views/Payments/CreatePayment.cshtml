@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Stripe Payment Demo</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <h2>Pay for Appointment</h2>
+    <form id="payment-form">
+        <div id="card-element"><!-- Stripe Card Element --></div>
+        <button id="submit">Pay</button>
+        <p id="payment-message"></p>
+    </form>
+
+    <script>
+        const stripe = Stripe("pk_test_51QFgQzGLtm1zZAcUERYssEttq4ZpOqQeW8vDHVQB9LEnPqhA5nLln6RMBhmyC9PFafiuV11qkLd3Xh9umXNsIPpL00mlmOTZkq"); // Use your publishable key
+        const clientSecret = "@ViewBag.ClientSecret";
+
+        const elements = stripe.elements();
+        const card = elements.create("card");
+        card.mount("#card-element");
+
+        const form = document.getElementById("payment-form");
+        form.addEventListener("submit", async (event) => {
+
+            event.preventDefault();
+            const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: { card: card }
+            });
+            document.getElementById("payment-message").textContent = error ? error.message : "Payment successful!";
+        });
+    </script>
+</body>
+</html>
