@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmpowerU.Models;
 using EmpowerU.Models.Data;
+using Stripe;
 
 namespace EmpowerU.Controllers
 {
@@ -17,6 +18,27 @@ namespace EmpowerU.Controllers
         public PaymentsController(EmpowerUContext context)
         {
             _context = context;
+        }
+
+        public ActionResult CreatePayment()
+        {
+            // Set your test API key from Stripe
+            StripeConfiguration.ApiKey = "sk_test_51QFgQzGLtm1zZAcU1QCGWO7Xr6R8yMt4x6yD0UXR0nyBwPl99qgx4u2zpirOCOhtN7LyfyANT2Oa7mOOKBvuE6Kp00pRGluzCQ";
+
+            var options = new PaymentIntentCreateOptions
+            {
+                Amount = 5000, // Amount in cents (5000 = $50.00)
+                Currency = "usd",
+                PaymentMethodTypes = new List<string> { "card" },
+            };
+
+            var service = new PaymentIntentService();
+            PaymentIntent paymentIntent = service.Create(options);
+
+            // Pass the client secret to the view for client-side payment
+            ViewBag.ClientSecret = paymentIntent.ClientSecret;
+
+            return View();
         }
 
         // GET: Payments
