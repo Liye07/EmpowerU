@@ -35,8 +35,10 @@ namespace EmpowerU.Controllers
             return View(businesses);
         }
 
-        public IActionResult Dashboard(int? id)
+ 
+        public IActionResult BusinessDashboard(int? id)
         {
+
             // Check if the id parameter is provided
             if (id == null)
             {
@@ -252,6 +254,7 @@ namespace EmpowerU.Controllers
             {
                 return NotFound();
             }
+/*            ViewData["ActivePage"] = "EditBusinessProfile";*/
 
             // If there is no associated LocationService, create an empty one
             if (business.LocationService == null)
@@ -412,7 +415,6 @@ namespace EmpowerU.Controllers
             var business = await _context.Businesses
                 .Include(b => b.LocationService)
                 .FirstOrDefaultAsync(m => m.Id == id);
-
             if (business == null)
             {
                 return NotFound();

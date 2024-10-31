@@ -9,44 +9,7 @@
 
 <div class="dashboard-container d-flex">
     <!-- Main Sidebar Section -->
-    <div class="col-lg-3 col-md-4 bg-primary text-white vh-100 p-0">
-        <div class="d-flex flex-column align-items-center py-4">
-            <!-- Sidebar Header with Logo -->
-            <a href="@Url.Action("Details", "Consumers", new { id = Model.Id })">
-                <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg"
-                     alt="Logo" class="rounded-circle mb-3" width="70" height="70">
-            </a>
-            <h5>@Model.Name</h5>
-        </div>
-        <ul class="nav flex-column px-3" id="mainSidebar">
-            <li class="nav-item">
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Dashboard" ? "active" : "")" href="@Model.Id" data-target="dashboard">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "EditConsumerProfile" ? "active" : "")" href="@Url.Action("EditConsumerProfile", "Consumers")/@Model.Id" data-target="profile">
-                    <i class="fas fa-user"></i> Profile
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "AppointmentDetails" ? "active" : "")" href="@Url.Action("AppointmentDetails", "Consumers")/@Model.Id" data-target="appointments">
-                    <i class="fas fa-calendar"></i> Appointments
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Services" ? "active" : "")" href="#" data-target="services">
-                    <i class="fas fa-briefcase"></i> Services
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Settings" ? "active" : "")" href="#" data-target="settings">
-                    <i class="fas fa-cog"></i> Settings
-                </a>
-            </li>
-        </ul>
-
-    </div>
+    @await Html.PartialAsync("_Sidebar", Model)
 
     <!-- Main Content Section -->
     <div class="main-content col-lg-9 col-md-8 py-5 ms-4">
