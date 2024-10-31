@@ -1,5 +1,4 @@
 ﻿
-
 <script>
 
     const mainSidebar = document.getElementById('mainSidebar');
@@ -63,10 +62,12 @@
 
 </script>
 
+
+
 <!-- Main Sidebar Section -->
 <div class="col-lg-3 col-md-4 bg-primary text-white vh-100 p-0">
 
-    @if (ViewContext.RouteData.Values["action"]?.ToString() == "BusinessDashboard")
+    @if (ViewContext.RouteData.Values["action"]?.ToString() == "BusinessDashboard" || ViewContext.RouteData.Values["action"]?.ToString() == "EditBusinessProfile")
     {
         <div class="d-flex flex-column align-items-center py-4">
             <!-- Sidebar Header with Logo -->
@@ -105,7 +106,7 @@
             </li>
         </ul>
     }
-    else if (ViewContext.RouteData.Values["action"]?.ToString() == "ConsumerDashboard")
+    else if (ViewContext.RouteData.Values["action"]?.ToString() == "ConsumerDashboard" || ViewContext.RouteData.Values["action"]?.ToString() == "EditConsumerProfile")
     {
         <div class="d-flex flex-column align-items-center py-4">
             <!-- Sidebar Header with Logo -->
@@ -144,22 +145,6 @@
         </ul>
     }
 
-    @if (ViewContext.RouteData.Values["action"]?.ToString() != "BusinessDashboard" && ViewContext.RouteData.Values["action"]?.ToString() != "ConsumerDashboard")
-{
-    <div class="col-lg-2 col-md-4 bg-light vh-100 p-0">
-        <div class="d-flex flex-column align-items-center py-4">
-            <h5 class="mb-4">Additional Settings</h5>
-        </div>
-        <ul class="nav flex-column px-3" id="secondarySidebar">
-            <!-- Dynamic content will be shown here based on the main sidebar selection -->
-        </ul>
-    </div>
-}
-
-
 </div>
-
-
-
 
 

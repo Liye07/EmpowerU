@@ -7,46 +7,10 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Main Sidebar Section (Left) -->
-        <div class="col-lg-3 col-md-4 bg-primary text-white vh-100 p-0">
-            <div class="d-flex flex-column align-items-center py-4">
-                <!-- Sidebar Header with Logo -->
-                <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg" alt="Logo" class="rounded-circle mb-3" width="70" height="70">
-                <h5>@Model.Name</h5>
-            </div>
-            <ul class="nav flex-column px-3" id="mainSidebar">
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#" data-target="dashboard">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white active" href="#" data-target="profile">
-                        <i class="fas fa-user"></i> Profile
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#" data-target="services">
-                        <i class="fas fa-briefcase"></i> Services
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#" data-target="settings">
-                        <i class="fas fa-cog"></i> Settings
-                    </a>
-                </li>
-            </ul>
-        </div>
+        @await Html.PartialAsync("_MainSidebar", Model)
 
         <!-- Secondary Sidebar Section (Connected to Main Sidebar) -->
-        <div class="col-lg-2 col-md-4 bg-light vh-100 p-0">
-            <div class="d-flex flex-column align-items-center py-4">
-                <h5 class="mb-4">Additional Settings</h5>
-            </div>
-            <ul class="nav flex-column px-3" id="secondarySidebar">
-                <!-- Dynamic content will be shown here based on the main sidebar selection -->
-            </ul>
-        </div>
-
+        @await Html.PartialAsync("_SecondarySidebar", Model)
         <!-- Main Content Section (Right) -->
         <div class="col-lg-7 col-md-8 py-5">
             <div class="container">
@@ -196,7 +160,7 @@
 
 
 <script>
-    const mainSidebar = document.getElementById('mainSidebar');
+    const mainSidebar =   @await Html.PartialAsync("_MainSidebar", Model)
     const secondarySidebar = document.getElementById('secondarySidebar');
 
     // Sidebar options based on main sidebar selection

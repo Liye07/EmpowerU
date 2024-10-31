@@ -343,7 +343,7 @@ namespace EmpowerU.Controllers
                     // Save changes to the business
                     _context.Update(existingBusiness);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction("Dashboard", "Businesses", new { id = business.Id });
+                    return RedirectToAction(nameof(BusinessDashboard), new { id = business.Id });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
