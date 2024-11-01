@@ -1,8 +1,7 @@
-﻿@model Business
+﻿@model Consumer
 
 @{
-    ViewBag.Title = "Business Dashboard";
-    Layout = "~/Views/Shared/_Layout.cshtml"; // Assuming you're using a shared layout
+    ViewBag.Title = "Consumer Dashboard";
     var todayAppointments = ViewBag.TodayAppointments as List<dynamic>;
     var notifications = ViewBag.Notifications as List<Notification>;
     var unreadMessages = ViewBag.UnreadMessages as List<Message>;
@@ -10,44 +9,7 @@
 
 <div class="dashboard-container d-flex">
     <!-- Main Sidebar Section -->
-    <div class="col-lg-3 col-md-4 bg-primary text-white vh-100 p-0">
-        <div class="d-flex flex-column align-items-center py-4">
-            <!-- Sidebar Header with Logo -->
-            <a href="@Url.Action("Details", "Businesses", new { id = Model.Id })">
-                <img src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg"
-                     alt="Logo" class="rounded-circle mb-3" width="70" height="70">
-            </a>
-            <h5>@Model.Name</h5>
-        </div>
-        <ul class="nav flex-column px-3" id="mainSidebar">
-            <li class="nav-item">
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Dashboard" ? "active" : "")" href="@Model.Id" data-target="dashboard">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "EditBusinessProfile" ? "active" : "")" href="@Url.Action("EditBusinessProfile", "Businesses")/@Model.Id" data-target="profile">
-                    <i class="fas fa-user"></i> Profile
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "ManageAppointments" ? "active" : "")" href="@Url.Action("ManageAppointments", "Businesses")/@Model.Id" data-target="appointments">
-                    <i class="fas fa-calendar"></i> Appointments
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Services" ? "active" : "")" href="#" data-target="services">
-                    <i class="fas fa-briefcase"></i> Services
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "Settings" ? "active" : "")" href="#" data-target="settings">
-                    <i class="fas fa-cog"></i> Settings
-                </a>
-            </li>
-        </ul>
-
-    </div>
+    @await Html.PartialAsync("_MainSidebar", Model)
 
     <!-- Main Content Section -->
     <div class="main-content col-lg-9 col-md-8 py-5 ms-4">
@@ -57,7 +19,7 @@
             <h1 style="font-size: 40px;"><strong>Dashboard</strong></h1>
             <div class="header-actions">
                 <!-- Notification Icon with Link -->
-                <button class="action-btn" onclick="window.location.href='/Notifications/Index/@Model.Id'">
+                <button class="action-btn" onclick="window.location.href='/Notifications/Details/@Model.Id'">
                     <i class="fa fa-bell"></i>
                     <!-- Show notification count if there are any -->
                     @if (notifications != null && notifications.Any())
@@ -66,7 +28,7 @@
                     }
                 </button>
 
-                <button class="action-btn" onclick="window.location.href='/Messages/Index/@Model.Id'">
+                <button class="action-btn" onclick="window.location.href='/Messages/Details/@Model.Id'">
                     <i class="fa fa-envelope"></i>
                     <!-- Show unread message count if there are any -->
                     @if (unreadMessages != null && unreadMessages.Any())
@@ -74,37 +36,29 @@
                         <span class="notification-count">@unreadMessages.Count</span>
                     }
                 </button>
+
             </div>
         </div>
 
-        <!-- Statistics Cards -->
-        <div class="stats-cards d-flex justify-content-between mb-4">
-            <div class="balance-card shadow p-3">
-                <h3 style="font-size: 20px;">Your Balance</h3>
-                <p>R@(ViewBag.TotalIncome.ToString("N2"))</p> 
-            </div>
-            <div class="stat-card flex-fill shadow p-3">
-                <h3 style="font-size: 20px;">@ViewBag.CurrentMonth's Income</h3>
-                <p>R@(ViewBag.MonthlyIncome.ToString("N2"))</p>
-            </div>
-            <div class="stat-card flex-fill shadow p-3">
-                <h3 style="font-size: 20px;">Total No. of Appointments Booked</h3> <!-- Adjusted font size -->
-                <p>@ViewBag.TotalAppointments</p>  <!-- Dynamic total appointments -->
+        <!-- Personalized Calendar Section -->
+        <div class="personal-calendar flex-fill p-3 mb-4 shadow">
+            <h3 style="font-size: 20px;">Your Calendar</h3>
+            <div class="calendar-content">
+                <p>View and manage your upcoming appointments, tasks, and reminders here.</p>
+                <button class="btn btn-primary" onclick="window.location.href='/Calendar/View'">Go to Calendar</button>
             </div>
         </div>
 
-        <!-- Content Section with Pie Chart and Today's Appointments -->
-        <div class="content-section d-flex flex-wrap">
-            <div class="left-column flex-fill me-4 mb-4" style="max-width: 400px;">
-                <!-- Pie Chart Section -->
-                <div class="marketplace-card p-3 mb-4 shadow">
-                    <h3 style="font-size: 20px;">Appointments by Service Category</h3>
-                    <canvas id="empoweruPieChart" style="max-width: 100%; height: auto;"></canvas>
-                </div>
-            </div>
+        <!-- Social History Section -->
+        <div class="social-history flex-fill p-3 mb-4 shadow">
+            <h3 style="font-size: 20px;">Your Activity History</h3>
+            <p>See recent appointments, cancellations, and any other past interactions here.</p>
+            <button class="btn btn-secondary" onclick="window.location.href='/History/View'">View History</button>
+        </div>
+
             
             <!-- Today's Appointments Section -->
-            <div class="today-appointments flex-fill p-3 mb-4 shadow" style="cursor: pointer;" onclick="window.location.href='/Businesses/ManageAppointments/@Model.Id'">
+            <div class="today-appointments flex-fill p-3 mb-4 shadow" style="cursor: pointer;" onclick="window.location.href='/Consumers/AppointmentDetails/@Model.Id'">
                 <h3 style="font-size: 20px;" >Today's Appointments</h3>
                 <div class="table-responsive">
                     <table class="table table-bordered">
@@ -142,16 +96,8 @@
                     </table>
                 </div>
             </div>
-
-            <div class="right-column flex-fill mb-4">
-                <div class="stat-card flex-fill shadow p-3">
-                    <h3 style="font-size: 20px;"> Total No. of Customers</h3> <!-- Adjusted font size -->
-                    <p>@ViewBag.TotalCustomers</p>  <!-- Dynamic total customers -->
-                </div>
-            </div>
         </div>
     </div>
-</div>
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" crossorigin="anonymous"></script>
@@ -298,4 +244,22 @@
         font-size: 12px;
     }
 
+    .header-actions .action-btn {
+        position: relative;
+        margin-left: 10px; /* Adjust spacing as needed */
+    }
+
+    .message-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        font-size: 0.75rem;
+        padding: 2px 5px;
+        border-radius: 50%;
+        color: white;
+    }
+
 </style>
+
+<!-- Add relevant Font Awesome CDN for icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">

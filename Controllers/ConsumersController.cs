@@ -34,8 +34,9 @@ namespace EmpowerU.Controllers
         }
 
 
-        public IActionResult Dashboard(int? id)
+        public IActionResult ConsumerDashboard(int? id)
         {
+
             // Check if the id parameter is provided
             if (id == null)
             {
@@ -124,6 +125,7 @@ namespace EmpowerU.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditConsumerProfile(int id, [Bind("PreferredCategories,Id,Name,Surname,Email,PhoneNumber,Password,Role,LastLogin")] Consumer consumer)
         {
+
             if (id != consumer.Id)
             {
                 return NotFound();

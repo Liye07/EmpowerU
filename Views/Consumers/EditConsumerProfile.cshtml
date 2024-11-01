@@ -6,41 +6,9 @@
 
 <div class="container-fluid">
     <div class="row">
-        <!-- Main Sidebar Section (Left) -->
-        <div class="col-lg-3 col-md-4 bg-primary text-white vh-100 p-0">
-            <div class="d-flex flex-column align-items-center py-4">
-                <!-- Sidebar Header with Profile Picture -->
-                <img src="https://th.bing.com/th/id/OIP.qnBU1qkkbFfp4tQjrMVx9wHaHw?rs=1&pid=ImgDetMain" alt="Profile Picture" class="rounded-circle mb-3" width="70" height="70">
-                <h5>@Model.Name</h5>
-            </div>
-            <ul class="nav flex-column px-3" id="mainSidebar">
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#" data-target="dashboard">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white active" href="#" data-target="profile">
-                        <i class="fas fa-user"></i> Profile
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white" href="#" data-target="settings">
-                        <i class="fas fa-cog"></i> Settings
-                    </a>
-                </li>
-            </ul>
-        </div>
 
-        <!-- Secondary Sidebar Section -->
-        <div class="col-lg-2 col-md-4 bg-light vh-100 p-0">
-            <div class="d-flex flex-column align-items-center py-4">
-                <h5 class="mb-4">Additional Settings</h5>
-            </div>
-            <ul class="nav flex-column px-3" id="secondarySidebar">
-                <!-- Dynamic content will be shown here based on the main sidebar selection -->
-            </ul>
-        </div>
+        <!-- Main Sidebar Section (Left) -->
+        @await Html.PartialAsync("_MainSidebar", Model)
 
         <!-- Main Content Section -->
         <div class="col-lg-7 col-md-8 py-5">
@@ -150,64 +118,7 @@
 }
 
 <script>
-    const mainSidebar = document.getElementById('mainSidebar');
-    const secondarySidebar = document.getElementById('secondarySidebar');
 
-    const options = {
-        profile: [
-            { text: 'Personal Info', icon: 'fas fa-info-circle' },
-            { text: 'Notifications', icon: 'fas fa-bell' },
-            { text: 'Privacy', icon: 'fas fa-lock' }
-        ],
-        settings: [
-            { text: 'General Settings', icon: 'fas fa-cog' },
-            { text: 'Account Security', icon: 'fas fa-shield-alt' }
-        ],
-        dashboard: [
-            { text: 'Overview', icon: 'fas fa-chart-line' }
-        ]
-    };
-
-    function updateMainActiveLink(targetLink) {
-        const allLinks = mainSidebar.querySelectorAll('a.nav-link');
-        allLinks.forEach(link => link.classList.remove('active'));
-        targetLink.classList.add('active');
-    }
-
-    function updateSecondarySidebar(target) {
-        secondarySidebar.innerHTML = '';
-        if (options[target]) {
-            options[target].forEach(option => {
-                const li = document.createElement('li');
-                li.classList.add('nav-item');
-                li.innerHTML = `<a class="nav-link text-dark" href="#"><i class="${option.icon}"></i> ${option.text}</a>`;
-                secondarySidebar.appendChild(li);
-            });
-        }
-        const firstLink = secondarySidebar.querySelector('a.nav-link');
-        if (firstLink) {
-            firstLink.classList.add('active');
-        }
-    }
-
-    mainSidebar.addEventListener('click', (e) => {
-        if (e.target.tagName === 'A') {
-            e.preventDefault();
-            const targetLink = e.target;
-            const target = targetLink.getAttribute('data-target');
-            updateMainActiveLink(targetLink);
-            updateSecondarySidebar(target);
-        }
-    });
-
-    secondarySidebar.addEventListener('click', (e) => {
-        if (e.target.tagName === 'A') {
-            e.preventDefault();
-            const allSecondaryLinks = secondarySidebar.querySelectorAll('a.nav-link');
-            allSecondaryLinks.forEach(link => link.classList.remove('active'));
-            e.target.classList.add('active');
-        }
-    });
 
 
     function toggleDropdown() {

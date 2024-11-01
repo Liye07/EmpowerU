@@ -4,8 +4,35 @@
     ViewData["Title"] = "Business Details";
 }
 
-<!-- Include Font Awesome for star icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<!-- Include jQuery for AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#bookingForm").submit(function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("BookService", "BusinessesController")", // Update with your actual controller name
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        // Show confirmation message
+                        $("#confirmationMessage").text(response.message).show();
+                        // Optionally, hide the booking form
+                        $("#bookingForm").hide();
+                    } else {
+                        // Handle error message
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("An error occurred while booking. Please try again.");
+                }
+            });
+        });
+    });
+</script>
 
 <div class="container mt-5 d-flex justify-content-center">
     <div class="row w-100">
@@ -21,9 +48,18 @@
 
                 <!-- Business Details -->
                 <div class="business-details justify-content-right">
-                    <h4>Business Details</h4>
+                    <!-- Add Message Us Icon -->
+                    <h4>@Model.Name</h4>
                     <p>@Model.Description</p>
 
+                    <!-- Message Us Button -->
+                    <div class="d-flex align-items-center mb-3">
+                        <a href="/Messages/Index?businessID=@Model.Id" class="btn btn-outline-primary d-flex align-items-center">
+                            <i class="fas fa-envelope mr-2"></i> Talk to Us
+                        </a>
+                    </div>
+
+                    <!-- Rating Section -->
                     <h4>Rating</h4>
                     <p>
                         @for (var i = 1; i <= 5; i++)
@@ -122,12 +158,13 @@
                     </div>
                 </form>
 
-
                 <!-- Confirmation Message -->
                 <div id="confirmationMessage" class="alert alert-success mt-3" style="display:none;"></div>
             </div>
         </div>
     </div>
+</div>
+
 
     <style>
         .business-details h4 {
@@ -174,34 +211,11 @@
             font-size: 16px;
         }
     </style>
-</div>
 
-<!-- Include jQuery for AJAX -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $("#bookingForm").submit(function (event) {
-            event.preventDefault(); // Prevent default form submission
 
-            $.ajax({
-                type: "POST",
-                url: "@Url.Action("BookService", "BusinessesController")", // Update with your actual controller name
-                data: $(this).serialize(),
-                success: function (response) {
-                    if (response.success) {
-                        // Show confirmation message
-                        $("#confirmationMessage").text(response.message).show();
-                        // Optionally, hide the booking form
-                        $("#bookingForm").hide();
-                    } else {
-                        // Handle error message
-                        alert(response.message);
-                    }
-                },
-                error: function () {
-                    alert("An error occurred while booking. Please try again.");
-                }
-            });
-        });
-    });
-</script>
+
+
+<!-- Include Font Awesome for star icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+

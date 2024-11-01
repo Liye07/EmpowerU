@@ -1,0 +1,80 @@
+﻿  
+
+<!-- Secondary Sidebar Section (Connected to Main Sidebar) -->
+<div class="col-lg-2 col-md-4 bg-light vh-100 p-0">
+    <div class="d-flex flex-column align-items-center py-4">
+        <h5 class="mb-4">Additional Settings</h5>
+    </div>
+    <ul class="nav flex-column px-3" id="secondarySidebar">
+        <!-- Dynamic content will be shown here based on the main sidebar selection -->
+    </ul>
+</div>
+
+<script>
+
+    const mainSidebar = document.getElementById('mainSidebar');
+    const secondarySidebar = document.getElementById('secondarySidebar');
+
+    const options = {
+        profile: [
+            { text: 'Personal Info', icon: 'fas fa-info-circle' },
+            { text: 'Notifications', icon: 'fas fa-bell' },
+            { text: 'Privacy', icon: 'fas fa-lock' }
+        ],
+        settings: [
+            { text: 'General Settings', icon: 'fas fa-cog' },
+            { text: 'Account Security', icon: 'fas fa-shield-alt' }
+        ],
+        dashboard: [
+            { text: 'Overview', icon: 'fas fa-chart-line' }
+        ]
+    };
+
+    function updateMainActiveLink(targetLink) {
+        const allLinks = mainSidebar.querySelectorAll('a.nav-link');
+        allLinks.forEach(link => link.classList.remove('active'));
+        targetLink.classList.add('active');
+    }
+
+    function updateSecondarySidebar(target) {
+        secondarySidebar.innerHTML = '';
+        if (options[target]) {
+            options[target].forEach(option => {
+                const li = document.createElement('li');
+                li.classList.add('nav-item');
+                li.innerHTML = `<a class="nav-link text-dark" href="#"><i class="${option.icon}"></i> ${option.text}</a>`;
+                secondarySidebar.appendChild(li);
+            });
+        }
+        const firstLink = secondarySidebar.querySelector('a.nav-link');
+        if (firstLink) {
+            firstLink.classList.add('active');
+        }
+    }
+
+    mainSidebar.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A') {
+            e.preventDefault();
+            const targetLink = e.target;
+            const target = targetLink.getAttribute('data-target');
+            updateMainActiveLink(targetLink);
+            updateSecondarySidebar(target);
+        }
+    });
+
+    secondarySidebar.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A') {
+            e.preventDefault();
+            const allSecondaryLinks = secondarySidebar.querySelectorAll('a.nav-link');
+            allSecondaryLinks.forEach(link => link.classList.remove('active'));
+            e.target.classList.add('active');
+        }
+    });
+
+
+</script>
+
+
+
+
+
