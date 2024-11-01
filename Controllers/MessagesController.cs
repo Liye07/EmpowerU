@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using EmpowerU.Models;
 using EmpowerU.Models.Data;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EmpowerU.Controllers
 {
+    [Authorize(Roles="Consumer,Business")]
     public class MessagesController : Controller
     {
         private readonly EmpowerUContext _context;
@@ -225,23 +227,6 @@ namespace EmpowerU.Controllers
 
           
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     }
