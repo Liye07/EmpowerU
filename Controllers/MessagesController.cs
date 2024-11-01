@@ -25,8 +25,21 @@ namespace EmpowerU.Controllers
         // GET: Messages
         public async Task<IActionResult> Index()
         {
-            var empowerUContext = _context.Messages.Include(m => m.Receiver).Include(m => m.Sender);
-            return View(await empowerUContext.ToListAsync());
+            // Get the current user's ID
+            int currentUserId;
+            if (!int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out currentUserId))
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
+            // Fetch only messages where the current user is the receiver
+            var messages = await _context.Messages
+                .Include(m => m.Receiver)
+                .Include(m => m.Sender)
+                .Where(m => m.ReceiverID == currentUserId)
+                .ToListAsync();
+
+            return View(messages);
         }
 
         // GET: Messages/Details/5
@@ -172,30 +185,16 @@ namespace EmpowerU.Controllers
 
 
         //Luyanda
-
         [HttpPost]
         public IActionResult SendMessage(string messageContent, string receiverId)
         {
-
-            if (string.IsNullOrWhiteSpace(receiverId))
-            {
-                return BadRequest("Receiver ID is null or empty.");
-            }
-
-            // Attempt to parse the receiver ID
-            if (!int.TryParse(receiverId, out int parsedReceiverId)) // Rename variable here
-            {
-                return BadRequest($"Invalid receiver ID: {receiverId}"); // This will give you the actual string that caused the issue
-            }
-
-
             // Validate the input
             if (string.IsNullOrWhiteSpace(messageContent) || string.IsNullOrWhiteSpace(receiverId))
             {
-                return BadRequest("Message content or receiver ID cannot be empty.");
+                return BadRequest("Message content or original sender ID cannot be empty.");
             }
 
-            // Convert receiverId from string to int
+            // Attempt to parse the receiver ID
             if (!int.TryParse(receiverId, out int receiverIdInt))
             {
                 return BadRequest("Invalid receiver ID.");
@@ -212,8 +211,8 @@ namespace EmpowerU.Controllers
             var message = new Message
             {
                 MessageContent = messageContent,
-                ReceiverID = receiverIdInt, // This should now be an int
-                SenderID = senderIdInt, // Ensure this is also an int
+                ReceiverID = receiverIdInt,
+                SenderID = senderIdInt,
                 Timestamp = DateTime.Now,
                 IsRead = false // Mark as unread by default
             };
@@ -224,9 +223,9 @@ namespace EmpowerU.Controllers
 
             // Redirect to the messages index or wherever you need
             return RedirectToAction("Index");
-
-          
         }
+
+
 
 
     }
