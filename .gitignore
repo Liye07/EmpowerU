@@ -371,5 +371,7 @@ FodyWeavers.xsd
 /Views/Consumers/AppointmentDetails.cshtml
 /Views/Consumers/AppointmentDetails.cshtml
 /Views/Consumers/AppointmentDetails.cshtml
+/Views/Account/RegisterBusiness.cshtml
+/SQLQuery1.sql
 /Controllers/HomeController.cs
 /Controllers/MessagesController.cs
