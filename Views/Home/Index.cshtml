@@ -3,7 +3,7 @@
 }
 
 <div class="text-center">
-    <p class="text-left">Book Your Next Appointment</p>
+    <p class="text-left" class="marquee">Book Your Next Appointment</p>
 </div>
 
 <div class="container mt-4">
@@ -13,7 +13,7 @@
             <div class="form-group position-relative">
                 <label for="address-input" class="control-label">Search for businesses by location</label>
                 <input id="address-input" name="LocationService.Address" class="form-control" placeholder="Enter street address" oninput="getSuggestions(event)" required />
-               
+
                 <ul id="suggestion-list" class="list-group position-absolute" style="max-height: 200px; overflow-y: auto; display: none;"></ul>
                 <div id="loading-indicator" style="display: none;">Loading...</div> <!-- Loading indicator -->
             </div>
@@ -30,17 +30,17 @@
     </div>
 </div>
 
-            <div class="mb-3">
-                <a href="#" class="btn btn-outline-primary mx-1">Massage</a>
-                <a href="#" class="btn btn-outline-primary mx-1">Hair</a>
-                <a href="#" class="btn btn-outline-primary mx-1">Barber</a>
-                <a href="#" class="btn btn-outline-primary mx-1">Nails</a>
-            </div>
+<div class="mb-3">
+    <a href="#" class="btn btn-outline-primary mx-1">Massage</a>
+    <a href="#" class="btn btn-outline-primary mx-1">Hair</a>
+    <a href="#" class="btn btn-outline-primary mx-1">Barber</a>
+    <a href="#" class="btn btn-outline-primary mx-1">Nails</a>
+</div>
 
-            <!-- Large Text for Services -->
-            <h2 class="text-left">Services</h2>
+<!-- Large Text for Services -->
+<h2 class="text-left">Services</h2>
 
-            <!-- Advertisement Section -->
+<!-- Advertisement Section -->
 <div>
     <div>
         <div>
@@ -151,6 +151,10 @@
 }
 
 <style>
+
+
+
+
     body {
         background-color: #f8f9fa;
         font-family: Arial, sans-serif;
@@ -217,6 +221,7 @@
         position: relative;
         cursor: pointer;
     }
+
 </style>
 
 <!-- Font Awesome for icons -->

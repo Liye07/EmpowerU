@@ -371,3 +371,5 @@ FodyWeavers.xsd
 /Views/Consumers/AppointmentDetails.cshtml
 /Views/Consumers/AppointmentDetails.cshtml
 /Views/Consumers/AppointmentDetails.cshtml
+/Controllers/HomeController.cs
+/Controllers/MessagesController.cs
