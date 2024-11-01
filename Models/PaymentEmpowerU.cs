@@ -27,6 +27,13 @@ namespace EmpowerU.Models
         [StringLength(10)]
         public string PaymentStatus { get; set; }
 
+        // New field to store Stripe PaymentIntent ID
+        [StringLength(255)]
+        public string PaymentIntentId { get; set; }
+
+        [StringLength(255)]
+        public string Currency { get; set; } = "USD"; // Default currency
+
         [ForeignKey(nameof(ConsumerID))]
         public Consumer Consumer { get; set; }
 

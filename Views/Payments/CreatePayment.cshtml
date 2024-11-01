@@ -1,34 +1,166 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@model PaymentEmpowerU
+
+@{
+    Layout = null;
+}
+
 <head>
-    <title>Stripe Payment Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay Invoice</title>
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
-    <h2>Pay for Appointment</h2>
-    <form id="payment-form">
-        <div id="card-element"><!-- Stripe Card Element --></div>
-        <button id="submit">Pay</button>
-        <p id="payment-message"></p>
-    </form>
+    <div class="payment-container">
+        <h2>Pay Invoice</h2>
+        <div class="card-icons">
+            <img src="https://img.icons8.com/color/48/000000/visa.png" alt="Visa">
+            <img src="https://img.icons8.com/color/48/000000/mastercard.png" alt="Mastercard">
+            <img src="https://img.icons8.com/color/48/000000/amex.png" alt="American Express">
+            <img src="https://img.icons8.com/color/48/000000/discover.png" alt="Discover">
+        </div>
+
+        <form id="payment-form">
+            <div class="form-group">
+                @Html.TextBoxFor(model => model.Amount, new { @class = "form-control title-box", placeholder = "How much are you paying?" })
+                @Html.ValidationMessageFor(model => model.Amount)
+            </div>
+            <div class="form-group">
+                <label for="cardholder-name">Name on card</label>
+                <input type="text" id="cardholder-name" placeholder="Cardholder Name" required>
+            </div>
+            <div class="form-group">
+                <label for="card-element">Card Details</label>
+                <div id="card-element" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;"></div>
+            </div>
+
+            <button id="submit">Pay</button>
+            <p id="payment-message"></p>
+        </form>
+    </div>
 
     <script>
-        const stripe = Stripe("pk_test_51QFgQzGLtm1zZAcUERYssEttq4ZpOqQeW8vDHVQB9LEnPqhA5nLln6RMBhmyC9PFafiuV11qkLd3Xh9umXNsIPpL00mlmOTZkq"); // Use your publishable key
-        const clientSecret = "@ViewBag.ClientSecret";
+        const stripe = Stripe("pk_test_51QFgQzGLtm1zZAcUERYssEttq4ZpOqQeW8vDHVQB9LEnPqhA5nLln6RMBhmyC9PFafiuV11qkLd3Xh9umXNsIPpL00mlmOTZkq");
+        const clientSecret = "@ViewBag.ClientSecret"; // Ensure this is set in the controller
 
         const elements = stripe.elements();
-        const card = elements.create("card");
+        const card = elements.create("card", {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#32325d',
+                    '::placeholder': { color: '#aab7c4' },
+                },
+                invalid: { color: '#fa755a' }
+            }
+        });
         card.mount("#card-element");
 
         const form = document.getElementById("payment-form");
         form.addEventListener("submit", async (event) => {
-
             event.preventDefault();
+
             const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
                 payment_method: { card: card }
             });
+
             document.getElementById("payment-message").textContent = error ? error.message : "Payment successful!";
         });
     </script>
 </body>
-</html>
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f5f5f5;
+    }
+
+    .payment-container {
+        width: 320px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+    }
+
+    .payment-container h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+        color: #555;
+    }
+
+    .card-icons {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+
+    .card-icons img {
+        width: 40px;
+        margin: 0 5px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        transition: border-color 0.2s; /* Smooth transition for border color */
+    }
+
+    .form-group input:focus {
+        border-color: #00b894; /* Change border color on focus */
+        outline: none; /* Remove default outline */
+    }
+
+    .form-group input[type="text"]:disabled {
+        background-color: #f5f5f5;
+        color: #888;
+    }
+
+    #submit {
+        width: 100%;
+        background-color: #00b894;
+        color: #fff;
+        border: none;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 15px;
+        transition: background-color 0.2s; /* Smooth transition for button */
+    }
+
+    #submit:hover {
+        background-color: #019968;
+    }
+
+    #payment-message {
+        color: green;
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    
+</style>
