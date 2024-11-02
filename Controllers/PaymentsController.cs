@@ -11,7 +11,7 @@ using Stripe;
 
 namespace EmpowerU.Controllers
 {
-    public class PaymentsController : Controller
+    public class PaymentsController : BaseController
     {
         private readonly EmpowerUContext _context;
 

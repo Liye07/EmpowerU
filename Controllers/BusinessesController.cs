@@ -12,7 +12,7 @@ using System.Security.Claims;
 
 namespace EmpowerU.Controllers
 {
-    public class BusinessesController : Controller
+    public class BusinessesController : BaseController
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager; // Change here if User is int

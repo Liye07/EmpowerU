@@ -5,21 +5,27 @@ using EmpowerU.Models.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add DbContext to the service container
 builder.Services.AddDbContext<EmpowerUContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add Identity services with matching types
-builder.Services.AddIdentity<User, IdentityRole<int>>() // Ensure role type is int if User is int
-    .AddEntityFrameworkStores<EmpowerUContext>() // Use your DbContext
-    .AddDefaultTokenProviders(); // Optional: for token providers
+builder.Services.AddIdentity<User, IdentityRole<int>>()
+    .AddEntityFrameworkStores<EmpowerUContext>() 
+    .AddDefaultTokenProviders();
 
-// Add services to the container.
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(2);
+    options.Cookie.HttpOnly = true; 
+    options.Cookie.IsEssential = true; 
+});
+
 builder.Services.AddControllersWithViews();
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 
-// Create a scope to get services
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -31,7 +37,7 @@ using (var scope = app.Services.CreateScope())
     await CreateRoles(roleManager, userManager);
 }
 
-// Configure the HTTP request pipeline.
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -43,18 +49,18 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Use Authentication and Authorization
-app.UseAuthentication(); // Ensure this is before UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
 
-// Define the default route
+app.UseSession();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
 
-// Method to create roles and a default admin user
+
 async Task CreateRoles(RoleManager<IdentityRole<int>> roleManager, UserManager<User> userManager)
 {
     // Define the roles
@@ -64,7 +70,6 @@ async Task CreateRoles(RoleManager<IdentityRole<int>> roleManager, UserManager<U
     {
         if (!await roleManager.RoleExistsAsync(role))
         {
-            // Create the role if it doesn't exist
             await roleManager.CreateAsync(new IdentityRole<int> { Name = role });
         }
     }

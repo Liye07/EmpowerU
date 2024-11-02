@@ -10,7 +10,7 @@ using EmpowerU.Models.Data;
 
 namespace EmpowerU.Controllers
 {
-    public class DiscountsController : Controller
+    public class DiscountsController : BaseController
     {
         private readonly EmpowerUContext _context;
 

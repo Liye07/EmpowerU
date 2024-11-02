@@ -11,7 +11,7 @@ using System.Security.Claims;
 
 namespace EmpowerU.Controllers
 {
-    public class MessagesController : Controller
+    public class MessagesController : BaseController
     {
         private readonly EmpowerUContext _context;
 
