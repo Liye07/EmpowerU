@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace EmpowerU.Controllers
 {
     [Authorize(Roles="Consumer,Business")]
-    public class MessagesController : Controller
     public class MessagesController : BaseController
     {
         private readonly EmpowerUContext _context;
