@@ -11,7 +11,7 @@ using Stripe;
 
 namespace EmpowerU.Controllers
 {
-    public class PaymentsController : Controller
+    public class PaymentsController : BaseController
     {
         private readonly EmpowerUContext _context;
 
@@ -19,15 +19,14 @@ namespace EmpowerU.Controllers
         {
             _context = context;
         }
-
         public ActionResult CreatePayment()
         {
-            // Set your test API key from Stripe
+            // Use Stripe sandbox API key for testing
             StripeConfiguration.ApiKey = "sk_test_51QFgQzGLtm1zZAcU1QCGWO7Xr6R8yMt4x6yD0UXR0nyBwPl99qgx4u2zpirOCOhtN7LyfyANT2Oa7mOOKBvuE6Kp00pRGluzCQ";
 
             var options = new PaymentIntentCreateOptions
             {
-                Amount = 5000, // Amount in cents (5000 = $50.00)
+                Amount = 5000, // Test amount (5000 = $50.00 in cents)
                 Currency = "usd",
                 PaymentMethodTypes = new List<string> { "card" },
             };
@@ -35,14 +34,43 @@ namespace EmpowerU.Controllers
             var service = new PaymentIntentService();
             PaymentIntent paymentIntent = service.Create(options);
 
-            // Pass the client secret to the view for client-side payment
+            // Pass the client secret to the view
             ViewBag.ClientSecret = paymentIntent.ClientSecret;
 
             return View();
+
+
         }
 
-        // GET: Payments
-        public async Task<IActionResult> Index()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ProcessPayment([FromBody] PaymentEmpowerU paymentData)
+        {
+            if (ModelState.IsValid)
+            {
+                var payment = new PaymentEmpowerU
+                {
+                    ConsumerID = paymentData.ConsumerID,
+                    BusinessID = paymentData.BusinessID,
+                    Amount = paymentData.Amount,
+                    PaymentDate = DateTime.Now,
+                    PaymentStatus = paymentData.PaymentStatus,
+                    PaymentIntentId = paymentData.PaymentIntentId
+                };
+
+                _context.Payments.Add(payment);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { success = true });
+            }
+            return BadRequest(new { success = false, message = "Invalid payment data" });
+        }
+    
+
+
+
+// GET: Payments
+public async Task<IActionResult> Index()
         {
             var empowerUContext = _context.Payments.Include(p => p.Business).Include(p => p.Consumer);
             return View(await empowerUContext.ToListAsync());

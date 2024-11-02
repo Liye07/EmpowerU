@@ -4,44 +4,176 @@
     ViewBag.Title = "Submit a Review";
 }
 
-<div class="container">
-    <h2>Submit a Review</h2>
+<div class="container feedback-card">
+    <!-- Header Section with Title and Close Icon -->
+    <div class="feedback-header">
+        <h2>Feedback</h2>
+        <span class="close-icon">&times;</span>
+    </div>
+
+    <!-- Main Question and Instruction Text -->
+    <h3 class="question-title">How are you feeling?</h3>
+    <p class="instruction-text">
+        Your input is valuable in helping us better understand your needs and tailor our service accordingly.
+    </p>
+
     @using (Html.BeginForm("CreateReview", "Reviews", FormMethod.Post))
     {
+        <!-- Review Title Input -->
         <div class="form-group">
-            @Html.LabelFor(model => model.Title, "Review Title")
-            @Html.TextBoxFor(model => model.Title, new { @class = "form-control", placeholder = "Enter Title" })
+            @Html.TextBoxFor(model => model.Title, new { @class = "form-control title-box", placeholder = "Give your review a catchy title!" })
             @Html.ValidationMessageFor(model => model.Title)
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Comment, "Review Body")
-            @Html.TextAreaFor(model => model.Comment, new { @class = "form-control", rows = 4, placeholder = "Type Comment" })
-            @Html.ValidationMessageFor(model => model.Comment)
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Rating, "Rating")
-            <select class="form-control" name="Rating">
-                <option value="1">1 Star</option>
-                <option value="2">2 Stars</option>
-                <option value="3">3 Stars</option>
-                <option value="4">4 Stars</option>
-                <option value="5">5 Stars</option>
-            </select>
+        <!-- Star Rating Section -->
+        <div class="form-group star-rating">
+            <strong> @Html.LabelFor(model => model.Rating, "Rating!") </strong>
+            <div class="stars">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <input type="radio" id="star-@i" name="Rating" value="@i" />
+                    <label for="star-@i" title="@i star">★</label>
+                }
+            </div>
             @Html.ValidationMessageFor(model => model.Rating)
         </div>
 
+
+        <!-- Comment Box Section -->
         <div class="form-group">
-           @* @ @Html.LabelFor(model => model.ReviewerName, "Your Name")
-            @Html.TextBoxFor(model => model.ReviewerName, new { @class = "form-control", placeholder = "Enter your name" })
-            @Html.ValidationMessageFor(model => model.ReviewerName) *@
+            @Html.TextAreaFor(model => model.Comment, new { @class = "form-control comment-box", rows = 3, placeholder = "Add a Comment..." })
+            @Html.ValidationMessageFor(model => model.Comment)
         </div>
 
-        <button type="submit" class="btn btn-primary">Submit Review</button>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn submit-button">Submit Now</button>
     }
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+<!-- CSS for Star Rating -->
+<style>
+    /* Star Rating Style */
+    .star-rating {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .stars {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+    }
+
+        .stars input[type="radio"] {
+            display: none; /* Hide radio buttons */
+        }
+
+        .stars label {
+            font-size: 24px;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0 5px;
+        }
+
+        .stars input[type="radio"]:checked ~ label,
+        .stars input[type="radio"]:hover ~ label {
+            color: #ffc107; /* Gold color for selected stars */
+        }
+
+        .stars input[type="radio"]:focus ~ label {
+            outline: 2px solid #ffa726; /* Outline for accessibility when focused */
+        }
+</style>
+
+<!-- CSS Styles to Match the Inspiration Design -->
+<style>
+    /* Card-like Container */
+    .feedback-card {
+        max-width: 400px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    /* Header Section */
+    .feedback-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .feedback-header h2 {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+    .close-icon {
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    /* Main Question and Instruction Text */
+    .question-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+
+    .instruction-text {
+        font-size: 14px;
+        color: #777;
+        margin: 10px 0 20px;
+    }
+
+    /* Review Title Box */
+    .title-box {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        font-size: 16px;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Comment Box */
+    .comment-box {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        margin-bottom: 20px;
+    }
+
+    /* Submit Button */
+    .submit-button {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(90deg, #00b09b 0%, #96c93d 100%);
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0px 4px 8px rgba(0, 128, 0, 0.3);
+        transition: box-shadow 0.2s;
+    }
+
+        .submit-button:hover {
+            box-shadow: 0px 6px 12px rgba(0, 128, 0, 0.4);
+        }
+</style>

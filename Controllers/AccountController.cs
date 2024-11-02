@@ -1,10 +1,13 @@
 ﻿using EmpowerU.Models;
 using EmpowerU.Models.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 
 namespace EmpowerU.Controllers
@@ -16,14 +19,18 @@ namespace EmpowerU.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager; // Change here if User is int
         private readonly EmpowerUContext _context;
+        private readonly Models.IEmailSender _emailSender;
+        private readonly UrlEncoder _urlEncoder;
 
-        public AccountController(EmpowerUContext context, ILogger<HomeController> logger, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole<int>> roleManager)
+        public AccountController(EmpowerUContext context, ILogger<HomeController> logger, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole<int>> roleManager, Models.IEmailSender emailSender, UrlEncoder urlEncoder)
         {
             _context = context;
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _emailSender = emailSender;
+            _urlEncoder = urlEncoder;
         }
 
         // GET: Home/Login
@@ -33,7 +40,6 @@ namespace EmpowerU.Controllers
             return View();
         }
 
-        // POST: Handle the login form submission
         [HttpPost]
         [ValidateAntiForgeryToken] // Helps protect against CSRF attacks
         public async Task<IActionResult> Login([FromForm] Login loginModel)
@@ -48,22 +54,29 @@ namespace EmpowerU.Controllers
 
             if (user != null)
             {
-                // Now attempt to sign in using the UserName and Password
+                // Attempt to sign in using the UserName and Password
                 var result = await _signInManager.PasswordSignInAsync(user.UserName, loginModel.Password, isPersistent: false, lockoutOnFailure: false);
 
                 if (result.Succeeded)
                 {
-                    await _userManager.FindByNameAsync(user.UserName);
-                    user.LastLogin = DateTime.UtcNow; // Set the last login time
+                    // Set the last login time
+                    user.LastLogin = DateTime.UtcNow;
                     await _userManager.UpdateAsync(user);
-                    return RedirectToAction("Index", "Home"); // Redirect to the home page or desired page after successful login
+
+                    // Set session variables for the logged-in user
+                    HttpContext.Session.SetString("UserId", user.Id.ToString());
+                    HttpContext.Session.SetString("UserEmail", user.Email);
+                    HttpContext.Session.SetString("UserName", user.UserName);
+
+                    // Redirect to the home page or desired page after successful login
+                    return RedirectToAction("Index", "Home");
                 }
             }
 
             // Add an error to the model state for invalid login attempts
-            ModelState.AddModelError(string.Empty, "Invalid login attempt."); // Add an error to the model state
-            ViewData["LoginError"] = "Invalid login attempt."; // Set the error message to be displayed in the view
-            return View(loginModel); // Return the view with the model containing the error
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            ViewData["LoginError"] = "Invalid login attempt.";
+            return View(loginModel);
         }
 
         [HttpPost]
@@ -73,9 +86,13 @@ namespace EmpowerU.Controllers
             // Log out the user
             await _signInManager.SignOutAsync();
 
+            // Clear all session variables
+            HttpContext.Session.Clear();
+
             // Redirect to the login page after logout
             return RedirectToAction("Login", "Account");
         }
+
 
         public IActionResult RegisterConsumer()
         {
@@ -278,11 +295,48 @@ namespace EmpowerU.Controllers
             return View(business);
         }
 
+
+        [HttpGet]
         public IActionResult ForgotPassword()
+        {
+            // Return the login view with a flag to indicate forgot password
+            return View(new Login { IsForgotPassword = true });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(Login model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Find the user by email
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                {
+                    // Don't reveal that the user does not exist or is not confirmed
+                    return RedirectToAction("ForgotPasswordConfirmation");
+                }
+
+                // Generate the password reset token
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, token }, protocol: HttpContext.Request.Scheme);
+
+                // Send email with the reset link
+                await _emailSender.SendEmailAsync(model.Email, "Reset Password",
+                    $"Please reset your password by <a href='{_urlEncoder.Encode(callbackUrl)}'>clicking here</a>.");
+
+
+                return RedirectToAction("ForgotPasswordConfirmation");
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        public IActionResult ForgotPasswordConfirmation()
         {
             return View();
         }
-
 
     }
 }

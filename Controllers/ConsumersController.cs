@@ -12,7 +12,7 @@ using System.Text.Json;
 
 namespace EmpowerU.Controllers
 {
-    public class ConsumersController : Controller
+    public class ConsumersController : BaseController
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager; // Change here if User is int

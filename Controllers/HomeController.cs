@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace EmpowerU.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<User> _userManager;
@@ -26,14 +26,14 @@ namespace EmpowerU.Controllers
             _context = context; // Initialize DbContext
         }
 
-        
+
         public async Task<IActionResult> Index()
         {
             ViewData["ActivePage"] = "Home"; // Set active page for Home
 
             // Fetch featured businesses
             var featuredBusinesses = await _context.Businesses
-                .Where(b => b.Rating > 1) // Adjust this condition as needed
+                //.Where(b => b.Rating > 1) // Adjust this condition as needed
                 .OrderByDescending(b => b.Rating)
                 .Take(3) // Limit to top 3 businesses, change as needed
                 .ToListAsync();
@@ -68,6 +68,12 @@ namespace EmpowerU.Controllers
             return degrees * (Math.PI / 180);
         }
 
+
+        public IActionResult RedirectToSearch(double lat, double lon)
+        {
+            // Pass latitude and longitude as route parameters to Consumers/Search
+            return RedirectToAction("Search", "Consumers", new { lat = lat, lon = lon });
+        }
 
         public IActionResult Search(double lat, double lon)
         {

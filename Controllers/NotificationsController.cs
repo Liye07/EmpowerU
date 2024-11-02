@@ -10,7 +10,7 @@ using EmpowerU.Models.Data;
 
 namespace EmpowerU.Controllers
 {
-    public class NotificationsController : Controller
+    public class NotificationsController : BaseController
     {
         private readonly EmpowerUContext _context;
 
