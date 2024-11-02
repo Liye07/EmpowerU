@@ -13,17 +13,17 @@
                 @foreach (var message in Model)
                 {
                     <li class="list-group-item list-group-item-action"
-                        onclick="loadMessage('@message.MessageID', '@message.Sender.Name', '@message.ReceiverID', '@message.MessageContent')">
+                        onclick="loadMessage('@message.MessageID', '@message.Sender.Name', '@message.SenderID', '@message.MessageContent')">
+                        <!-- Make sure to use SenderID for the reply -->
                         <div class="d-flex justify-content-between align-items-center">
                             <span>
-                                <!-- Icon indicating read/unread status -->
                                 @if (message.IsRead)
                                 {
-                                    <i class="fas fa-envelope-open text-success"></i> <!-- Open envelope for read -->
+                                    <i class="fas fa-envelope-open text-success"></i>
                                 }
                                 else
                                 {
-                                    <i class="fas fa-envelope text-warning"></i> <!-- Closed envelope for unread -->
+                                    <i class="fas fa-envelope text-warning"></i>
                                 }
                                 @(message.MessageContent.Length > 20 ? message.MessageContent.Substring(0, 20) + "..." : message.MessageContent)
                             </span>
@@ -31,26 +31,26 @@
                         </div>
                     </li>
                 }
+            </ul>
         </div>
 
         <!-- Main Chat Area: Display Selected Message -->
         <div class="col-md-8 d-flex flex-column" style="height: 80vh;">
             <div class="chat-header p-3 border-bottom bg-light">
-                <h5 class="mb-0" id="messageSender">Message Details</h5> <!-- Placeholder for sender name -->
+                <h5 class="mb-0" id="messageSender">Message Details</h5>
             </div>
 
             <div id="chatMessages" class="chat-messages p-3 flex-grow-1 overflow-auto" style="background-color: #e5ddd5;">
-                <!-- Details of the selected message will be loaded here -->
                 <p class="text-muted text-center">Select a message to view details.</p>
             </div>
 
             <!-- Reply Box -->
             <div class="p-3 border-top">
-                <div id="replyHeader" class="text-muted mb-2" style="display:none;"></div> <!-- For displaying receiver's name -->
+                <div id="replyHeader" class="text-muted mb-2" style="display:none;"></div>
                 <form asp-action="SendMessage" method="post">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Type a message" id="replyInput" name="MessageContent" required />
-                        <input type="hidden" id="receiverId" name="ReceiverID" value="" /> <!-- Set the receiver ID dynamically -->
+                        <input type="hidden" id="receiverId" name="ReceiverID" value="" />
                         <button type="submit" class="btn btn-primary">Send</button>
                     </div>
                 </form>
@@ -60,7 +60,7 @@
 </div>
 
 <script>
-    function loadMessage(messageId, senderName, receiverName, messageContent) {
+    function loadMessage(messageId, senderName, originalSenderId, messageContent) {
         // Display the selected message in the chat area
         document.getElementById("chatMessages").innerHTML = `
                 <div class="message text-start">
@@ -72,10 +72,15 @@
             `;
 
         // Update the message sender header
-        document.getElementById("messageSender").innerText = `Message from: ${senderName}`; // Set the sender's name
-        // Set the receiverId based on the selected message
-        document.getElementById("receiverId").value = receiverName; // Set the actual receiver ID
-        document.getElementById("replyHeader").innerText = `Replying to: ${senderName}`; // Display sender's name for replying
-        document.getElementById("replyHeader").style.display = "block"; // Show the reply header
+        document.getElementById("messageSender").innerText = `Message from: ${senderName}`;
+
+        // Set the original sender ID (the person you're replying to) in the hidden input
+        document.getElementById("receiverId").value = originalSenderId; // Update this to reflect the correct sender
+
+        // Update the reply header to indicate who you're replying to
+        document.getElementById("replyHeader").innerText = `Replying to: ${senderName}`;
+        document.getElementById("replyHeader").style.display = "block";
     }
+
+
 </script>
