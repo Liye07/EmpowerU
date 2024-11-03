@@ -15,9 +15,9 @@
             <button id="past-btn" class="btn btn-secondary" onclick="showPastAppointments()">Past</button>
             <button id="upcoming-btn" class="btn btn-primary active" onclick="showUpcomingAppointments()">Upcoming</button>
         </div>
-        <div class="col-md-4 text-right">
+      @*   <div class="col-md-4 text-right">
             <input type="text" class="form-control" placeholder="Search by business name..." />
-        </div>
+        </div> *@
     </div>
 
     <div class="row">
@@ -114,7 +114,7 @@
 
                 <div class="button-container">
                     <button id="cancelButton" class="btn btn-outline-danger mt-2" style="display: none;" onclick="cancelAppointment()">Cancel</button>
-                    <button id="leaveReviewButton" class="btn btn-primary mt-2" style="display: none;">Leave a Review</button>
+                    <button id="leaveReviewButton" class="btn btn-primary mt-2" onclick="location.href='/Review/CreateReview?BusinessID=@Model.BusinessID'" style="display: none;">Leave a Review</button>
                     <button id="rescheduleButton" class="btn btn-warning mt-2" onclick="rescheduleAppointment()">Reschedule</button>
                     <button id="payNowButton" class="btn btn-success mt-2" style="display: none;">Pay Now</button>
                 </div>

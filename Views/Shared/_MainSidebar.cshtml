@@ -85,7 +85,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "EditBusinessProfile" ? "active" : "")" href="@Url.Action("EditBusinessProfile", "Businesses", new { id = Model.Id })" data-target="profile">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "EditBusinessProfile" ? "active" : "")" href="@Url.Action("Details", "Businesses", new { id = Model.Id })" data-target="profile">
                     <i class="fas fa-user"></i> Profile
                 </a>
             </li>
@@ -123,7 +123,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "EditConsumerProfile" ? "active" : "")" href="@Url.Action("EditConsumerProfile", "Consumers", new { id = Model.Id })" data-target="profile">
+                <a class="nav-link text-white @(ViewContext.RouteData.Values["action"].ToString() == "EditConsumerProfile" ? "active" : "")" href="@Url.Action("Details", "Consumers", new { id = Model.Id })" data-target="profile">
                     <i class="fas fa-user"></i> Profile
                 </a>
             </li>

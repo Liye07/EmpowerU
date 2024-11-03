@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmpowerU.Models;
 using EmpowerU.Models.Data;
+using System.Security.Claims;
 
 namespace EmpowerU.Controllers
 {
@@ -17,13 +18,6 @@ namespace EmpowerU.Controllers
         public NotificationsController(EmpowerUContext context)
         {
             _context = context;
-        }
-
-        // GET: Notifications
-        public async Task<IActionResult> Index()
-        {
-            var empowerUContext = _context.Notifications.Include(n => n.User);
-            return View(await empowerUContext.ToListAsync());
         }
 
         // GET: Notifications/Details/5
@@ -45,28 +39,29 @@ namespace EmpowerU.Controllers
             return View(notification);
         }
 
-        // GET: Notifications/Create
-        public IActionResult Create()
+        public void AddNotification(int _userID, string _notificationContent)
         {
-            ViewData["UserID"] = new SelectList(_context.Users, "UserID", "Email");
-            return View();
+            var notification = new Notification
+            {
+                UserID = _userID,
+                NotificationContent = _notificationContent,
+                Timestamp = DateTime.UtcNow,
+                IsRead = false
+            };
+
+            _context.Notifications.Add(notification);
+            _context.SaveChanges();
         }
 
-        // POST: Notifications/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NotificationID,UserID,NotificationContent,IsRead,Timestamp")] Notification notification)
+        public IActionResult GetNotifications()
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(notification);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserID"] = new SelectList(_context.Users, "UserID", "Email", notification.UserID);
-            return View(notification);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var notifications = _context.Notifications
+                .Where(n => n.UserID == userId && !n.IsRead)
+                .OrderByDescending(n => n.Timestamp)
+                .ToList();
+
+            return Json(new { notifications });
         }
 
         // GET: Notifications/Edit/5
