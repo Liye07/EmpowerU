@@ -360,5 +360,98 @@ namespace EmpowerU.Controllers
 
 
 
+
+
+
+
+
+
+
+
+        private const double SEARCH_RADIUS_KM = 10; // Define search radius in kilometers
+
+        [HttpGet]
+        public async Task<IActionResult> Search(double lat, double lon, string address)
+        {
+            // Get businesses within the radius of the searched location
+            var nearbyBusinesses = await GetNearbyBusinesses(lat, lon, SEARCH_RADIUS_KM);
+            ViewBag.SearchLocation = address;
+            ViewBag.Latitude = lat;
+            ViewBag.Longitude = lon;
+            return View(nearbyBusinesses);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetBusinessesNearby(double lat, double lon, string searchTerm = "")
+        {
+            var businesses = await GetNearbyBusinesses(lat, lon, SEARCH_RADIUS_KM);
+
+            // Filter results if searchTerm is provided
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                businesses = businesses.Where(b =>
+                    b.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    b.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    b.BusinessCategory.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+                ).ToList();
+            }
+
+            return Json(businesses);
+        }
+
+        private async Task<List<Business>> GetNearbyBusinesses(double centerLat, double centerLon, double radiusKm)
+        {
+            const double KM_PER_DEGREE = 111.32;
+
+            // Calculate the latitude and longitude ranges
+            double latRange = radiusKm / KM_PER_DEGREE;
+            double lonRange = radiusKm / (KM_PER_DEGREE * Math.Cos(centerLat * Math.PI / 180));
+
+            // Query businesses within the bounding box, accessing Latitude and Longitude from LocationService
+            var businesses = await _context.Businesses
+                .Include(b => b.LocationService)
+                .Where(b =>
+                    b.LocationService.Latitude >= (centerLat - latRange) &&
+                    b.LocationService.Latitude <= (centerLat + latRange) &&
+                    b.LocationService.Longitude >= (centerLon - lonRange) &&
+                    b.LocationService.Longitude <= (centerLon + lonRange)
+                )
+                .ToListAsync();
+
+            // Filter businesses by exact distance within the radius
+            return businesses
+                .Select(b => {
+                    // Calculate exact distance using LocationService coordinates
+                    double distance = CalculateDistance(centerLat, centerLon, b.LocationService.Latitude, b.LocationService.Longitude);
+                    return new { Business = b, Distance = distance };
+                })
+                .Where(x => x.Distance <= radiusKm)
+                .OrderBy(x => x.Distance)
+                .Select(x => x.Business)
+                .ToList();
+        }
+
+        private double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+        {
+            const double R = 6371; // Earth's radius in kilometers
+            var dLat = ToRad(lat2 - lat1);
+            var dLon = ToRad(lon2 - lon1);
+
+            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                    Math.Cos(ToRad(lat1)) * Math.Cos(ToRad(lat2)) *
+                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            return R * c;
+        }
+
+        private double ToRad(double deg)
+        {
+            return deg * Math.PI / 180;
+        }
+
+
+
+
     }
 }
