@@ -16,7 +16,7 @@
             <button id="past-btn" class="btn btn-secondary" onclick="showPastAppointments()">Past</button>
             <button id="upcoming-btn" class="btn btn-primary active" onclick="showUpcomingAppointments()">Upcoming</button>
         </div>
-      @*   <div class="col-md-4 text-right">
+  @*       <div class="col-md-4 text-right">
             <input type="text" class="form-control" placeholder="Search by customer name..." />
         </div> *@
     </div>
@@ -29,9 +29,9 @@
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th>Appointment ID</th>
-                            <th>Full Name</th>
-                            <th>Service</th>
+                            <th>First Name</th>
+                            <th>Surname</th>
+                            <th>Service Type</th>
                             <th>Date & Time</th>
                             <th>Status</th>
                         </tr>
@@ -39,9 +39,9 @@
                     <tbody>
                         @foreach (var appointment in upcomingAppointments)
                         {
-                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID, '@appointment.Consumer.Name', '@appointment.Consumer.Email', '@appointment.Consumer.PhoneNumber', '@appointment.Service.ServiceName', '@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")', '@appointment.Status')">
-                                <td>@appointment.AppointmentID</td>
+                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID, '@appointment.Consumer.Name', '@appointment.Consumer.Surname', '@appointment.Consumer.Email', '@appointment.Consumer.PhoneNumber', '@appointment.Service.ServiceName', '@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")', '@appointment.Status')">
                                 <td>@appointment.Consumer.Name</td>
+                                <td>@appointment.Consumer.Surname</td>
                                 <td>@appointment.Service.ServiceName</td>
                                 <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
                                 <td>
@@ -67,8 +67,8 @@
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th>Appointment ID</th>
-                            <th>Name</th>
+                            <th>First Name</th>
+                            <th>Surname</th>
                             <th>Date & Time</th>
                             <th>Service Type</th>
                             <th>Status</th>
@@ -77,9 +77,9 @@
                     <tbody>
                         @foreach (var appointment in pastAppointments)
                         {
-                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID, '@appointment.Consumer.Name', '@appointment.Consumer.Email', '@appointment.Consumer.PhoneNumber', '@appointment.Service.ServiceName', '@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")', '@appointment.Status')">
-                                <td>@appointment.AppointmentID</td>
+                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID, '@appointment.Consumer.Name', '@appointment.Consumer.Surname', '@appointment.Consumer.Email', '@appointment.Consumer.PhoneNumber', '@appointment.Service.ServiceName', '@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")', '@appointment.Status')">
                                 <td>@appointment.Consumer.Name</td>
+                                <td>@appointment.Consumer.Surname</td>
                                 <td>@appointment.Service.ServiceName</td>
                                 <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
                                 <td>
@@ -106,8 +106,9 @@
         <div class="col-md-5">
             <h2 class="h5 mb-3">Appointment Details</h2>
             <div id="appointmentDetails" class="card p-3 mb-3" style="display: none;">
-                <p><strong>Appointment ID:</strong> <span id="appointmentId"></span></p>
+                <p><strong></strong> <span id="appointmentId" style="display: none;"></span></p>
                 <p><strong>Name:</strong> <span id="appointmentName"></span></p>
+                <p><strong>Surame:</strong> <span id="appointmentSurname"></span></p>
                 <p><strong>Email:</strong> <span id="appointmentEmail"></span></p>
                 <p><strong>Phone:</strong> <span id="appointmentPhone"></span></p>
                 <p><strong>Service:</strong> <span id="appointmentService"></span></p>
@@ -214,9 +215,10 @@
         document.getElementById('past-btn').classList.add('btn-secondary');
     }
 
-    function showAppointmentDetails(id, name, email, phone, service, dateTime, status) {
+    function showAppointmentDetails(id, name, surname, email, phone, service, dateTime, status) {
         document.getElementById("appointmentId").innerText = id;
         document.getElementById("appointmentName").innerText = name;
+        document.getElementById("appointmentSurname").innerText = surname;
         document.getElementById("appointmentEmail").innerText = email;
         document.getElementById("appointmentPhone").innerText = phone;
         document.getElementById("appointmentService").innerText = service;
