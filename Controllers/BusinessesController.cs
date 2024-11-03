@@ -196,41 +196,31 @@ namespace EmpowerU.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Get the currently logged-in user
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get user ID from claims
-                var consumer = _context.Consumers.Find(userId); // Assuming you have a Consumers DbSet
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var consumer = _context.Consumers.Find(userId);
 
                 if (consumer == null)
                 {
                     return Json(new { success = false, message = "Consumer not found." });
                 }
 
-                // Fetch the service name based on the serviceID
                 var service = _context.Services.Find(serviceID);
                 if (service == null)
                 {
                     return Json(new { success = false, message = "Service not found." });
                 }
 
-                var appointment = new Appointment
-                {
-                    BusinessID = businessID,
-                    ConsumerID = consumer.Id, // Use the Consumer's ID
-                    ServiceType = service.ServiceName, // Assign the service name
-                    DateTime = bookingDate,
-                    Status = "Confirmed",
-                    Confirmation = true
-                };
+                // Use raw SQL to insert the appointment
+                var insertQuery = $@"
+            INSERT INTO Appointment (BusinessID, ConsumerID, ServiceType, DateTime, Status, Confirmation)
+            VALUES ({businessID}, {consumer.Id}, '{service.ServiceName}', '{bookingDate}', 'Scheduled', 1)";
 
-                // Save the appointment to the database
-                _context.Appointments.Add(appointment);
-                _context.SaveChanges();
+                // Execute the raw SQL insert command
+                _context.Database.ExecuteSqlRaw(insertQuery);
 
-                // Return a success response
-                return Json(new { success = true, message = "Booking confirmed!", appointment });
+                return Json(new { success = true, message = "Booking confirmed!" });
             }
 
-            // If the model state is not valid, return an error response
             return Json(new { success = false, message = "Failed to book appointment. Please try again." });
         }
 
