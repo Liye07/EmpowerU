@@ -191,39 +191,79 @@ namespace EmpowerU.Controllers
             return View(model);
         }
 
+        public IActionResult GetAvailableTimeSlots(int serviceID, DateTime bookingDate)
+        {
+            // Define working hours and slot duration
+            TimeSpan startTime = TimeSpan.FromHours(9);  // 9:00 AM
+            TimeSpan endTime = TimeSpan.FromHours(17);   // 5:00 PM
+            TimeSpan slotDuration = TimeSpan.FromHours(1); // 1-hour slots
+
+            // Get existing appointments for the selected date and service
+            var bookedSlots = _context.Appointments
+                .Where(a => a.ServiceID == serviceID && a.DateTime.Date == bookingDate.Date)
+                .Select(a => a.DateTime.TimeOfDay)
+                .ToList();
+
+            // Generate all possible time slots within the working hours
+            var availableSlots = new List<TimeSpan>();
+            for (var time = startTime; time < endTime; time += slotDuration)
+            {
+                // Only add the slot if it’s not already booked
+                if (!bookedSlots.Contains(time))
+                {
+                    availableSlots.Add(time);
+                }
+            }
+
+            // Return available time slots
+            return Json(new { availableSlots = availableSlots.Select(s => s.ToString(@"hh\:mm")) });
+        }
+
+
         [HttpPost]
-        public IActionResult BookService(int serviceID, DateTime bookingDate, int businessID)
+        public IActionResult BookService(int serviceID, DateTime bookingDate, int businessID, string BookingTime)
         {
             if (ModelState.IsValid)
             {
+                DateTime fullBookingDateTime = DateTime.Parse(BookingTime);
                 var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
                 var consumer = _context.Consumers.Find(userId);
 
                 if (consumer == null)
                 {
-                    return Json(new { success = false, message = "Consumer not found." });
+                    ModelState.AddModelError("", "Consumer not found.");
+                    return View("Details", new { id = businessID }); // Return to booking form with error
                 }
 
                 var service = _context.Services.Find(serviceID);
                 if (service == null)
                 {
-                    return Json(new { success = false, message = "Service not found." });
+                    ModelState.AddModelError("", "Service not found.");
+                    return View("Details", new { id = businessID }); // Return to booking form with error
                 }
 
-                // Use raw SQL to insert the appointment
-                var insertQuery = $@"
-            INSERT INTO Appointment (BusinessID, ConsumerID, ServiceType, DateTime, Status, Confirmation)
-            VALUES ({businessID}, {consumer.Id}, '{service.ServiceName}', '{bookingDate}', 'Scheduled', 1)";
+                TimeSpan startBusinessHours = new TimeSpan(9, 0, 0); // 9:00 AM
+                TimeSpan endBusinessHours = new TimeSpan(17, 0, 0); // 5:00 PM
 
-                // Execute the raw SQL insert command
+                if (fullBookingDateTime.TimeOfDay < startBusinessHours || fullBookingDateTime.TimeOfDay > endBusinessHours)
+                {
+                    ModelState.AddModelError("", "Booking time must be between 9:00 AM and 5:00 PM.");
+                    return View("Details", new { id = businessID }); // Return to booking form with error
+                }
+
+                var insertQuery = $@"INSERT INTO Appointment (BusinessID, ConsumerID, ServiceID, DateTime, Status, Confirmation)
+                             VALUES ({businessID}, {consumer.Id}, '{serviceID}', '{fullBookingDateTime}', 'Scheduled', 1)";
+
                 _context.Database.ExecuteSqlRaw(insertQuery);
 
-                return Json(new { success = true, message = "Booking confirmed!" });
+                // Store the confirmation message in TempData
+                TempData["ConfirmationMessage"] = $"Booking confirmed! \nService: {service.ServiceName}, \nDate: {fullBookingDateTime:dd MMM yyyy}, \nTime: {fullBookingDateTime:hh:mm tt}";
+
+                return RedirectToAction("Details", new { id = businessID }); // Redirect to the booking form with the business ID
             }
 
-            return Json(new { success = false, message = "Failed to book appointment. Please try again." });
+            return View("Details", new { id = businessID }); // Return to booking form if model state is invalid
         }
-
 
 
 
@@ -414,6 +454,7 @@ namespace EmpowerU.Controllers
                 .Where(a => a.BusinessID == business.Id)
                 .Include(a => a.Business)
                 .Include(a => a.Consumer) // Ensure Consumer data is loaded
+                .Include(a => a.Service)
                 .ToListAsync();
 
             var currentDate = DateTime.UtcNow;
@@ -482,16 +523,16 @@ namespace EmpowerU.Controllers
                             return Json(new { success = false, message = "The new appointment time must be in the future." });
                         }
 
-                        //// Check for appointment overlap
-                        //bool hasConflict = _context.Appointments.Any(a =>
-                        //    a.AppointmentID != appointmentId &&
-                        //    a.DateTime == request.DateTime &&
-                        //    (a.Status == "Scheduled" || a.Status == "Pending"));
+                        // Check for appointment overlap
+                        bool hasConflict = _context.Appointments.Any(a =>
+                            a.AppointmentID != appointmentId &&
+                            a.DateTime == request.DateTime &&
+                            (a.Status == "Scheduled" || a.Status == "Pending"));
 
-                        //if (hasConflict)
-                        //{
-                        //    return Json(new { success = false, message = "The new appointment time conflicts with an existing appointment." });
-                        //}
+                        if (hasConflict)
+                        {
+                            return Json(new { success = false, message = "The new appointment time conflicts with an existing appointment." });
+                        }
 
                         // Update the appointment
                         appointment.DateTime = request.DateTime;
