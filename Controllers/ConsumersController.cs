@@ -223,6 +223,7 @@ namespace EmpowerU.Controllers
             var appointments = await _context.Appointments
                 .Where(a => a.ConsumerID == consumer.Id)
                 .Include(a => a.Business) // Include the Business information from appointments
+                .Include(a => a.Service)
                 .ToListAsync();
 
             // Get the current date to filter appointments

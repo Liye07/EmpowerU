@@ -36,10 +36,10 @@
                 <tbody>
                     @foreach (var appointment in upcomingAppointments)
                     {
-                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
+                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.Service.ServiceName','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
                             <td>@appointment.AppointmentID</td>
                             <td>@appointment.Business.Name</td>
-                            <td>@appointment.ServiceType</td>
+                            <td>@appointment.Service.ServiceName</td>
                             <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
                             <td>
                                 <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
@@ -74,10 +74,10 @@
                 <tbody>
                     @foreach (var appointment in pastAppointments)
                     {
-                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.ServiceType','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
+                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.Service.ServiceName','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
                             <td>@appointment.AppointmentID</td>
                             <td>@appointment.Business.Name</td>
-                            <td>@appointment.ServiceType</td>
+                            <td>@appointment.Service.ServiceName</td>
                             <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
                             <td>
                                 <span class="badge @(appointment.Status == "Completed" ? "bg-success" :
@@ -113,7 +113,7 @@
                 <p><strong>Status: </strong><span class="badge" id="detailStatusBadge"></span></p>
 
                 <div class="button-container">
-                    <button id="cancelButton" class="btn btn-danger mt-2" style="display: none;" onclick="cancelAppointment()">Cancel</button>
+                    <button id="cancelButton" class="btn btn-outline-danger mt-2" style="display: none;" onclick="cancelAppointment()">Cancel</button>
                     <button id="leaveReviewButton" class="btn btn-primary mt-2" style="display: none;">Leave a Review</button>
                     <button id="rescheduleButton" class="btn btn-warning mt-2" onclick="rescheduleAppointment()">Reschedule</button>
                     <button id="payNowButton" class="btn btn-success mt-2" style="display: none;">Pay Now</button>

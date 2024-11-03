@@ -17,8 +17,7 @@ namespace EmpowerU.Models
         public int ConsumerID { get; set; }
 
         [Required]
-        [StringLength(45)]
-        public string ServiceType { get; set; }
+        public int ServiceID { get; set; }
 
         [Required]
         public DateTime DateTime { get; set; }
@@ -35,5 +34,9 @@ namespace EmpowerU.Models
 
         [ForeignKey(nameof(ConsumerID))]
         public Consumer Consumer { get; set; }
+
+
+        [ForeignKey(nameof(ServiceID))]
+        public Service Service { get; set; }
     }
 }
