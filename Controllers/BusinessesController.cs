@@ -232,23 +232,23 @@ namespace EmpowerU.Controllers
                 if (consumer == null)
                 {
                     ModelState.AddModelError("", "Consumer not found.");
-                    return View("Details", new { id = businessID }); // Return to booking form with error
+                    return View("Details", new { id = businessID }); 
                 }
 
                 var service = _context.Services.Find(serviceID);
                 if (service == null)
                 {
                     ModelState.AddModelError("", "Service not found.");
-                    return View("Details", new { id = businessID }); // Return to booking form with error
+                    return View("Details", new { id = businessID });
                 }
 
-                TimeSpan startBusinessHours = new TimeSpan(9, 0, 0); // 9:00 AM
-                TimeSpan endBusinessHours = new TimeSpan(17, 0, 0); // 5:00 PM
+                TimeSpan startBusinessHours = new TimeSpan(9, 0, 0); 
+                TimeSpan endBusinessHours = new TimeSpan(17, 0, 0); 
 
                 if (fullBookingDateTime.TimeOfDay < startBusinessHours || fullBookingDateTime.TimeOfDay > endBusinessHours)
                 {
                     ModelState.AddModelError("", "Booking time must be between 9:00 AM and 5:00 PM.");
-                    return View("Details", new { id = businessID }); // Return to booking form with error
+                    return View("Details", new { id = businessID }); 
                 }
 
                 var insertQuery = $@"INSERT INTO Appointment (BusinessID, ConsumerID, ServiceID, DateTime, Status, Confirmation)
@@ -259,10 +259,10 @@ namespace EmpowerU.Controllers
                 // Store the confirmation message in TempData
                 TempData["ConfirmationMessage"] = $"Booking confirmed! \nService: {service.ServiceName}, \nDate: {fullBookingDateTime:dd MMM yyyy}, \nTime: {fullBookingDateTime:hh:mm tt}";
 
-                return RedirectToAction("Details", new { id = businessID }); // Redirect to the booking form with the business ID
+                return RedirectToAction("Details", new { id = businessID });
             }
 
-            return View("Details", new { id = businessID }); // Return to booking form if model state is invalid
+            return View("Details", new { id = businessID }); 
         }
 
 
@@ -275,16 +275,14 @@ namespace EmpowerU.Controllers
                 return NotFound();
             }
 
-            // Include the related LocationService when fetching the business profile
             var business = await _context.Businesses
-                .Include(b => b.LocationService) // Include LocationService data
+                .Include(b => b.LocationService) 
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (business == null)
             {
                 return NotFound();
             }
-/*            ViewData["ActivePage"] = "EditBusinessProfile";*/
 
             // If there is no associated LocationService, create an empty one
             if (business.LocationService == null)
