@@ -20,6 +20,22 @@ namespace EmpowerU.Controllers
             _context = context;
         }
 
+        public IActionResult GetProfilePicture(int userId)
+        {
+            var user = _context.Users.Find(userId); // Replace with your actual user retrieval logic
+            if (user == null || user.ProfilePicture == null)
+            {
+                return NotFound();
+            }
+
+            // Convert byte array to base64 string
+            string base64Image = Convert.ToBase64String(user.ProfilePicture);
+            string imageDataURL = $"data:image/jpeg;base64,{base64Image}"; // Assuming the image is a JPEG
+
+            return Json(new { imageData = imageDataURL });
+        }
+
+
         // GET: Notifications/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -28,16 +44,25 @@ namespace EmpowerU.Controllers
                 return NotFound();
             }
 
+            // Get the notification using the provided ID
             var notification = await _context.Notifications
                 .Include(n => n.User)
                 .FirstOrDefaultAsync(m => m.NotificationID == id);
+
             if (notification == null)
             {
                 return NotFound();
             }
 
-            return View(notification);
+            // Fetch notifications based on whether the user is a consumer or a business
+            var notifications = await _context.Notifications
+                .Include(n => n.User)
+                .Where(n => n.UserID == notification.UserID)
+                .ToListAsync();
+
+            return View(notifications);
         }
+
 
         public void AddNotification(int _userID, string _notificationContent)
         {
