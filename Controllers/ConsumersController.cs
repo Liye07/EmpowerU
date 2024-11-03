@@ -316,7 +316,7 @@ namespace EmpowerU.Controllers
 
 
         [HttpPost]
-        [Route("appointments/b_cancel/{appointmentId}")]
+        [Route("appointments/cancel/{appointmentId}")]
         public IActionResult B_Cancel(int appointmentId)
         {
             var appointment = _context.Appointments
