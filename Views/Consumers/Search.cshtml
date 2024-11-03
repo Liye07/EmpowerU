@@ -82,8 +82,17 @@
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const lat = parseFloat(urlParams.get('lat')) || 0;
+        const lon = parseFloat(urlParams.get('lon')) || 0;
+        const address = urlParams.get('address') || '[Location not specified]';
 
-        const map = L.map('map').setView([0, 0], 2); // Set initial view (latitude, longitude, zoom level)
+        // Update location label
+        document.getElementById("locationLabel").textContent = decodeURIComponent(address);
+
+        // Initialize map with the searched location
+        const map = L.map('map').setView([lat, lon], 13); // Higher zoom level (13) for better detail
 
         // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -91,56 +100,94 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Function to add markers to the map
-        function addMarker(lat, lng, name) {
-            const marker = L.marker([lat, lng]).addTo(map);
-            marker.bindPopup(`<b>${name}</b>`).openPopup();
+        // Add a marker for the searched location
+        const searchMarker = L.marker([lat, lon])
+            .addTo(map)
+            .bindPopup('<b>Searched Location</b>')
+            .openPopup();
+
+        // Function to add business markers to the map
+        function addBusinessMarker(business) {
+            const marker = L.marker([business.Latitude, business.Longitude])
+                .addTo(map)
+                .bindPopup(`
+                        <div class="popup-content">
+                            <h5>${business.Name}</h5>
+                            <p>${business.Description}</p>
+                            <p>Category: ${business.BusinessCategory}</p>
+                            <p>Rating: ${business.Rating}</p>
+                        </div>
+                    `);
+
+            // Store marker reference for later use
+            return marker;
         }
 
+        // Add markers for initial business data
+        const businesses = @Json.Serialize(Model);
+        const markers = [];
+
+        businesses.forEach(business => {
+            if (business.Latitude && business.Longitude) {
+                const marker = addBusinessMarker(business);
+                markers.push(marker);
+            }
+        });
+
+        // Create a bounds object that includes all markers and the search location
+        if (markers.length > 0) {
+            const bounds = L.featureGroup([searchMarker, ...markers]).getBounds();
+            map.fitBounds(bounds, { padding: [50, 50] });
+        }
+
+        // Handle search input
         document.getElementById("searchInput").addEventListener("input", function () {
             const searchTerm = this.value;
-            fetch(`@Url.Action("Search", "Consumer")?searchTerm=${searchTerm}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Clear previous results
-                    const businessResults = document.querySelector(".sidebar");
-                    businessResults.innerHTML = '';
 
-                    // Clear existing markers
-                    map.eachLayer(function (layer) {
-                        if (layer instanceof L.Marker) {
-                            map.removeLayer(layer);
+            // Only search if there's input
+            if (searchTerm.trim().length > 2) {
+                fetch(`@Url.Action("Search", "Consumer")?searchTerm=${searchTerm}&lat=${lat}&lon=${lon}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Clear previous results
+                        const businessResults = document.querySelector(".sidebar");
+                        businessResults.innerHTML = `<h6>Search results near: <span id="locationLabel">${decodeURIComponent(address)}</span></h6>`;
+
+                        // Clear existing business markers (but keep search location marker)
+                        markers.forEach(marker => map.removeLayer(marker));
+                        markers.length = 0;
+
+                        // Populate results and add markers to the map
+                        data.forEach(business => {
+                            // Create business card
+                            const card = document.createElement("div");
+                            card.className = "business-card";
+                            card.innerHTML = `
+                                    <img src="data:image/png;base64,${business.ProfilePicture}" alt="Logo">
+                                    <div class="business-details">
+                                        <h5>${business.Name}</h5>
+                                        <p>${business.Description}</p>
+                                        <p>Category: ${business.BusinessCategory}</p>
+                                        <p>Rating: ${business.Rating}</p>
+                                    </div>
+                                `;
+                            businessResults.appendChild(card);
+
+                            // Add marker if coordinates exist
+                            if (business.Latitude && business.Longitude) {
+                                const marker = addBusinessMarker(business);
+                                markers.push(marker);
+                            }
+                        });
+
+                        // Update map bounds to show all markers
+                        if (markers.length > 0) {
+                            const bounds = L.featureGroup([searchMarker, ...markers]).getBounds();
+                            map.fitBounds(bounds, { padding: [50, 50] });
                         }
-                    });
-
-                    // Update the location label if you have a specific location
-                    document.getElementById("locationLabel").textContent = "your desired location"; // Update with your logic
-
-                    // Populate results and add markers to the map
-                    data.forEach(business => {
-                        const card = document.createElement("div");
-                        card.className = "business-card";
-                        card.innerHTML = `
-                                            <img src="data:image/png;base64,${business.ProfilePicture}" alt="Logo">
-                                            <div class="business-details">
-                                                <h5>${business.Name}</h5>
-                                                <p>${business.Description}</p>
-                                                <p>Category: ${business.BusinessCategory}</p>
-                                                <p>Rating: ${business.Rating}</p>
-                                            </div>
-                                        `;
-                        businessResults.appendChild(card);
-
-                        // Add marker for each business (update property names accordingly)
-                        addMarker(business.Latitude, business.Longitude, business.Name);
-                    });
-
-                    // Center map based on the first business (if any)
-                    if (data.length > 0) {
-                        map.setView([data[0].Latitude, data[0].Longitude], 12); // Adjust zoom level as necessary
-                    }
-                })
-                .catch(error => console.error('Error fetching search results:', error));
+                    })
+                    .catch(error => console.error('Error fetching search results:', error));
+            }
         });
     </script>
 </body>

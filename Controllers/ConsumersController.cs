@@ -18,6 +18,7 @@ namespace EmpowerU.Controllers
         private readonly RoleManager<IdentityRole<int>> _roleManager; // Change here if User is int
         private readonly EmpowerUContext _context;
         private readonly ILogger<ConsumersController> _logger;
+        
 
         public ConsumersController(EmpowerUContext context, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager, ILogger<ConsumersController> logger) // Change here if User is int
         {
@@ -326,6 +327,12 @@ namespace EmpowerU.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
+
+
+
+
+
 
     }
 }

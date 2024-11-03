@@ -118,30 +118,22 @@
                 }
             }
         }
-
         function selectAddress(result) {
             const addressComponents = result.address;
             const streetAddress = addressComponents.road || addressComponents.street || "";
             document.getElementById('address-input').value = streetAddress;
 
-            // Update latitude and longitude fields
+            // Update hidden fields
             document.getElementById('latitude').value = result.lat;
             document.getElementById('longitude').value = result.lon;
-
-            // Extract and populate other location details
             document.getElementById('city').value = addressComponents.city || addressComponents.town || addressComponents.village || "";
             document.getElementById('postalCode').value = addressComponents.postcode || "";
             document.getElementById('country').value = addressComponents.country || "";
             document.getElementById('suburb').value = addressComponents.suburb || addressComponents.neighbourhood || "";
 
-            // Clear suggestions
-            document.getElementById('suggestion-list').innerHTML = '';
-            document.getElementById('suggestion-list').style.display = 'none';
-
-            // OPTIONAL: Navigate to the Consumers/Search screen
-            window.location.href = '/Consumers/Search?lat=' + result.lat + '&lon=' + result.lon;
+            // Redirect with all necessary parameters
+            window.location.href = `/Consumers/Search?lat=${result.lat}&lon=${result.lon}&address=${encodeURIComponent(result.display_name)}`;
         }
-
 
 
     </script>
