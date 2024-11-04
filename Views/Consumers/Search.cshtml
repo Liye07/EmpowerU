@@ -37,9 +37,6 @@
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             }
 
-
-
-        /* Style adjustments for layout */
         .container {
             display: flex;
             width: 100%;
@@ -63,11 +60,10 @@
 
         .business-card img {
             width: 100px;
-            height: 100px;
+            height: 500px;
             object-fit: cover;
         }
 
-        /* Leaflet map styling */
         #map {
             width: 100%;
             height: 100%; /* Make map fill the container */
@@ -76,10 +72,11 @@
         }
     </style>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <!-- Add these in the head section -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script> <!-- Load Leaflet first -->
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script> <!-- Load MarkerCluster after Leaflet -->
+
 </head>
 <body>
     <div class="header">
@@ -90,13 +87,12 @@
     </div>
 
     <div class="container">
-        <!-- Sidebar with business results -->
         <div class="sidebar">
             <h6>Search results: Businesses in <span id="locationLabel">[Specified location]</span></h6>
 
             @foreach (var business in Model)
             {
-                <div class="business-card">
+                <div class="business-card" onclick="viewBusinessDetails(@business.Id)">
                     <img src="data:image/png;base64,@(Convert.ToBase64String(business.ProfilePicture ?? new byte[0]))" alt="Logo">
                     <div class="business-details">
                         <h5>@business.Name</h5>
@@ -108,7 +104,6 @@
             }
         </div>
 
-        <!-- Map section positioned on the right side -->
         <div class="map">
             <div id="map"></div>
         </div>
@@ -116,44 +111,27 @@
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        // Get URL parameters and initial data
         const urlParams = new URLSearchParams(window.location.search);
         const centerLat = parseFloat(urlParams.get('lat')) || 0;
         const centerLon = parseFloat(urlParams.get('lon')) || 0;
         const address = urlParams.get('address') || '[Location not specified]';
-        const searchRadius = 10; // km - match with controller's SEARCH_RADIUS_KM
 
-        // Update location label
         document.getElementById("locationLabel").textContent = decodeURIComponent(address);
 
-        // Initialize map
         const map = L.map('map').setView([centerLat, centerLon], 13);
 
-        // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Create a marker cluster group for better performance with many markers
         const markers = L.markerClusterGroup();
-
-        // Add search location marker
         const searchMarker = L.marker([centerLat, centerLon], {
             icon: L.divIcon({
                 className: 'search-location-marker',
                 html: '<div class="search-marker-inner"></div>',
                 iconSize: [20, 20]
             })
-        }).addTo(map);
-
-        // Add circle to show search radius
-        const radiusCircle = L.circle([centerLat, centerLon], {
-            radius: searchRadius * 1000, // Convert km to meters
-            color: '#0066cc',
-            fillColor: '#0066cc',
-            fillOpacity: 0.1,
-            weight: 1
         }).addTo(map);
 
         // Function to add business markers using LocationService coordinates
@@ -164,39 +142,27 @@
             if (latitude && longitude) {
                 const marker = L.marker([latitude, longitude])
                     .bindPopup(`
-                            <div class="popup-content">
-                                <h5>${business.Name}</h5>
-                                <p>${business.Description}</p>
-                                <p>Category: ${business.BusinessCategory}</p>
-                                <div class="rating">
-                                    ${getStarRating(business.Rating)}
+                                <div class="popup-content">
+                                    <h5>${business.Name}</h5>
+                                    <p>${business.Description}</p>
+                                    <p>Category: ${business.BusinessCategory}</p>
+                                    <p>Rating: ${business.Rating}</p>
+                                    <button onclick="viewBusinessDetails(${business.Id})" class="btn btn-sm btn-primary mt-2">
+                                        View Details
+                                    </button>
                                 </div>
-                                <button onclick="viewBusinessDetails(${business.Id})"
-                                        class="btn btn-sm btn-primary mt-2">
-                                    View Details
-                                </button>
-                            </div>
-                        `);
+                            `);
                 markers.addLayer(marker);
             }
         }
 
-        // Function to generate star rating HTML
-        function getStarRating(rating) {
-            let stars = '';
-            for (let i = 1; i <= 5; i++) {
-                stars += i <= rating ? '<i class="fas fa-star text-warning"></i>' : '<i class="far fa-star text-warning"></i>';
-            }
-            return stars;
-        }
-
-        // Function to handle business details view
+        // Handle business details view
         function viewBusinessDetails(businessId) {
             window.location.href = `/Businesses/Details/${businessId}`;
         }
 
         // Add business markers from initial data
-        const businesses = @Json.Serialize(Model);
+        const businesses = @Html.Raw(Json.Serialize(Model));
         businesses.forEach(business => {
             addBusinessMarker(business);
         });
@@ -205,102 +171,10 @@
         map.addLayer(markers);
 
         // Fit map bounds to show all markers
-        const bounds = markers.getBounds().extend(searchMarker.getLatLng());
-        map.fitBounds(bounds, { padding: [50, 50] });
-
-        // Handle search input
-        let searchTimeout;
-        document.getElementById("searchInput").addEventListener("input", function () {
-            const searchTerm = this.value;
-
-            clearTimeout(searchTimeout);
-
-            searchTimeout = setTimeout(() => {
-                if (searchTerm.trim().length > 2) {
-                    fetch(`/Consumer/GetBusinessesNearby?lat=${centerLat}&lon=${centerLon}&searchTerm=${searchTerm}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            markers.clearLayers();
-
-                            const businessResults = document.querySelector(".sidebar");
-                            businessResults.innerHTML = `
-                                    <h6>Search results near: <span id="locationLabel">${decodeURIComponent(address)}</span></h6>
-                                    <p>${data.length} businesses found</p>
-                                `;
-
-                            data.forEach(business => {
-                                addBusinessMarker(business);
-
-                                const card = document.createElement("div");
-                                card.className = "business-card";
-                                card.innerHTML = `
-                                        <img src="data:image/png;base64,${business.ProfilePicture}" alt="${business.Name}">
-                                        <div class="business-details">
-                                            <h5>${business.Name}</h5>
-                                            <p>${business.Description}</p>
-                                            <p>Category: ${business.BusinessCategory}</p>
-                                            <div class="rating">
-                                                ${getStarRating(business.Rating)}
-                                            </div>
-                                        </div>
-                                    `;
-
-                                card.addEventListener('click', () => {
-                                    map.setView([business.LocationService.Latitude, business.LocationService.Longitude], 15);
-                                    markers.eachLayer((marker) => {
-                                        if (marker.getLatLng().lat === business.LocationService.Latitude &&
-                                            marker.getLatLng().lng === business.LocationService.Longitude) {
-                                            marker.openPopup();
-                                        }
-                                    });
-                                });
-
-                                businessResults.appendChild(card);
-                            });
-                        })
-                        .catch(error => console.error('Error fetching search results:', error));
-                }
-            }, 300);
-        });
+        if (markers.getLayers().length > 0) {
+            const bounds = markers.getBounds();
+            map.fitBounds(bounds);
+        }
     </script>
-
-
-    <style>
-        /* Add these new styles */
-        .search-location-marker {
-            background: none;
-        }
-
-        .search-marker-inner {
-            width: 20px;
-            height: 20px;
-            background-color: #0066cc;
-            border: 3px solid white;
-            border-radius: 50%;
-            box-shadow: 0 0 0 2px #0066cc;
-        }
-
-        .popup-content {
-            min-width: 200px;
-            padding: 10px;
-        }
-
-        .rating {
-            color: #ffd700;
-            margin: 5px 0;
-        }
-
-        .business-card {
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-            .business-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            }
-
-        /* Rest of your existing styles... */
-    </style>
 </body>
 </html>

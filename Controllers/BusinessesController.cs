@@ -149,6 +149,12 @@ namespace EmpowerU.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateProfile(Business model)
         {
+            ModelState.Remove("Name");
+            ModelState.Remove("Password");
+            ModelState.Remove("LocationService");
+            ModelState.Remove("BusinessCategory");
+            ModelState.Remove("Business");
+
             if (ModelState.IsValid)
             {
                 // Save business description and other business details
@@ -186,6 +192,20 @@ namespace EmpowerU.Controllers
                 // Redirect to a different page (e.g., profile details or confirmation)
                 return RedirectToAction("ProfileDetails", new { id = newBusiness.Id });
             }
+
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+
+            foreach (var error in errors)
+
+            {
+
+                // Log error message
+
+                Console.WriteLine(error);
+
+            }
+
+    
 
             // If the model state is invalid, return the form with validation messages
             return View(model);
@@ -565,6 +585,9 @@ namespace EmpowerU.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
+
+
 
 
 
