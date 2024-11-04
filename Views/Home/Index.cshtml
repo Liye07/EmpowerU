@@ -3,7 +3,9 @@
 }
 
 <div class="text-center">
-    <p class="text-left" class="marquee">Book Your Next Appointment</p>
+    <span style="display: block; height: 20px;"></span>
+    <h1 class="text-left slide-in" style="color: white; font-weight: bold;">Book Your Next Appointment With EmpowerU!</h1>
+
 </div>
 
 <div class="container mt-4">
@@ -11,7 +13,7 @@
         <div class="col-md-8">
 
             <div class="form-group position-relative">
-                <label for="address-input" class="control-label">Search for businesses by location</label>
+                <label style="color:white" for="address-input" class="control-label">Search for businesses by location</label>
                 <input id="address-input" name="LocationService.Address" class="form-control" placeholder="Enter street address" oninput="getSuggestions(event)" required />
 
                 <ul id="suggestion-list" class="list-group position-absolute" style="max-height: 200px; overflow-y: auto; display: none;"></ul>
@@ -30,15 +32,9 @@
     </div>
 </div>
 
-<div class="mb-3">
-    <a href="#" class="btn btn-outline-primary mx-1">Massage</a>
-    <a href="#" class="btn btn-outline-primary mx-1">Hair</a>
-    <a href="#" class="btn btn-outline-primary mx-1">Barber</a>
-    <a href="#" class="btn btn-outline-primary mx-1">Nails</a>
-</div>
 
 <!-- Large Text for Services -->
-<h2 class="text-left">Services</h2>
+<h2 class="text-left" style="color: white; font-weight: bold; ">Our Services:</h2>
 
 <!-- Advertisement Section -->
 <div>
@@ -145,8 +141,6 @@
 <style>
 
 
-
-
     body {
         background-color: #f8f9fa;
         font-family: Arial, sans-serif;
@@ -173,13 +167,18 @@
         font-size: 16px;
     }
 
+    .fa-star {
+        font-size: 20px;
+    }
+
     .card-img-top {
-        max-width: 100px; /* Adjust width */
-        max-height: 100px; /* Adjust height */
+        width: 100px; 
+        height: auto; 
         object-fit: cover; /* Ensures image scales proportionally */
         margin: auto;
     }
 
+   
     .list-group-item {
         cursor: pointer;
     }
@@ -213,6 +212,46 @@
         position: relative;
         cursor: pointer;
     }
+
+   
+
+    /* Add Line Between Search and Services */
+    .container.mt-4::after {
+        content: "";
+        display: block;
+        width: 100%;
+        border-top: 2px solid #ccc;
+        margin: 20px 0;
+    }
+
+    /* Update 'View Details' Button Background Color */
+    .btn-primary {
+        background-color: #613659 !important;
+        border-color: #613659 !important;
+    }
+
+    /* Remove Light Background Color from Footer */
+    footer {
+        background-color: transparent;
+        display: none;
+    }
+
+    h1, h2 {
+        margin-bottom: 20px;
+    }
+
+    .container.mt-4 {
+        padding-top: 20px;
+    }
+
+    .btn-primary {
+        color: #ffffff !important;
+    }
+
+    .navbar-brand {
+        display: none;
+    }
+
 
 </style>
 
