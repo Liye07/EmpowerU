@@ -259,46 +259,45 @@ namespace EmpowerU.Controllers
         {
             try
             {
-                var appointment = _context.Appointments.Find(appointmentId);
-                if (appointment != null)
-                {
-                    // Check if the appointment status allows rescheduling
-                    if (appointment.Status == "Scheduled" || appointment.Status == "Pending")
-                    {
-                        // Validate the new DateTime
-                        if (request.DateTime < DateTime.Now)
-                        {
-                            return Json(new { success = false, message = "The new appointment time must be in the future." });
-                        }
+                var appointment = _context.Appointments
+                    .Include(a => a.Consumer) 
+                    .Include(a => a.Business)
+                    .Include(a => a.Service) 
+                    .FirstOrDefault(a => a.AppointmentID == appointmentId);
 
-                        //// Check for appointment overlap
-                        //bool hasConflict = _context.Appointments.Any(a =>
-                        //    a.AppointmentID != appointmentId &&
-                        //    a.DateTime == request.DateTime &&
-                        //    (a.Status == "Scheduled" || a.Status == "Pending"));
+                if (appointment == null)
+                    return Json(new { success = false, message = "Appointment not found." });
 
-                        //if (hasConflict)
-                        //{
-                        //    return Json(new { success = false, message = "The new appointment time conflicts with an existing appointment." });
-                        //}
+                if (appointment.Status != "Scheduled" && appointment.Status != "Pending")
+                    return Json(new { success = false, message = "Only scheduled or pending appointments can be rescheduled." });
 
-                        // Update the appointment
-                        appointment.DateTime = request.DateTime;
-                        _context.SaveChanges();
+                if (request.DateTime < DateTime.Now)
+                    return Json(new { success = false, message = "The new appointment time must be in the future." });
 
-                        return Json(new { success = true });
-                    }
-                    else
-                    {
-                        return Json(new { success = false, message = "Only scheduled or pending appointments can be rescheduled." });
-                    }
-                }
-                return Json(new { success = false, message = "Appointment not found." });
+                appointment.DateTime = request.DateTime;
+                _context.SaveChanges();
+
+                var consumer = appointment.Consumer;
+                var business = appointment.Business;
+                var service = appointment.Service;
+
+                var notificationService = new NotificationsController(_context);
+
+                notificationService.AddNotification(
+                    appointment.Consumer.Id,
+                    $"Your appointment for {appointment.Service.ServiceName} has been rescheduled successfully to {appointment.DateTime:dd MMM yyyy} at {appointment.DateTime:hh:mm tt}."
+                );
+
+                notificationService.AddNotification(
+                    appointment.Business.Id,
+                    $" {business.Name} has rescheduled your appointment for {appointment.Service.ServiceName} to {appointment.DateTime:dd MMM yyyy} at {appointment.DateTime:hh:mm tt}."
+                );
+
+                return Json(new { success = true });
             }
             catch (Exception ex)
             {
-                // Log the exception (use your logging framework of choice)
-                Console.WriteLine(ex.Message); // Replace with proper logging
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "An unexpected error occurred. Please try again later." });
             }
         }
@@ -318,13 +317,40 @@ namespace EmpowerU.Controllers
 
         [HttpPost]
         [Route("appointments/cancel/{appointmentId}")]
-        public IActionResult Cancel(int appointmentId)
+        public IActionResult B_Cancel(int appointmentId)
         {
-            var appointment = _context.Appointments.Find(appointmentId);
-            if (appointment == null) return Json(new { success = false });
+            var appointment = _context.Appointments
+                .Include(a => a.Consumer)
+                .Include(a => a.Business) 
+                .Include(a => a.Service)
+                .FirstOrDefault(a => a.AppointmentID == appointmentId);
+
+            if (appointment == null)
+                return Json(new { success = false, message = "Appointment not found." });
 
             appointment.Status = "Cancelled";
             _context.SaveChanges();
+
+            var consumer = appointment.Consumer;
+            var business = appointment.Business;
+            var service = appointment.Service;
+
+            if (consumer == null || business == null || service == null)
+                return Json(new { success = false, message = "Missing required appointment details." });
+
+            var notificationService = new NotificationsController(_context);
+
+
+            notificationService.AddNotification(
+                consumer.Id,
+                $"Your appointment for {service.ServiceName} scheduled on {appointment.DateTime:dd MMM yyyy} at {appointment.DateTime:hh:mm tt} has been cancelled."
+            );
+
+            notificationService.AddNotification(
+                business.Id,
+                $"{consumer.Name} {consumer.Surname} has cancelled their appointment for {service.ServiceName} scheduled on {appointment.DateTime:dd MMM yyyy} at {appointment.DateTime:hh:mm tt}."
+            );
+
             return Json(new { success = true });
         }
 

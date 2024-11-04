@@ -15,9 +15,9 @@
             <button id="past-btn" class="btn btn-secondary" onclick="showPastAppointments()">Past</button>
             <button id="upcoming-btn" class="btn btn-primary active" onclick="showUpcomingAppointments()">Upcoming</button>
         </div>
-        <div class="col-md-4 text-right">
+      @*   <div class="col-md-4 text-right">
             <input type="text" class="form-control" placeholder="Search by business name..." />
-        </div>
+        </div> *@
     </div>
 
     <div class="row">
@@ -26,7 +26,6 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>Appointment ID</th>
                         <th>Business Name</th>
                         <th>Service Type</th>
                         <th>Date & Time</th>
@@ -37,7 +36,6 @@
                     @foreach (var appointment in upcomingAppointments)
                     {
                             <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.Service.ServiceName','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
-                            <td>@appointment.AppointmentID</td>
                             <td>@appointment.Business.Name</td>
                             <td>@appointment.Service.ServiceName</td>
                             <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
@@ -64,10 +62,9 @@
                 <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>Appointment ID</th>
                         <th>Business Name</th>
-                        <th>Date & Time</th>
                         <th>Service Type</th>
+                        <th>Date & Time</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -75,7 +72,6 @@
                     @foreach (var appointment in pastAppointments)
                     {
                             <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.Service.ServiceName','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
-                            <td>@appointment.AppointmentID</td>
                             <td>@appointment.Business.Name</td>
                             <td>@appointment.Service.ServiceName</td>
                             <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
@@ -102,7 +98,7 @@
         <div class="col-md-4">
             <h2 class="h5 mb-3">Appointment Details</h2>
             <div id="appointmentDetails" class="card p-3 mb-3" style="display: none;">
-                <p><strong>Appointment ID: </strong><span id="detailAppointmentId"></span></p>
+                <p><strong></strong><span id="detailAppointmentId" style="display: none;"></span></p>
                 <p><strong>Business Name: </strong><span id="detailBusinessName"></span></p>
                 <p><strong>First Name: </strong><span id="detailFirstName"></span></p>
                 <p><strong>Surname: </strong><span id="detailSurname"></span></p>
@@ -114,8 +110,8 @@
 
                 <div class="button-container">
                     <button id="cancelButton" class="btn btn-outline-danger mt-2" style="display: none;" onclick="cancelAppointment()">Cancel</button>
-                    <button id="leaveReviewButton" class="btn btn-primary mt-2" style="display: none;">Leave a Review</button>
-                    <button id="rescheduleButton" class="btn btn-warning mt-2" onclick="rescheduleAppointment()">Reschedule</button>
+                    <button id="leaveReviewButton" class="btn btn-primary mt-2" onclick="location.href='/Review/CreateReview?BusinessID=@Model.BusinessID'" style="display: none;">Leave a Review</button>
+                    <button id="rescheduleButton" class="btn btn-warning mt-2" style="display: none;" onclick="rescheduleAppointment()">Reschedule</button>
                     <button id="payNowButton" class="btn btn-success mt-2" style="display: none;">Pay Now</button>
                 </div>
             </div>

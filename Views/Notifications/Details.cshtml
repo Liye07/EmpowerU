@@ -1,46 +1,113 @@
-﻿@model EmpowerU.Models.Notification
+﻿@model List<EmpowerU.Models.Notification>
 
 @{
     ViewData["Title"] = "Notification Details";
 }
 
-<h2 class="mb-3">Notification Details</h2>
+<div class="container mt-4">
+    <h2 class="mb-4">Notification Details</h2>
 
-<div class="notification-details-card card p-3 mb-4">
-    <div class="d-flex align-items-center">
-        <div class="notification-avatar me-3">
-            <img src="~/images/default-avatar.png" alt="User Avatar" class="rounded-circle" style="width: 50px; height: 50px;" />
+    @if (Model != null && Model.Any())
+    {
+        <div class="notification-list" id="notification-list">
+            @foreach (var notification in Model.Take(5)
+           /* Display the first 5 notifications */)
+            {
+                <div class="notification-details-card card p-3 mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="notification-avatar me-3">
+                            <img src="~/images/default-avatar.png" alt="User Avatar" class="rounded-circle" style="width: 50px; height: 50px;" data-user-id="@notification.User.Id" />
+                        </div>
+                        <div class="notification-info">
+                            <h5 class="mb-1">
+                                <strong>@Html.DisplayFor(modelItem => notification.User.Email)</strong>
+                            </h5>
+                            <small class="text-muted">@Html.DisplayFor(modelItem => notification.Timestamp)</small>
+                        </div>
+                    </div>
+
+                    <div class="notification-content mt-3">
+                        <p class="mb-0">@Html.DisplayFor(modelItem => notification.NotificationContent)</p>
+                    </div>
+
+                    <div class="mt-2">
+                        <span class="badge @(notification.IsRead ? "badge-secondary" : "badge-primary")">
+                            @(notification.IsRead ? "Read" : "Unread")
+                        </span>
+                    </div>
+                </div>
+            }
         </div>
-        <div class="notification-info">
-            <h5 class="mb-1">
-                <strong>@Html.DisplayFor(model => model.User.Email)</strong>
-            </h5>
-            <small class="text-muted">@Html.DisplayFor(model => model.Timestamp)</small>
-        </div>
-    </div>
 
-    <div class="notification-content mt-3">
-        <p class="mb-0">@Html.DisplayFor(model => model.NotificationContent)</p>
-    </div>
-
-    <div class="mt-2">
-        <span class="badge @(Model.IsRead ? "badge-secondary" : "badge-primary")">
-            @(Model.IsRead ? "Read" : "Unread")
-        </span>
-    </div>
+        @if (Model.Count() > 5) // Check if there are more than 5 notifications
+        {
+            <div class="text-center">
+                <button id="loadMoreBtn" class="btn btn-outline-primary">
+                    <i class="fas fa-plus"></i> See Previous Notifications
+                </button>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info">No notifications found.</div>
+    }
 </div>
 
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.NotificationID" class="btn btn-warning me-2">Edit</a>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Load user profile pictures
+            $("img[data-user-id]").each(function () {
+                var img = $(this);
+                var userId = img.data("user-id");
+
+                $.getJSON('@Url.Action("GetProfilePicture", "Notifications")', { userId: userId }, function (data) {
+                    if (data && data.imageData) {
+                        img.attr("src", data.imageData); // Set the image source to the base64 string
+                    }
+                });
+            });
+
+            // Load more notifications logic
+            let notificationCount = @Model.Count();
+            let notificationsToShow = 5;
+
+            $("#loadMoreBtn").on("click", function () {
+                notificationsToShow += 5; // Increase the number of notifications to show by 5
+                const notificationList = $("#notification-list");
+
+                if (notificationsToShow >= notificationCount) {
+                    $(this).hide(); // Hide the button if all notifications are shown
+                }
+
+                // Show the next set of notifications
+                notificationList.children().slice(notificationsToShow - 5, notificationsToShow).show();
+            });
+
+            // Initially hide all notifications after the first 5
+            $("#notification-list").children().slice(5).hide();
+        });
+    </script>
+}
 
 <style>
+    .notification-list {
+        max-width: 1500px;
+        max-height: 1000px;
+        margin: 0 auto;
+    }
+
     .notification-details-card {
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        background-color: #fff;
+        background-color: #f9f9f9; /* Light grey background */
         border-radius: 8px;
+        transition: transform 0.2s;
     }
+
+        .notification-details-card:hover {
+            transform: scale(1.02);
+        }
 
     .notification-avatar img {
         border-radius: 50%;
@@ -48,6 +115,8 @@
 
     .notification-info h5 {
         font-size: 1.25rem;
+        margin: 0;
+        color: #333; /* Darker color for the name */
     }
 
     .badge {
@@ -62,6 +131,16 @@
     .badge-secondary {
         background-color: #6c757d;
     }
+
+    .btn-outline-primary {
+        border-color: #007bff;
+        color: #007bff;
+    }
+
+        .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: white;
+        }
 </style>
 
 <!-- Font Awesome for the icons -->

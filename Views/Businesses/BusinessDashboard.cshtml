@@ -20,7 +20,7 @@
             <h1 style="font-size: 40px;"><strong>Dashboard</strong></h1>
             <div class="header-actions">
                 <!-- Notification Icon with Link -->
-                <button class="action-btn" onclick="window.location.href='/Notifications/Index/@Model.Id'">
+                <button class="action-btn" onclick="window.location.href='/Notifications/Details/@Model.Id'">
                     <i class="fa fa-bell"></i>
                     <!-- Show notification count if there are any -->
                     @if (notifications != null && notifications.Any())

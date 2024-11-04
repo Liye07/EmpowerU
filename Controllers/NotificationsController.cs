@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmpowerU.Models;
 using EmpowerU.Models.Data;
+using System.Security.Claims;
 
 namespace EmpowerU.Controllers
 {
@@ -19,12 +20,21 @@ namespace EmpowerU.Controllers
             _context = context;
         }
 
-        // GET: Notifications
-        public async Task<IActionResult> Index()
+        public IActionResult GetProfilePicture(int userId)
         {
-            var empowerUContext = _context.Notifications.Include(n => n.User);
-            return View(await empowerUContext.ToListAsync());
+            var user = _context.Users.Find(userId); // Replace with your actual user retrieval logic
+            if (user == null || user.ProfilePicture == null)
+            {
+                return NotFound();
+            }
+
+            // Convert byte array to base64 string
+            string base64Image = Convert.ToBase64String(user.ProfilePicture);
+            string imageDataURL = $"data:image/jpeg;base64,{base64Image}"; // Assuming the image is a JPEG
+
+            return Json(new { imageData = imageDataURL });
         }
+
 
         // GET: Notifications/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -34,39 +44,49 @@ namespace EmpowerU.Controllers
                 return NotFound();
             }
 
+            // Get the notification using the provided ID
             var notification = await _context.Notifications
                 .Include(n => n.User)
                 .FirstOrDefaultAsync(m => m.NotificationID == id);
+
             if (notification == null)
             {
                 return NotFound();
             }
 
-            return View(notification);
+            // Fetch notifications based on whether the user is a consumer or a business
+            var notifications = await _context.Notifications
+                .Include(n => n.User)
+                .Where(n => n.UserID == notification.UserID)
+                .ToListAsync();
+
+            return View(notifications);
         }
 
-        // GET: Notifications/Create
-        public IActionResult Create()
-        {
-            ViewData["UserID"] = new SelectList(_context.Users, "UserID", "Email");
-            return View();
-        }
 
-        // POST: Notifications/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NotificationID,UserID,NotificationContent,IsRead,Timestamp")] Notification notification)
+        public void AddNotification(int _userID, string _notificationContent)
         {
-            if (ModelState.IsValid)
+            var notification = new Notification
             {
-                _context.Add(notification);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserID"] = new SelectList(_context.Users, "UserID", "Email", notification.UserID);
-            return View(notification);
+                UserID = _userID,
+                NotificationContent = _notificationContent,
+                Timestamp = DateTime.UtcNow,
+                IsRead = false
+            };
+
+            _context.Notifications.Add(notification);
+            _context.SaveChanges();
+        }
+
+        public IActionResult GetNotifications()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var notifications = _context.Notifications
+                .Where(n => n.UserID == userId && !n.IsRead)
+                .OrderByDescending(n => n.Timestamp)
+                .ToList();
+
+            return Json(new { notifications });
         }
 
         // GET: Notifications/Edit/5
