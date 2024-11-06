@@ -26,40 +26,42 @@ namespace EmpowerU.Controllers
             return View(await empowerUContext.ToListAsync());
         }
 
-        // GET: Reviews/ViewReview/5
-        public ActionResult ViewReview()
+        // GET: Reviews/Delete/5
+        public async Task<IActionResult> ViewReview()
         {
-            var reviews = new List<Review>
-        {
-            new Review { Title = "Great product!", Comment = "Really enjoyed using this.", Rating = 5, Date = DateTime.Now },
-            new Review { Title = "Could be better", Comment = "There were some issues with this.", Rating = 3, Date = DateTime.Now }
-        };
-
-            return View(reviews); 
+            var reviews = await _context.Reviews.ToListAsync();
+            return View(reviews); // Ensure view expects @model IEnumerable<Review>
         }
 
-        // GET: Reviews/CreateReview
-        public IActionResult CreateReview()
-        {
-            return View();
-        }
-
-        // POST: Reviews/CreateReview
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more ViewReview, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateReview( Review review)
+        public async Task<IActionResult> CreateReview(Review review)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(review);
+                review.Date = DateTime.Now; // Set the current date for the review
+
+                // Add review to the database context
+                _context.Reviews.Add(review);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("ViewReview");
+
+                // Redirect to a page, e.g., the business or consumer's reviews page
+                return RedirectToAction("ViewReview", new { id = review.BusinessID });
             }
-            
+            else
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                foreach (var error in errors)
+                {
+                    // Log error message
+                    Console.WriteLine(error);
+                }
+
+            }
+
+            // If the model is not valid, return the view to show validation errors
             return View(review);
         }
+
 
         // GET: Reviews/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -80,8 +82,6 @@ namespace EmpowerU.Controllers
         }
 
         // POST: Reviews/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ReviewID,BusinessID,ConsumerID,Rating,Comment,Date")] Review review)
