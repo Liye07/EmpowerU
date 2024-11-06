@@ -103,73 +103,13 @@ namespace EmpowerU.Controllers
             return PartialView("_SearchResults", results); // Return a partial view with the results
         }
 
-
-
-
         public IActionResult SecuritySettings()
         {
             return View();
         }
 
-        public IActionResult ChangePassword()
+        public IActionResult Privacy()
         {
-            return View();
-        }
-
-        // Handle Change Password form submission
-        [HttpPost]
-        public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
-            if (result.Succeeded)
-            {
-                await _signInManager.RefreshSignInAsync(user);
-                TempData["SuccessMessage"] = "Password changed successfully!";
-                return RedirectToAction("SecuritySettings");
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-            return View();
-        }
-
-        public IActionResult ChangeEmail()
-        {
-            return View();
-        }
-
-        // Handle Change Email form submission
-        [HttpPost]
-        public async Task<IActionResult> ChangeEmail(string newEmail)
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            user.Email = newEmail;
-            user.UserName = newEmail;
-            var result = await _userManager.UpdateAsync(user);
-            if (result.Succeeded)
-            {
-                await _signInManager.RefreshSignInAsync(user);
-                TempData["SuccessMessage"] = "Email changed successfully!";
-                return RedirectToAction("SecuritySettings");
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
             return View();
         }
 

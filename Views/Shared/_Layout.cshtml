@@ -25,6 +25,11 @@
 
     </style>
 
+            }
+
+
+    </style>
+
 </head>
 <body>
     <header>
@@ -115,38 +120,34 @@
             </main>
         </div>
     </div>
-    <footer >
-        <div class="container py-3">
+
+    <footer class="bg-light text-center text-lg-start mt-4">
+        <div class="container p-4">
             <div class="row">
-                <div class="col-lg-4 col-md-12 mb-2">
-                    <h6 class="text-uppercase">Contact Us</h6>
-                    <p class="m-0">
+                <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Contact Us</h5>
+                    <p>
                         Phone: +1 234 567 890<br>
                         Email: support@empoweru.com<br>
-                        Address: 123 EmpowerU St, Gqeberha, South Africa
+                        Address: 123 EmpowerU St, City, Country
                     </p>
                 </div>
-                <div class="col-lg-4 col-md-6 mb-2">
-                    <h6 class="text-uppercase">About Us</h6>
-                    <p class="m-0">
+                <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">About Us</h5>
+                    <p>
                         EmpowerU connects consumers with top-rated service providers in beauty and wellness.
+                        Our goal is to streamline the process of discovering and booking appointments.
                     </p>
                 </div>
-                <div class="col-lg-4 col-md-6 mb-2">
-                    <h6 class="text-uppercase">Follow Us</h6>
-                    <a href="#" class="text-light me-2" aria-label="Follow us on Facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#" class="text-light me-2" aria-label="Follow us on Instagram">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="#" class="text-light" aria-label="Follow us on Twitter">
-                        <i class="fab fa-twitter"></i>
-                    </a>
+                <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Follow Us</h5>
+                    <a href="#" class="text-dark">Facebook</a><br>
+                    <a href="#" class="text-dark">Instagram</a><br>
+                    <a href="#" class="text-dark">Twitter</a>
                 </div>
             </div>
         </div>
-        <div class="text-center p-2" style="background-color:#211522 ;">
+        <div class="text-center p-3">
             © 2024 EmpowerU. All rights reserved.
         </div>
     </footer>
@@ -154,6 +155,5 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 </html>

@@ -1,18 +1,106 @@
-﻿@{
-    ViewData["Title"] = "User Settings";
+﻿@* @model EmpowerU.Models.SecuritySettingsViewModel
+
+@{
+    ViewBag.Title = "Security Settings";
 }
 
-<h2>User Settings</h2>
-<p>Select an option to update your profile settings:</p>
+<div class="container">
+    <h2>Account Security Settings</h2>
 
-<ul>
-    <li>
-        <a asp-action="ChangePassword" asp-controller="Home">Change Password</a>
-    </li>
-    <li>
-        <a asp-action="ChangeEmail" asp-controller="Home">Change Email</a>
-    </li>
-    <li>
-        <a asp-action="EditProfile" asp-controller="Home">Edit Profile</a>
-    </li>
-</ul>
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>Change Password</h4>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("ChangePassword", "Account", FormMethod.Post, new { @class = "form-horizontal" }))
+            {
+                <div class="form-group">
+                    @Html.LabelFor(m => m.OldPassword, "Current Password", new { @class = "control-label" })
+                    @Html.PasswordFor(m => m.OldPassword, new { @class = "form-control", placeholder = "Enter current password" })
+                    @Html.ValidationMessageFor(m => m.OldPassword)
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.NewPassword, "New Password", new { @class = "control-label" })
+                    @Html.PasswordFor(m => m.NewPassword, new { @class = "form-control", placeholder = "Enter new password" })
+                    @Html.ValidationMessageFor(m => m.NewPassword)
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ConfirmPassword, "Confirm New Password", new { @class = "control-label" })
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Re-enter new password" })
+                    @Html.ValidationMessageFor(m => m.ConfirmPassword)
+                </div>
+
+                <button type="submit" class="btn btn-primary">Change Password</button>
+            }
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>Two-Factor Authentication (2FA)</h4>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                @if (Model.IsTwoFactorEnabled)
+                {
+                    <p>Two-factor authentication is currently <strong>enabled</strong>.</p>
+                    @using (Html.BeginForm("Disable2FA", "Account", FormMethod.Post))
+                    {
+                        <button type="submit" class="btn btn-danger">Disable 2FA</button>
+                    }
+                }
+                else
+                {
+                    <p>Two-factor authentication is currently <strong>disabled</strong>.</p>
+                    @using (Html.BeginForm("Enable2FA", "Account", FormMethod.Post))
+                    {
+                        <button type="submit" class="btn btn-primary">Enable 2FA</button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>Security Questions</h4>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("UpdateSecurityQuestions", "Account", FormMethod.Post))
+            {
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SecurityQuestion1, "Security Question 1", new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.SecurityQuestion1, new { @class = "form-control", placeholder = "Enter your security question" })
+                    @Html.ValidationMessageFor(m => m.SecurityQuestion1)
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SecurityAnswer1, "Answer 1", new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.SecurityAnswer1, new { @class = "form-control", placeholder = "Enter your answer" })
+                    @Html.ValidationMessageFor(m => m.SecurityAnswer1)
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SecurityQuestion2, "Security Question 2", new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.SecurityQuestion2, new { @class = "form-control", placeholder = "Enter your security question" })
+                    @Html.ValidationMessageFor(m => m.SecurityQuestion2)
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SecurityAnswer2, "Answer 2", new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.SecurityAnswer2, new { @class = "form-control", placeholder = "Enter your answer" })
+                    @Html.ValidationMessageFor(m => m.SecurityAnswer2)
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update Security Questions</button>
+            }
+        </div>
+     </div>
+</div> 
+<div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} *@

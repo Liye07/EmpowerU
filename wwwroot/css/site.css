@@ -73,11 +73,11 @@ body {
 }
 
 .navbar-nav .nav-link {
-    color: #211522; /* Dark text */
+    color: #343a40; /* Dark text */
 }
 
     .navbar-nav .nav-link:hover {
-        color: ##211522; /* Blue on hover */
+        color: #007bff; /* Blue on hover */
     }
 
 .navbar-nav .btn-primary {
@@ -89,7 +89,7 @@ body {
 }
 
 .navbar {
-    background-color: #211522; /* Dark gray color */
+    background-color: #343a40; /* Dark gray color */
 }
 
 .navbar-nav .nav-link {
@@ -122,11 +122,11 @@ body {
 
 .navbar-nav .nav-link.active {
     font-weight: bold; /* Make active link bold */
-    background-color: #211522; /* Slightly darker background for active link */
+    background-color: #495057; /* Slightly darker background for active link */
 }
 
 .nav-link.active {
-    background-color: #211522; /* Change this to your desired active color */
+    background-color: #54a2f5; /* Change this to your desired active color */
     color: #fff; /* Adjust text color */
     font-weight: bold; /* Optional: make the text bold */
     border-radius: 4px; /* Optional: add rounded corners */
@@ -137,7 +137,7 @@ body {
 }
 
     .nav-link:hover {
-        background-color: #d3b1c2 /* Optional: hover effect color */
+        background-color: #0056b4; /* Optional: hover effect color */
     }
 
     .custom-heading {
