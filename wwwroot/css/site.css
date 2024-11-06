@@ -140,30 +140,5 @@ body {
         background-color: #0056b4; /* Optional: hover effect color */
     }
 
-    .custom-heading {
-    color: #d3b1c2;
-}
-.navbar-brand {
-        color: #ffffff; /* Default color: White */
-    }
-    .navbar-brand:hover {
-        color: #E0B0FF; /* Hover color: Mauve */
-    }
 
-/* Slide-in animation */
-@keyframes slideIn {
-    from {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.slide-in {
-    animation: slideIn 1.5s ease-out; /* Duration and easing function */
-}
     
