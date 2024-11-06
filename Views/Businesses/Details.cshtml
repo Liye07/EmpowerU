@@ -19,7 +19,7 @@
                 <!-- Business Details -->
                 <div class="business-details justify-content-right">
                     <!-- Add Message Us Icon -->
-                    <h4 style="color:white" >@Model.Name</h4>
+                    <h4>@Model.Name</h4>
                     <p>@Model.Description</p>
 
                     <!-- Message Us Button -->
@@ -30,7 +30,7 @@
                     </div>
 
                     <!-- Rating Section -->
-                    <h4 style="color:white">Rating</h4>
+                    <h4>Rating</h4>
                     <p>
                         @for (var i = 1; i <= 5; i++)
                         {
@@ -46,13 +46,13 @@
                         (@Model.Rating)
                     </p>
 
-                    <h4 style ="color:white"> Email</h4>
+                    <h4>Email</h4>
                     <p>@Model.Email</p>
 
-                    <h4 style="color:white">Location</h4>
+                    <h4>Location</h4>
                     <p>@Model.LocationService.Address</p> <!-- Display the address -->
                     <!-- Embed OpenStreetMap -->
-                    <h4 style="color:white" >Map Location</h4>
+                    <h4>Map Location</h4>
                     <iframe width="500"
                             height="400"
                             frameborder="0"
@@ -62,7 +62,7 @@
                     </iframe>
 
                     <!-- Reviews Section -->
-                    <h4 style="color:white">Reviews</h4>
+                    <h4>Reviews</h4>
                     <div class="reviews-section">
                         @if (Model.Reviews != null && Model.Reviews.Any())
                         {

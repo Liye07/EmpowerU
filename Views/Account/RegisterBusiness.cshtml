@@ -8,7 +8,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header text-white" style="background-color: #c197d2;">
+                <div class="card-header text-white bg-primary">
                     <h4 class="mb-0">Business Registration</h4>
                 </div>
                 <div class="card-body">
@@ -27,7 +27,7 @@
 
                         <div class="form-group">
                             <label asp-for="UserName" class="control-label">Username</label>
-                            <input asp-for="UserName" class="form-control" placeholder="Enter your business username" required />
+                            <input asp-for="UserName" class="form-control" placeholder="Enter business username" required />
                             <span asp-validation-for="UserName" class="text-danger"></span>
                         </div>
 
@@ -94,7 +94,7 @@
                             <input asp-for="Password" class="form-control" type="password" placeholder="Enter password" required />
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
-                        <span style="display: block; height: 20px;"></span>
+
                         <div class="d-flex justify-content-between align-items-center">
                             <input type="submit" value="Register" class="btn btn-primary" />
                             <p class="mb-0">Already have an account? <a href="#" class="text-primary">Login</a></p>
@@ -276,28 +276,6 @@
         transform: translateY(-50%) rotate(180deg); /* Rotate when dropdown is open */
     }
 
-    .btn-primary {
-        background-color: #c197d2; /* Mauve color */
-        border-color: #c197d2; /* Optional: match border color */
-    }
-
-        .btn-primary:hover {
-            background-color: #613659; /* Slightly darker mauve on hover */
-            border-color: #613659;
-        }
-
-    .btn-register {
-        background-color: #5A9; /* Match color with header */
-        color: #fff;
-        padding: 0.8rem 1.5rem;
-        border-radius: 5px;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-        .btn-register:hover {
-            background-color: #488; /* Slightly darker shade on hover */
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        }
 </style>
 
 <!-- Font Awesome for icons -->
