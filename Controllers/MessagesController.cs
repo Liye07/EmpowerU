@@ -54,7 +54,7 @@ namespace EmpowerU.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> SendMessage(string messageContent, int receiverId)
+        public IActionResult SendMessage(string messageContent, int receiverId)
         {
             if (string.IsNullOrWhiteSpace(messageContent))
             {
