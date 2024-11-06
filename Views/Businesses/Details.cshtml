@@ -1,8 +1,38 @@
-﻿@model Business
+﻿﻿@Model Business
 
 @{
     ViewData["Title"] = "Business Details";
 }
+
+<!-- Include jQuery for AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#bookingForm").submit(function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("BookService", "BusinessesController")", // Update with your actual controller name
+                data: $(this).serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        // Show confirmation message
+                        $("#confirmationMessage").text(response.message).show();
+                        // Optionally, hide the booking form
+                        $("#bookingForm").hide();
+                    } else {
+                        // Handle error message
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("An error occurred while booking. Please try again.");
+                }
+            });
+        });
+    });
+</script>
 
 <div class="container mt-5 d-flex justify-content-center">
     <div class="row w-100">
@@ -64,7 +94,7 @@
                     <!-- Reviews Section -->
                     <h4>Reviews</h4>
                     <div class="reviews-section">
-                        @if (Model.Reviews != null && Model.Reviews.Any())
+                        @if (Model.Reviews != null)
                         {
                             foreach (var review in Model.Reviews)
                             {
@@ -94,7 +124,6 @@
                         {
                             <p>No reviews available.</p>
                         }
-                        
                     </div>
 
                 </div>
@@ -106,15 +135,8 @@
             <div class="card p-4">
                 <h4 class="text-center mb-4">@Model.Name</h4>
 
-                @if (TempData["ConfirmationMessage"] != null)
-                {
-                    <div class="alert alert-success">
-                        @TempData["ConfirmationMessage"]
-                    </div>
-                }
-
                 <form asp-action="BookService" method="post">
-                    <input type="hidden" name="BusinessID" value="@Model.Id" />
+                    <input type="hidden" name="BusinessID" value="@Model.Id" /> <!-- Hidden field for BusinessID -->
 
                     <div class="form-group mb-3">
                         <label for="Service" class="form-label">Select Service</label>
@@ -128,32 +150,18 @@
 
                     <div class="form-group mb-3">
                         <label for="Date" class="form-label">Pick Date</label>
-                        <input type="date" class="form-control" id="Date" required />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="TimeSlot" class="form-label">Available Time Slots</label>
-                        <select class="form-select" id="TimeSlot" name="BookingTime" required>
-                            <option value="">Select a time slot</option>
-                            <!-- Time slots will be loaded here by JavaScript -->
-                        </select>
+                        <input type="datetime-local" class="form-control" id="Date" name="BookingDate" required />
                     </div>
 
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary w-100">Book</button>
                     </div>
-
-                    @if (!ViewData.ModelState.IsValid)
-                    {
-                        <div class="alert alert-danger mt-3">
-                            @Html.ValidationSummary()
-                        </div>
-                    }
                 </form>
 
+                <!-- Confirmation Message -->
+                <div id="confirmationMessage" class="alert alert-success mt-3" style="display:none;"></div>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -204,119 +212,8 @@
         }
     </style>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("#bookingForm").submit(function (event) {
-                event.preventDefault(); // Prevent default form submission
 
-                $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("BookService", "BusinessesController")", // Update with your actual controller name
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        if (response.success) {
-                            // Show confirmation message
-                            $("#confirmationMessage").text(response.message).show();
-                            // Optionally, hide the booking form
-                            $("#bookingForm").hide();
-                        } else {
-                            // Handle error message
-                            alert(response.message);
-                        }
-                    },
-                    error: function () {
-                        alert("An error occurred while booking. Please try again.");
-                    }
-                });
-            });
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const dateElement = document.getElementById("Date");
-            const serviceElement = document.getElementById("Service");
-
-            if (dateElement && serviceElement) {
-                dateElement.addEventListener("change", loadAvailableTimeSlots);
-                serviceElement.addEventListener("change", loadAvailableTimeSlots);
-            }
-
-            function loadAvailableTimeSlots() {
-                const serviceID = serviceElement.value;
-                const date = dateElement.value;
-
-                if (serviceID && date) {
-                    const url = `/Businesses/GetAvailableTimeSlots?serviceID=${serviceID}&bookingDate=${date}`;
-
-                fetch(url)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Network response was not ok");
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        const timeSlotSelect = document.getElementById("TimeSlot");
-                        timeSlotSelect.innerHTML = '<option value="">Select a time slot</option>'; // Reset
-
-                        data.availableSlots.forEach(slot => {
-                            const fullDateTime = `${date}T${slot}`; // Format it correctly
-                            const option = document.createElement("option");
-                            option.value = fullDateTime; // Set value to full datetime
-                            option.textContent = slot; // Display time slot
-                            timeSlotSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => {
-                        console.error("Error fetching time slots:", error);
-                    });
-
-                }
-            }
-        });
-
-        document.querySelector("form").addEventListener("submit", function (event) {
-            event.preventDefault(); // Prevent the default form submission
-
-            // Create FormData object to capture form values
-            var formData = new FormData(this);
-
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest' // To identify the request as AJAX
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Replace the form with a confirmation message
-                        var confirmationMessage = `
-                        <h4 class="text-center">Appointment Confirmed!</h4>
-                        <p>Service: ${data.serviceName}</p>
-                        <p>Date: ${data.appointmentDate}</p>
-                        <p>Time: ${data.appointmentTime}</p>
-                    `;
-                        document.querySelector(".card").innerHTML = confirmationMessage;
-                    } else {
-                        // Show error message (optional)
-                        document.getElementById("confirmationMessage").innerText = data.message;
-                        document.getElementById("confirmationMessage").style.display = "block";
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById("confirmationMessage").innerText = "An error occurred. Please try again.";
-                    document.getElementById("confirmationMessage").style.display = "block";
-                });
-        });
-
-
-    </script>
 
 
 <!-- Include Font Awesome for star icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-
-

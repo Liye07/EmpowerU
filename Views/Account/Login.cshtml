@@ -9,21 +9,21 @@
         <div class="col-md-6">
             <!-- Branding -->
             <div class="text-center mb-4">
-                <h1 class="fw-bold">EmpowerU</h1>
+                <h1 class="fw-bold custom-heading">EmpowerU</h1>
             </div>
 
             <!-- Social Media Login Buttons -->
             <div class="d-grid gap-3 mb-4">
-                <div class="text-center mb-3">
-                    <p>Sign up using:</p>
-                    <a href="@Url.Action("ExternalLogin", new { provider = "Google" })" class="btn btn-light mx-1" style="border: 1px solid #db4437;">
-                        <i class="fab fa-google" style="color: #db4437;"></i> Google
+                <div class="text-center mb-3" style="color: white;">
+                    <p class="mb-2">Sign up using:</p>
+                    <a href="@Url.Action("ExternalLogin", new { provider = "Google" })" class="btn btn-light mx-1" style="border: 1px solid #db4437; background-color: white;">
+                        <i class="fab fa-google" style="color: #db4437;" aria-label="Sign up with Google"></i>
                     </a>
-                    <a href="@Url.Action("ExternalLogin", new { provider = "Facebook" })" class="btn btn-primary mx-1">
-                        <i class="fab fa-facebook-f"></i> Facebook
+                    <a href="@Url.Action("ExternalLogin", new { provider = "Facebook" })" class="btn btn-primary mx-1" style="background-color: white;">
+                        <i class="fab fa-facebook-f" style="color: #3b5998;" aria-label="Sign up with Facebook"></i>
                     </a>
-                    <a href="@Url.Action("ExternalLogin", new { provider = "Instagram" })" class="btn btn-danger mx-1">
-                        <i class="fab fa-instagram"></i> Instagram
+                    <a href="@Url.Action("ExternalLogin", new { provider = "Instagram" })" class="btn btn-danger mx-1" style="background-color: white;">
+                        <i class="fab fa-instagram" style="color: #E1306C;" aria-label="Sign up with Instagram"></i>
                     </a>
                 </div>
             </div>
@@ -48,42 +48,52 @@
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 }
 
-                <div class="mb-3">
+                <div class="mb-3" style="color: white;">
                     <label for="Email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="Email" name="Email" autocomplete="email" value="@Model?.Email" required />
-                    <div class="invalid-feedback">
+                    <div class="invalid-feedback" style="color: white;">
                         Please enter a valid email address.
                     </div>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" style="color: white;">
                     <label for="Password" class="form-label">Password</label>
                     <div class="input-group">
                         <input type="password" class="form-control" id="Password" name="Password" autocomplete="current-password" required />
                     </div>
-                    <div class="invalid-feedback">
+                    <div class="invalid-feedback" style="color: white;">
                         Please enter your password.
                     </div>
                 </div>
 
                 <!-- Forgot Password Link -->
-                <div class="mb-3 text-end">
-                    <a href="@Url.Action("ForgotPassword", "Account")" class="text-muted">Forgot password?</a>
+                <div class="mb-3 text-end" style="color: white;">
+                    <a href="@Url.Action("ForgotPassword", "Account")" style="color: white;">Forgot password?</a> <!-- Dark grey color -->
                 </div>
 
-                <!-- Sign In Button -->
+                <!--Sign in button-->
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-dark btn-block">Sign in</button>
+                    <button type="submit" class="btn" style="background-color: #613659; color: white;">Sign in</button>
                 </div>
             </form>
 
             <!-- Sign Up Option -->
-            <div class="text-center mt-3">
-                <p>Don't have an account? <a href="@Url.Action("RegisterConsumer", "Account")">Sign Up Now</a></p>
+            <div class="text-center mt-3" style="color: white;">
+                <p>Don't have an account? <a href="@Url.Action("RegisterConsumer", "Account")" style="color: white;;">Sign Up Now</a></p> <!-- Dark grey color -->
             </div>
 
         </div>
     </div>
 </div>
+
+<style>
+    body {
+        background-image: url(@Url.Content("~/images/pexels-tombrand-1891234.jpg"));
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+
+</style>
 
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
