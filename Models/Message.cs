@@ -17,6 +17,9 @@ namespace EmpowerU.Models
         public int ReceiverID { get; set; }
 
         [Required]
+        public int ConversationID { get; set; }
+
+        [Required]
         public string MessageContent { get; set; }
 
         [Required]
@@ -30,5 +33,9 @@ namespace EmpowerU.Models
 
         [ForeignKey(nameof(ReceiverID))]
         public User Receiver { get; set; }
+
+        [ForeignKey(nameof(ConversationID))]
+        public Conversation Conversation { get; set; }
     }
+
 }

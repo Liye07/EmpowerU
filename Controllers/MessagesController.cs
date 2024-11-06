@@ -22,25 +22,93 @@ namespace EmpowerU.Controllers
             _context = context;
         }
 
-        // GET: Messages
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int businessID)
         {
-            // Get the current user's ID
             int currentUserId;
             if (!int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out currentUserId))
             {
                 return BadRequest("Invalid user ID.");
             }
 
-            // Fetch only messages where the current user is the receiver
-            var messages = await _context.Messages
-                .Include(m => m.Receiver)
-                .Include(m => m.Sender)
-                .Where(m => m.ReceiverID == currentUserId)
-                .ToListAsync();
+            // Find or create a conversation between the current user and the business
+            var conversation = await _context.Conversations
+                .Include(c => c.Messages)
+                .ThenInclude(m => m.Sender)
+                .FirstOrDefaultAsync(c => (c.User1ID == currentUserId && c.User2ID == businessID) ||
+                                          (c.User1ID == businessID && c.User2ID == currentUserId));
 
-            return View(messages);
+            if (conversation == null)
+            {
+                // Create a new conversation if none exists
+                conversation = new Conversation
+                {
+                    User1ID = currentUserId,
+                    User2ID = businessID
+                };
+                _context.Conversations.Add(conversation);
+                await _context.SaveChangesAsync();
+            }
+
+            return View(conversation.Messages);
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> SendMessage(string messageContent, int receiverId)
+        {
+            if (string.IsNullOrWhiteSpace(messageContent))
+            {
+                return BadRequest("Message content cannot be empty.");
+            }
+
+            int senderId;
+            if (!int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out senderId))
+            {
+                return BadRequest("Invalid sender ID.");
+            }
+
+            var conversation = _context.Conversations
+               .FirstOrDefault(c => (c.User1ID == senderId && c.User2ID == receiverId) ||
+                        (c.User1ID == receiverId && c.User2ID == senderId));
+
+            // If no conversation exists, create a new one
+            if (conversation == null)
+            {
+                conversation = new Conversation
+                {
+                    User1ID = senderId,
+                    User2ID = receiverId,
+                    CreatedDate = DateTime.Now
+                };
+
+                _context.Conversations.Add(conversation);
+                _context.SaveChanges(); // Save to get the conversation ID
+            }
+
+            var receiver = _context.Users.Find(1);
+            if (receiver == null)
+            {
+                // Handle the error (e.g., show an error message or redirect)
+                return NotFound("The specified receiver does not exist.");
+            }
+
+            // Proceed with message creation
+            var message = new Message
+            {
+                MessageContent = messageContent,
+                SenderID = senderId, // Assume you have the sender ID here
+                ReceiverID = receiverId,
+                Timestamp = DateTime.Now,
+                IsRead = false,
+                ConversationID = conversation.ConversationID
+            };
+
+            _context.Messages.Add(message);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", new { businessID = receiverId });
+        }
+
 
         // GET: Messages/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -185,45 +253,7 @@ namespace EmpowerU.Controllers
 
 
         //Luyanda
-        [HttpPost]
-        public IActionResult SendMessage(string messageContent, string receiverId)
-        {
-            // Validate the input
-            if (string.IsNullOrWhiteSpace(messageContent) || string.IsNullOrWhiteSpace(receiverId))
-            {
-                return BadRequest("Message content or original sender ID cannot be empty.");
-            }
-
-            // Attempt to parse the receiver ID
-            if (!int.TryParse(receiverId, out int receiverIdInt))
-            {
-                return BadRequest("Invalid receiver ID.");
-            }
-
-            // Assuming SenderID is obtained from User claims
-            int senderIdInt;
-            if (!int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out senderIdInt))
-            {
-                return BadRequest("Invalid sender ID.");
-            }
-
-            // Create the message object
-            var message = new Message
-            {
-                MessageContent = messageContent,
-                ReceiverID = receiverIdInt,
-                SenderID = senderIdInt,
-                Timestamp = DateTime.Now,
-                IsRead = false // Mark as unread by default
-            };
-
-            // Save the message to the database
-            _context.Messages.Add(message);
-            _context.SaveChanges();
-
-            // Redirect to the messages index or wherever you need
-            return RedirectToAction("Index");
-        }
+   
 
 
 

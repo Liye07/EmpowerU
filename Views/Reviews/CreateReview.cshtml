@@ -17,38 +17,35 @@
         Your input is valuable in helping us better understand your needs and tailor our service accordingly.
     </p>
 
-    @using (Html.BeginForm("CreateReview", "Reviews", FormMethod.Post))
-    {
-        <!-- Review Title Input -->
-        <div class="form-group">
-            @Html.TextBoxFor(model => model.Title, new { @class = "form-control title-box", placeholder = "Give your review a catchy title!" })
-            @Html.ValidationMessageFor(model => model.Title)
+    <!-- Review Title Input -->
+    <div class="form-group">
+        @Html.TextBoxFor(model => model.Title, new { @class = "form-control title-box", placeholder = "Give your review a catchy title!" })
+        @Html.ValidationMessageFor(model => model.Title)
+    </div>
+
+    <!-- Star Rating Section -->
+    <div class="form-group star-rating">
+        <strong> @Html.LabelFor(model => model.Rating, "Rating!") </strong>
+        <div class="stars">
+            @for (int i = 1; i <= 5; i++)
+            {
+                <input type="radio" id="star-@i" name="Rating" value="@i" />
+                <label for="star-@i" title="@i star">★</label>
+            }
         </div>
-
-        <!-- Star Rating Section -->
-        <div class="form-group star-rating">
-            <strong> @Html.LabelFor(model => model.Rating, "Rating!") </strong>
-            <div class="stars">
-                @for (int i = 1; i <= 5; i++)
-                {
-                    <input type="radio" id="star-@i" name="Rating" value="@i" />
-                    <label for="star-@i" title="@i star">★</label>
-                }
-            </div>
-            @Html.ValidationMessageFor(model => model.Rating)
-        </div>
+        @Html.ValidationMessageFor(model => model.Rating)
+    </div>
 
 
-        <!-- Comment Box Section -->
-        <div class="form-group">
-            @Html.TextAreaFor(model => model.Comment, new { @class = "form-control comment-box", rows = 3, placeholder = "Add a Comment..." })
-            @Html.ValidationMessageFor(model => model.Comment)
-        </div>
+    <!-- Comment Box Section -->
+    <div class="form-group">
+        @Html.TextAreaFor(model => model.Comment, new { @class = "form-control comment-box", rows = 3, placeholder = "Add a Comment..." })
+        @Html.ValidationMessageFor(model => model.Comment)
+    </div>
 
 
-        <!-- Submit Button -->
-        <button type="submit" class="btn submit-button">Submit Now</button>
-    }
+    <!-- Submit Button -->
+    <button type="submit" class="btn submit-button">Submit Now</button>
 </div>
 
 @section Scripts {

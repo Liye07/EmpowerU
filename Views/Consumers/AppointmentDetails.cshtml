@@ -110,7 +110,7 @@
 
                 <div class="button-container">
                     <button id="cancelButton" class="btn btn-outline-danger mt-2" style="display: none;" onclick="cancelAppointment()">Cancel</button>
-                    <button id="leaveReviewButton" class="btn btn-primary mt-2" onclick="location.href='/Review/CreateReview?BusinessID=@Model.BusinessID'" style="display: none;">Leave a Review</button>
+                    <button id="leaveReviewButton" class="btn btn-primary mt-2" onclick="openModal(@Model.BusinessID, @Model.ConsumerID)"> Leave a Review</button>
                     <button id="rescheduleButton" class="btn btn-warning mt-2" style="display: none;" onclick="rescheduleAppointment()">Reschedule</button>
                     <button id="payNowButton" class="btn btn-success mt-2" style="display: none;">Pay Now</button>
                 </div>
@@ -135,7 +135,7 @@
                 </div>
                 <div id="cancelConfirmationPrompt">
                     <p>Are you sure you want to cancel this appointment?</p>
-                    <p><strong>Appointment ID:</strong> <span id="cancelAppointmentId"></span></p>
+                    <p><strong></strong> <span id="cancelAppointmentId" style="display : none;"></span></p>
                     <p><strong>Business Name:</strong> <span id="cancelBusinessName"></span></p>
                     <p><strong>Service Type:</strong> <span id="cancelServiceType"></span></p>
                     <p><strong>Date & Time:</strong> <span id="cancelDateTime"></span></p>
@@ -165,7 +165,7 @@
                 </div>
                 <div id="rescheduleConfirmationPrompt">
                     <p>Are you sure you want to reschedule this appointment?</p>
-                    <p><strong>Appointment ID:</strong> <span id="rescheduleAppointmentId"></span></p>
+                    <p><strong></strong> <span id="rescheduleAppointmentId" style="display : none;"></span></p>
                     <p><strong>Business Name:</strong> <span id="rescheduleBusinessName"></span></p>
                     <p><strong>Service Type:</strong> <span id="rescheduleServiceType"></span></p>
                     <p><strong>Date & Time:</strong> <span id="rescheduleDateTime"></span></p>
@@ -183,6 +183,49 @@
     </div>
 </div>
 
+
+<!-- Review Modal -->
+<div id="reviewModal" class="modal" style="display: none;">
+    <div class="modal-content feedback-card">
+        <div class="feedback-header">
+            <h2>Feedback</h2>
+            <span class="close-icon" onclick="closeModal()">&times;</span>
+        </div>
+
+        <!-- Review Form -->
+        <form id="reviewForm" method="post" asp-action="CreateReview" asp-controller="Reviews">
+            <input type="hidden" name="BusinessID" id="BusinessID" />
+            <input type="hidden" name="ConsumerID" id="ConsumerID" />
+
+            <h3 class="question-title">How are you feeling?</h3>
+            <p class="instruction-text">Your input is valuable in helping us better understand your needs and tailor our service accordingly.</p>
+
+            <div class="form-group">
+                <input type="text" name="Title" class="form-control title-box" placeholder="Give your review a catchy title!" required />
+                <span class="text-danger" id="titleError"></span>
+            </div>
+
+            <div class="form-group star-rating">
+                <strong>Rating!</strong>
+                <div class="stars">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <input type="radio" id="star-@i" name="Rating" value="@i" required />
+                        <label for="star-@i" title="@i star">★</label>
+                    }
+                </div>
+                <span class="text-danger" id="ratingError"></span>
+            </div>
+
+            <div class="form-group">
+                <textarea name="Comment" class="form-control comment-box" rows="3" placeholder="Add a Comment..."></textarea>
+                <span class="text-danger" id="commentError"></span>
+            </div>
+
+            <button type="submit" class="btn submit-button">Submit Now</button>
+        </form>
+    </div>
+</div>
 
 
 
@@ -337,7 +380,7 @@
 
                     // Show success message in the modal
                     document.getElementById("cancelConfirmationMessage").classList.remove("d-none");
-                    document.getElementById("successMessage").innerText = "Appointment canceled successfully!";
+                    document.getElementById("successMessage").innerText = "Appointment cancelled successfully!";
 
                     // Use setTimeout to hide the message after a few seconds
                     setTimeout(() => {
@@ -452,6 +495,30 @@
         paginateTable2('past-appointments-section', pastTableRows);
     });
 
+    function openModal(businessId, consumerId) {
+        // Set hidden input values for the business and consumer IDs
+        document.getElementById("BusinessID").value = businessId;
+        document.getElementById("ConsumerID").value = consumerId;
+
+        // Log values to confirm they are set correctly
+        console.log("BusinessID:", businessId, "ConsumerID:", consumerId);
+
+        // Display the modal
+        document.getElementById("reviewModal").style.display = "block";
+    }
+
+    function closeModal() {
+        // Hide the modal
+        document.getElementById("reviewModal").style.display = "none";
+    }
+
+    // Close the modal when clicking outside of it
+    window.onclick = function (event) {
+        const modal = document.getElementById("reviewModal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
 
 
 
@@ -479,4 +546,132 @@
         .button-container button {
             min-width: 60px; /* Optional: Set a minimum width */
         }
+
+    #reviewModal .star-rating {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    #reviewModal .stars {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+    }
+
+        #reviewModal .stars input[type="radio"] {
+            display: none; /* Hide radio buttons */
+        }
+
+        #reviewModal .stars label {
+            font-size: 24px;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0 5px;
+        }
+
+        #reviewModal .stars input[type="radio"]:checked ~ label,
+        #reviewModal .stars input[type="radio"]:hover ~ label {
+            color: #ffc107; /* Gold color for selected stars */
+        }
+
+        #reviewModal .stars input[type="radio"]:focus ~ label {
+            outline: 2px solid #ffa726; /* Outline for accessibility when focused */
+        }
+
+    /* Modal background overlay */
+    #reviewModal {
+        display: none;
+        position: fixed;
+        z-index: 1000; /* Ensure it stays on top */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.7); /* Darken the background */
+    }
+
+        /* Modal content box */
+        #reviewModal .modal-content {
+            max-width: 400px;
+            max-height: 900px;
+            margin: 5% auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            position: relative; /* Ensures it stays centered in the modal */
+            z-index: 1001; /* Higher than the background overlay */
+        }
+
+    #reviewModal .feedback-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        #reviewModal .feedback-header h2 {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+    #reviewModal .close-icon {
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    #reviewModal .question-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+
+    #reviewModal .instruction-text {
+        font-size: 14px;
+        color: #777;
+        margin: 10px 0 20px;
+    }
+
+    #reviewModal .title-box {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        font-size: 16px;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    #reviewModal .comment-box {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        margin-bottom: 20px;
+    }
+
+    #reviewModal .submit-button {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(90deg, #00b09b 0%, #96c93d 100%);
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0px 4px 8px rgba(0, 128, 0, 0.3);
+        transition: box-shadow 0.2s;
+    }
+
+        #reviewModal .submit-button:hover {
+            box-shadow: 0px 6px 12px rgba(0, 128, 0, 0.4);
+        }
+
+
 </style>

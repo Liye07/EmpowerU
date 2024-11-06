@@ -4,6 +4,7 @@ using EmpowerU.Models.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmpowerU.Migrations
 {
     [DbContext(typeof(EmpowerUContext))]
-    partial class EmpowerUContextModelSnapshot : ModelSnapshot
+    [Migration("20241104002231_AddConversationModel")]
+    partial class AddConversationModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,9 +101,6 @@ namespace EmpowerU.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ConversationID"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("User1ID")
                         .HasColumnType("int");
@@ -197,7 +197,7 @@ namespace EmpowerU.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageID"));
 
-                    b.Property<int>("ConversationID")
+                    b.Property<int?>("ConversationID")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsRead")
@@ -753,11 +753,9 @@ namespace EmpowerU.Migrations
 
             modelBuilder.Entity("EmpowerU.Models.Message", b =>
                 {
-                    b.HasOne("EmpowerU.Models.Conversation", "Conversation")
+                    b.HasOne("EmpowerU.Models.Conversation", null)
                         .WithMany("Messages")
-                        .HasForeignKey("ConversationID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ConversationID");
 
                     b.HasOne("EmpowerU.Models.User", "Receiver")
                         .WithMany()
@@ -770,8 +768,6 @@ namespace EmpowerU.Migrations
                         .HasForeignKey("SenderID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Conversation");
 
                     b.Navigation("Receiver");
 
