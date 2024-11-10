@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "Error";
+}
+
+<h1>Oops! Something went wrong.</h1>
+<p>We're sorry, but it seems like the link you followed is invalid or an unexpected error has occurred.</p>
+<p>Please try the following options:</p>
+<ul>
+    <li><a href="@Url.Action("Index", "Home")">Return to Home Page</a></li>
+    <li><a href="@Url.Action("Login", "Account")">Go to Login Page</a></li>
+</ul>

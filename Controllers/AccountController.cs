@@ -44,6 +44,8 @@ namespace EmpowerU.Controllers
         [ValidateAntiForgeryToken] // Helps protect against CSRF attacks
         public async Task<IActionResult> Login([FromForm] Login loginModel)
         {
+
+
             if (!ModelState.IsValid)
             {
                 return View(loginModel); // Return the view with validation errors
@@ -54,6 +56,16 @@ namespace EmpowerU.Controllers
 
             if (user != null)
             {
+
+                // Check if the email is confirmed
+                if (!user.EmailConfirmed)
+                {
+                    // Add an error to the ModelState if the email is not confirmed
+                    ModelState.AddModelError(string.Empty, "Please verify your email before logging in.");
+                    ViewData["LoginError"] = "Please verify your email before logging in.";
+                    return View(loginModel);
+                }
+
                 // Attempt to sign in using the UserName and Password
                 var result = await _signInManager.PasswordSignInAsync(user.UserName, loginModel.Password, isPersistent: false, lockoutOnFailure: false);
 
@@ -158,7 +170,22 @@ namespace EmpowerU.Controllers
                     }
 
                     await _userManager.AddToRoleAsync(user, "Consumer");
-                    return RedirectToAction("Login", "Account");
+
+                    // Generate the email confirmation token
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                    // Create a confirmation link
+                    var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
+
+                    // Send the email confirmation
+                    var emailMessage = $"Please confirm your email by clicking this link: <a href='{confirmationLink}'>Confirm Email</a>";
+                    await _emailSender.SendEmailAsync(consumer.Email, "Email Confirmation", emailMessage);
+
+                    // Notify the user to check their email for confirmation
+                    TempData["Message"] = "Registration successful! Please check your email to confirm your account.";
+
+                    TempData["Email"] = consumer.Email;
+                    return RedirectToAction("EmailVerificationPending", "Account");
                 }
 
                 // Capture and log any creation errors
@@ -267,9 +294,22 @@ namespace EmpowerU.Controllers
                     {
                         await _roleManager.CreateAsync(new IdentityRole<int>("Business")); // Use int if User is int
                     }
-
                     await _userManager.AddToRoleAsync(user, "Business");
-                    return RedirectToAction("Login", "Account");
+
+                    // Generate the email confirmation token
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                    // Create a confirmation link
+                    var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
+
+                    // Send the email confirmation
+                    var emailMessage = $"Please confirm your email by clicking this link: <a href='{confirmationLink}'>Confirm Email</a>";
+                    await _emailSender.SendEmailAsync(business.Email, "Email Confirmation", emailMessage);
+
+                    // Notify the user to check their email for confirmation
+                    TempData["Message"] = "Registration successful! Please check your email to confirm your account.";
+                    TempData["Email"] = business.Email;
+                    return RedirectToAction("EmailVerificationPending", "Account");
                 }
 
                 // Capture and log any creation errors
@@ -319,7 +359,7 @@ namespace EmpowerU.Controllers
 
                 // Generate the password reset token
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, token }, protocol: HttpContext.Request.Scheme);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, token = token }, Request.Scheme);
 
                 // Send email with the reset link
                 await _emailSender.SendEmailAsync(model.Email, "Reset Password",
@@ -333,10 +373,86 @@ namespace EmpowerU.Controllers
             return View(model);
         }
 
+        public IActionResult VerificationSuccess()
+        {
+            return View();
+        }
+
+
+        public IActionResult EmailVerificationPending()
+        {
+            return View();
+        }
+
         public IActionResult ForgotPasswordConfirmation()
         {
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(int userId, string token)
+        {
+            if (userId == 0 || string.IsNullOrWhiteSpace(token))
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                TempData["Message"] = "Email confirmed successfully!";
+                return RedirectToAction("VerificationSuccess", "Account");
+            }
+
+            TempData["Error"] = "Email confirmation failed.";
+            return RedirectToAction("Error", "Home");
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ResendVerification()
+        {
+            // Get the user by their email from the session or other mechanism (e.g., logged-in user)
+            var userId = HttpContext.Session.GetString("UserId");
+            if (userId == null)
+            {
+                _logger.LogError("User ID not found in session.");
+                return RedirectToAction("Login"); // Redirect to login if user is not authenticated
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return RedirectToAction("Login"); // Redirect to login if user doesn't exist
+            }
+
+            // Check if the user's email is already confirmed
+            if (user.EmailConfirmed)
+            {
+                // If already confirmed, no need to resend the verification email
+                TempData["Error"] = $"Your email ({user.Email}) is already verified.";
+                return RedirectToAction("Login"); // Or redirect as needed
+            }
+
+            // Generate the email verification token
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
+
+            // Send the email (you need to configure an email service here)
+            await _emailSender.SendEmailAsync(user.Email, "Confirm your email", $"Please confirm your email by clicking <a href='{callbackUrl}'>here</a>");
+
+            // Provide feedback to the user
+            TempData["Success"] = "Verification email has been resent. Please check your inbox.";
+            return RedirectToAction("EmailVerificationPending"); // Redirect back to the verify email page
+        }
+
+
     }
+
 }
