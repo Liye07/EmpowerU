@@ -102,7 +102,7 @@ namespace EmpowerU.Controllers
         // POST: Consumers/RegisterConsumer
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterConsumer([Bind("PreferredCategories,UserName,Name,Surname,Email,PhoneNumber,Password")] Consumer consumer)
+        public async Task<IActionResult> RegisterConsumer([Bind("PreferredCategories,UserName,Name,Surname,Email,PhoneNumber,Password,ConfirmPassword")] Consumer consumer)
         {
             if (ModelState.IsValid)
             {
@@ -195,7 +195,7 @@ namespace EmpowerU.Controllers
         // POST: Businesses/RegisterBusiness
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterBusiness([Bind("Description,Rating,Name,UserName,Email,PhoneNumber,Password,BusinessCategory,LocationService")] Business business)
+        public async Task<IActionResult> RegisterBusiness([Bind("Description,Rating,Name,UserName,Email,PhoneNumber,Password,ConfirmPassword,BusinessCategory,LocationService")] Business business)
         {
             if (ModelState.IsValid)
             {

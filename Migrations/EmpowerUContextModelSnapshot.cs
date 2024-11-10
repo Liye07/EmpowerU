@@ -110,7 +110,7 @@ namespace EmpowerU.Migrations
 
                     b.HasKey("ConversationID");
 
-                    b.ToTable("Conversations");
+                    b.ToTable("Conversations", (string)null);
                 });
 
             modelBuilder.Entity("EmpowerU.Models.Discount", b =>
