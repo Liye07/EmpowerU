@@ -15,21 +15,21 @@ public class EmailSender : IEmailSender
 
     public async Task SendEmailAsync(string email, string subject, string message)
     {
-        var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort)
+        using (var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort))
         {
-            Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.SenderPassword),
-            EnableSsl = true
-        };
+            client.Credentials = new NetworkCredential(_emailSettings.SenderEmail, _emailSettings.SenderPassword);
+            client.EnableSsl = true;
 
-        var mailMessage = new MailMessage
-        {
-            From = new MailAddress(_emailSettings.SenderEmail, _emailSettings.SenderName),
-            Subject = subject,
-            Body = message,
-            IsBodyHtml = true
-        };
-        mailMessage.To.Add(email);
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(_emailSettings.SenderEmail, _emailSettings.SenderName),
+                Subject = subject,
+                Body = message,
+                IsBodyHtml = true
+            };
+            mailMessage.To.Add(email);
 
-        await client.SendMailAsync(mailMessage);
+            await client.SendMailAsync(mailMessage);
+        }
     }
 }

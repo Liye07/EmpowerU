@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Verify Your Email";
+}
+
+<div class="container text-center mt-5">
+    <h2>Verify Your Email</h2>
+    <p>An email has been sent to <strong>@TempData["Email"]</strong>. Please check your inbox and click the link to verify your account.</p>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    <p>If you didn't receive the email, <a href="@Url.Action("ResendVerification")">click here to resend it</a>.</p>
+</div>

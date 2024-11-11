@@ -24,6 +24,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.SignIn.RequireConfirmedEmail = true;
+});
+
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
