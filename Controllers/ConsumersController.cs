@@ -302,18 +302,6 @@ namespace EmpowerU.Controllers
             }
         }
 
-        public async Task<IActionResult> Search(string searchTerm = "")
-        {
-            // Fetch businesses matching the search term
-            var businesses = await _context.Businesses
-                .Where(b => b.Name.Contains(searchTerm) || b.Description.Contains(searchTerm))
-                .OrderByDescending(b => b.Rating) // Sort by rating
-                .ToListAsync();
-
-            return View(businesses); // Pass businesses to the view
-        }
-
-
 
         [HttpPost]
         [Route("appointments/cancel/{appointmentId}")]
@@ -368,7 +356,7 @@ namespace EmpowerU.Controllers
 
 
 
-        private const double SEARCH_RADIUS_KM = 10; // Define search radius in kilometers
+        private const double SEARCH_RADIUS_KM = 15; // Define search radius in kilometers
 
         [HttpGet]
         public async Task<IActionResult> Search(double lat, double lon, string address)

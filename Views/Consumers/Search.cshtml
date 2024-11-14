@@ -37,8 +37,6 @@
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             }
 
-
-
         /* Style adjustments for layout */
         .container {
             display: flex;
@@ -116,17 +114,17 @@
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        // Get URL parameters and initial data
+        // Get URL parameters (latitude, longitude, and address)
         const urlParams = new URLSearchParams(window.location.search);
         const centerLat = parseFloat(urlParams.get('lat')) || 0;
         const centerLon = parseFloat(urlParams.get('lon')) || 0;
         const address = urlParams.get('address') || '[Location not specified]';
-        const searchRadius = 10; // km - match with controller's SEARCH_RADIUS_KM
+        const searchRadius = 10; // km
 
-        // Update location label
+        // Set location label
         document.getElementById("locationLabel").textContent = decodeURIComponent(address);
 
-        // Initialize map
+        // Initialize the map
         const map = L.map('map').setView([centerLat, centerLon], 13);
 
         // Add OpenStreetMap tile layer
@@ -135,10 +133,10 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Create a marker cluster group for better performance with many markers
+        // Add cluster group for markers
         const markers = L.markerClusterGroup();
 
-        // Add search location marker
+        // Add the search location marker
         const searchMarker = L.marker([centerLat, centerLon], {
             icon: L.divIcon({
                 className: 'search-location-marker',
@@ -147,7 +145,7 @@
             })
         }).addTo(map);
 
-        // Add circle to show search radius
+        // Add a circle to show the search radius
         const radiusCircle = L.circle([centerLat, centerLon], {
             radius: searchRadius * 1000, // Convert km to meters
             color: '#0066cc',
@@ -156,28 +154,54 @@
             weight: 1
         }).addTo(map);
 
-        // Function to add business markers using LocationService coordinates
+        // Function to calculate distance between two lat/lon points
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius of the Earth in km
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLon = (lon2 - lon1) * (Math.PI / 180);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Distance in km
+        }
+
+        // Function to add a red pin marker for each business
         function addBusinessMarker(business) {
             const latitude = business.LocationService?.Latitude;
             const longitude = business.LocationService?.Longitude;
 
             if (latitude && longitude) {
-                const marker = L.marker([latitude, longitude])
-                    .bindPopup(`
-                            <div class="popup-content">
-                                <h5>${business.Name}</h5>
-                                <p>${business.Description}</p>
-                                <p>Category: ${business.BusinessCategory}</p>
-                                <div class="rating">
-                                    ${getStarRating(business.Rating)}
+                const distance = calculateDistance(centerLat, centerLon, latitude, longitude);
+
+                // Check if the business is within the search radius
+                if (distance <= searchRadius) {
+                    // Use a red pin for business markers
+                    const redPinIcon = L.icon({
+                        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x-red.png', // Red pin image URL
+                        iconSize: [25, 41], // Size of the icon
+                        iconAnchor: [12, 41], // Anchor point of the icon
+                        popupAnchor: [0, -41] // Position of the popup
+                    });
+
+                    const marker = L.marker([latitude, longitude], { icon: redPinIcon })
+                        .bindPopup(`
+                                <div class="popup-content">
+                                    <h5>${business.Name}</h5>
+                                    <p>${business.Description}</p>
+                                    <p>Category: ${business.BusinessCategory}</p>
+                                    <div class="rating">${getStarRating(business.Rating)}</div>
+                                    <button onclick="viewBusinessDetails(${business.Id})" class="btn btn-sm btn-primary mt-2">
+                                        View Details
+                                    </button>
                                 </div>
-                                <button onclick="viewBusinessDetails(${business.Id})"
-                                        class="btn btn-sm btn-primary mt-2">
-                                    View Details
-                                </button>
-                            </div>
-                        `);
-                markers.addLayer(marker);
+                            `);
+
+                    markers.addLayer(marker);
+
+                    // Return the marker object for reference
+                    return marker;
+                }
             }
         }
 
@@ -190,117 +214,46 @@
             return stars;
         }
 
-        // Function to handle business details view
+        // Function to view business details
         function viewBusinessDetails(businessId) {
             window.location.href = `/Businesses/Details/${businessId}`;
         }
 
-        // Add business markers from initial data
-        const businesses = @Json.Serialize(Model);
+        // Initialize businesses from server-side model data
+        const businesses = @Html.Raw(Json.Serialize(Model));
+
+        // Add markers for each business within the search radius
+        let businessMarkers = {};
         businesses.forEach(business => {
-            addBusinessMarker(business);
+            const marker = addBusinessMarker(business);
+            if (marker) {
+                businessMarkers[business.Id] = marker; // Store the marker for later reference
+            }
         });
 
         // Add marker cluster to map
         map.addLayer(markers);
 
-        // Fit map bounds to show all markers
-        const bounds = markers.getBounds().extend(searchMarker.getLatLng());
-        map.fitBounds(bounds, { padding: [50, 50] });
+        // Fit map bounds to include all markers
+        if (markers.getLayers().length > 0) {
+            const bounds = markers.getBounds().extend(searchMarker.getLatLng());
+            map.fitBounds(bounds);
+        }
 
-        // Handle search input
-        let searchTimeout;
-        document.getElementById("searchInput").addEventListener("input", function () {
-            const searchTerm = this.value;
+        // Add event listeners to sidebar items (assuming you have a list of businesses on the sidebar)
+        document.querySelectorAll('.business-item').forEach(item => {
+            item.addEventListener('click', (event) => {
+                const businessId = item.dataset.businessId;
+                const marker = businessMarkers[businessId];
 
-            clearTimeout(searchTimeout);
-
-            searchTimeout = setTimeout(() => {
-                if (searchTerm.trim().length > 2) {
-                    fetch(`/Consumer/GetBusinessesNearby?lat=${centerLat}&lon=${centerLon}&searchTerm=${searchTerm}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            markers.clearLayers();
-
-                            const businessResults = document.querySelector(".sidebar");
-                            businessResults.innerHTML = `
-                                    <h6>Search results near: <span id="locationLabel">${decodeURIComponent(address)}</span></h6>
-                                    <p>${data.length} businesses found</p>
-                                `;
-
-                            data.forEach(business => {
-                                addBusinessMarker(business);
-
-                                const card = document.createElement("div");
-                                card.className = "business-card";
-                                card.innerHTML = `
-                                        <img src="data:image/png;base64,${business.ProfilePicture}" alt="${business.Name}">
-                                        <div class="business-details">
-                                            <h5>${business.Name}</h5>
-                                            <p>${business.Description}</p>
-                                            <p>Category: ${business.BusinessCategory}</p>
-                                            <div class="rating">
-                                                ${getStarRating(business.Rating)}
-                                            </div>
-                                        </div>
-                                    `;
-
-                                card.addEventListener('click', () => {
-                                    map.setView([business.LocationService.Latitude, business.LocationService.Longitude], 15);
-                                    markers.eachLayer((marker) => {
-                                        if (marker.getLatLng().lat === business.LocationService.Latitude &&
-                                            marker.getLatLng().lng === business.LocationService.Longitude) {
-                                            marker.openPopup();
-                                        }
-                                    });
-                                });
-
-                                businessResults.appendChild(card);
-                            });
-                        })
-                        .catch(error => console.error('Error fetching search results:', error));
+                if (marker) {
+                    map.setView(marker.getLatLng(), 15); // Zoom in on the marker
+                    marker.openPopup(); // Open the marker popup
                 }
-            }, 300);
+            });
         });
+
     </script>
 
-
-    <style>
-        /* Add these new styles */
-        .search-location-marker {
-            background: none;
-        }
-
-        .search-marker-inner {
-            width: 20px;
-            height: 20px;
-            background-color: #0066cc;
-            border: 3px solid white;
-            border-radius: 50%;
-            box-shadow: 0 0 0 2px #0066cc;
-        }
-
-        .popup-content {
-            min-width: 200px;
-            padding: 10px;
-        }
-
-        .rating {
-            color: #ffd700;
-            margin: 5px 0;
-        }
-
-        .business-card {
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-            .business-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            }
-
-        /* Rest of your existing styles... */
-    </style>
 </body>
 </html>
