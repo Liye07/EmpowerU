@@ -604,7 +604,26 @@ namespace EmpowerU.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult LoadMoreReviews(int count, int businessId)
+        {
+            var reviews = _context.Reviews
+                .Where(r => r.BusinessID == businessId)
+                .OrderByDescending(r => r.Date)  // Sort by date descending
+                .Skip(count) 
+                .Take(5)
+                .Select(r => new
+                {
+                    r.Title,
+                    r.Comment,
+                    r.Rating,
+                    r.Date
+                })
+                .ToList();
 
+            // Return the reviews as JSON
+            return Json(reviews);
+        }
 
 
 

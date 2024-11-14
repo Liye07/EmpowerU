@@ -119,9 +119,9 @@
                 </p>
                 <div class="button-container">
                     <button id="cancelButton" class="btn btn-outline-danger mt-2" style="display: none;" onclick="cancelAppointment()">Cancel</button>
-                    <button id="leaveReviewButton" class="btn btn-primary mt-2" style="display: none;">Leave a Review</button>
+@*                     <button id="leaveReviewButton" class="btn btn-primary mt-2" style="display: none;">Leave a Review</button> *@
                     <button id="rescheduleButton" class="btn btn-warning mt-2" onclick="rescheduleAppointment()">Reschedule</button>
-                    <button id="payNowButton" class="btn btn-success mt-2" style="display: none;">Pay Now</button>
+@*                     <button id="payNowButton" class="btn btn-success mt-2" style="display: none;">Pay Now</button> *@
                 </div>
             </div>
             <div id="noAppointmentSelected" class="alert alert-info" style="display: block;">
@@ -238,8 +238,8 @@
         document.getElementById("cancelConfirmationMessage").classList.add("d-none");
         document.getElementById("modalFooter").style.display = "block"; // Show footer buttons again
 
-        document.getElementById("leaveReviewButton").style.display = (status === "Completed") ? 'block' : 'none';
-        document.getElementById("payNowButton").style.display = (status === "Scheduled") ? 'block' : 'none';
+        // document.getElementById("leaveReviewButton").style.display = (status === "Completed") ? 'block' : 'none';
+        // document.getElementById("payNowButton").style.display = (status === "Scheduled") ? 'block' : 'none';
         document.getElementById("rescheduleButton").style.display = (status === "Scheduled") ? 'block' : 'none';
         document.getElementById("cancelButton").style.display = (status === "Scheduled") ? 'block' : 'none';
 
