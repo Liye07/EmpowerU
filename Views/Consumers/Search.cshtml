@@ -9,6 +9,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Businesses</title>
     <style>
+
+        .business-link {
+            text-decoration: none; /* Removes the default underline */
+            color: inherit; /* Ensures the link doesn't change text color */
+        }
+
         .search-location-marker {
             background: none;
         }
@@ -95,15 +101,18 @@
             @foreach (var business in Model)
             {
                 <div class="business-card">
-                    <img src="data:image/png;base64,@(Convert.ToBase64String(business.ProfilePicture ?? new byte[0]))" alt="Logo">
-                    <div class="business-details">
-                        <h5>@business.Name</h5>
-                        <p>@business.Description</p>
-                        <p>Category: @business.BusinessCategory</p>
-                        <p>Rating: @business.Rating</p>
-                    </div>
+                    <a href="@Url.Action("Details", "Businesses", new { id = business.Id })" class="business-link">
+                        <img src="data:image/png;base64,@(Convert.ToBase64String(business.ProfilePicture ?? new byte[0]))" alt="Logo">
+                        <div class="business-details">
+                            <h5>@business.Name</h5>
+                            <p>@business.Description</p>
+                            <p>Category: @business.BusinessCategory</p>
+                            <p>Rating: @business.Rating</p>
+                        </div>
+                    </a>
                 </div>
             }
+
         </div>
 
         <!-- Map section positioned on the right side -->
