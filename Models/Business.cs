@@ -11,7 +11,7 @@ public class Business : User
     public int? LocationID { get; set; }
 
     [Column(TypeName = "decimal(5,2)")]
-    public decimal? Rating { get; set; }
+    public decimal? Rating { get; set; } = 0.00m;
 
     [Required(ErrorMessage = "Business Category is required.")]
     [StringLength(30)]
