@@ -22,7 +22,7 @@
 
         <form id="payment-form">
             <div class="form-group">
-                <label>Total Amount: @Model.Amount USD</label>
+                <label>Total Amount: @Model.Amount ZAR</label>
             </div>
             <div class="form-group">
                 <label for="cardholder-name">Name on card</label>
@@ -84,7 +84,7 @@
                         PaymentDate: new Date().toISOString(),
                         PaymentStatus: "Success",
                         PaymentIntentId: paymentIntent.id,
-                        Currency: "USD",
+                        Currency: "ZAR",
                         AppointmentID: @Model.AppointmentID // Pass AppointmentID here
                     })
                 }).then(response => {
