@@ -4,7 +4,7 @@
     ViewData["Title"] = "Consumer Details";
 }
 
-<h1 class="text-center mb-4 text-primary">Consumer Details</h1>
+<h1 class="text-center mb-4 text-primary">   </h1>
 
 <div class="container">
     <div class="row">
@@ -17,11 +17,11 @@
 
         <!-- Consumer Information Section -->
         <div class="col-md-8">
-            <h4 class="mb-4 text-primary">Personal Information</h4>
+            <h4 class="mb-4" style="color: black;">Personal Information</h4>
+
             <div class="card p-4 shadow-sm">
                 <dl class="row">
-                    <dt class="col-sm-4">Preferred Categories</dt>
-                    <dd class="col-sm-8">@Html.DisplayFor(model => model.PreferredCategories)</dd>
+                   
 
                     <dt class="col-sm-4">Name</dt>
                     <dd class="col-sm-8">@Html.DisplayFor(model => model.Name)</dd>
@@ -35,22 +35,36 @@
                     <dt class="col-sm-4">Phone Number</dt>
                     <dd class="col-sm-8">@Html.DisplayFor(model => model.PhoneNumber)</dd>
 
-                    <dt class="col-sm-4">Password</dt>
-                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Password)</dd>
 
-                    <dt class="col-sm-4">Role</dt>
-                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Role)</dd>
+                
+
+                     @if (User.IsInRole("Admin"))
+                    {
+                        <dt class="col-sm-4">Preferred Categories</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.PreferredCategories)</dd>
+
+                        <dt class="col-sm-4">Password</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Password)</dd>
+
+                        <dt class="col-sm-4">Role</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Role)</dd>
 
                     <dt class="col-sm-4">Last Login</dt>
                     <dd class="col-sm-8">@Html.DisplayFor(model => model.LastLogin)</dd>
+
+                    }
                 </dl>
             </div>
-        </div>
-    </div>
+       <p>
 
-    <div class="text-center mt-4">
-        <!-- Buttons with Facebook Blue Style -->
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary btn-lg">Edit Profile</a>
-        <a asp-action="Index" class="btn btn-secondary btn-lg ml-3">Back to List</a>
+       </p>
+            <div class="d-flex align-items-center mb-3">
+                <a href="/Messages/Index?consumerID=@Model.Id" class="btn btn-outline-primary d-flex align-items-center">
+                    <i class="fas fa-envelope mr-2"></i> Message Me!
+                </a>
+            </div>
+        </div>
+        <!-- Message Us Button -->
+       
     </div>
 </div>
