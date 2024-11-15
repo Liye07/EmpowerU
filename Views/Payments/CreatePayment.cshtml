@@ -1,4 +1,4 @@
-﻿@model PaymentEmpowerU
+﻿
 
 @{
     Layout = null;
@@ -22,8 +22,7 @@
 
         <form id="payment-form">
             <div class="form-group">
-                @Html.TextBoxFor(model => model.Amount, new { @class = "form-control title-box", placeholder = "How much are you paying?" })
-                @Html.ValidationMessageFor(model => model.Amount)
+                <label>Total Amount: @Model.Amount USD</label>
             </div>
             <div class="form-group">
                 <label for="cardholder-name">Name on card</label>
@@ -38,37 +37,66 @@
             <p id="payment-message"></p>
         </form>
     </div>
-
+    </body>
+    <script src="https://js.stripe.com/v3/"></script>
     <script>
         const stripe = Stripe("pk_test_51QFgQzGLtm1zZAcUERYssEttq4ZpOqQeW8vDHVQB9LEnPqhA5nLln6RMBhmyC9PFafiuV11qkLd3Xh9umXNsIPpL00mlmOTZkq");
-        const clientSecret = "@ViewBag.ClientSecret"; // Ensure this is set in the controller
+        const clientSecret = "@ViewBag.ClientSecret"; // Client secret from controller
 
         const elements = stripe.elements();
-        const card = elements.create("card", {
-            style: {
-                base: {
-                    fontSize: '16px',
-                    color: '#32325d',
-                    '::placeholder': { color: '#aab7c4' },
-                },
-                invalid: { color: '#fa755a' }
-            }
-        });
-        card.mount("#card-element");
+        const cardElement = elements.create("card");
+        cardElement.mount("#card-element");
 
-        const form = document.getElementById("payment-form");
-        form.addEventListener("submit", async (event) => {
+        document.getElementById("payment-form").addEventListener("submit", async (event) => {
             event.preventDefault();
+            const cardholderName = document.getElementById("cardholder-name").value;
 
+            // Simulate payment with Stripe's test card numbers
             const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
-                payment_method: { card: card }
+                payment_method: {
+                    card: cardElement,
+                    billing_details: {
+                        name: cardholderName
+                    }
+                }
             });
 
-            document.getElementById("payment-message").textContent = error ? error.message : "Payment successful!";
-        });
-    </script>
-</body>
+            if (error) {
+                document.getElementById("payment-message").textContent = error.message;
+            } else {
+                document.getElementById("payment-message").textContent = "Payment successful!";
 
+                // Confirm the payment on the server side (you can also store this in your database)
+                fetch("/Payments/Confirm", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "RequestVerificationToken": document.getElementsByName("__RequestVerificationToken")[0].value
+                    },
+                    body: JSON.stringify({
+                        PaymentID: @Model.PaymentID,
+                        ConsumerID: @Model.ConsumerID,
+                        BusinessID: @Model.BusinessID,
+                        Amount: @Model.Amount,
+                        PaymentDate: new Date().toISOString(),
+                        PaymentStatus: "Success",
+                        PaymentIntentId: paymentIntent.id,
+                        Currency: "USD",
+                        AppointmentID: @Model.AppointmentID // Pass AppointmentID here
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = "/Payments/Success";
+                    } else {
+                        document.getElementById("payment-message").textContent = "Error confirming payment.";
+                    }
+                });
+            }
+        });
+
+
+    
+    </script>
 
 <style>
     body {

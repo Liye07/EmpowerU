@@ -112,7 +112,10 @@
                     <button id="cancelButton" class="btn btn-outline-danger mt-2" style="display: none;" onclick="cancelAppointment()">Cancel</button>
                     <button id="leaveReviewButton" class="btn btn-primary mt-2" onclick="openModal(@Model.BusinessID, @Model.ConsumerID)"> Leave a Review</button>
                     <button id="rescheduleButton" class="btn btn-warning mt-2" style="display: none;" onclick="rescheduleAppointment()">Reschedule</button>
-                    <button id="payNowButton" class="btn btn-success mt-2" style="display: none;">Pay Now</button>
+                    <button id="payNowButton" class="btn btn-success mt-2" style="display: none;"
+                            onclick="location.href='@Url.Action("CreatePayment", "Payments", new { appointmentId = Model.AppointmentID })'">
+                        Pay Now
+                    </button>
                 </div>
             </div>
             <div id="noAppointmentSelected" class="alert alert-info" style="display: block;">
