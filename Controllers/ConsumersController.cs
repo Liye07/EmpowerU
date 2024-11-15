@@ -37,7 +37,7 @@ namespace EmpowerU.Controllers
             return View(await _context.Consumers.ToListAsync());
         }
 
-
+        [Authorize(Roles = "Consumer")]
         public IActionResult ConsumerDashboard(int? id)
         {
             ViewData["ActivePage"] = "ConsumerDashboard";
