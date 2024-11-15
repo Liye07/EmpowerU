@@ -66,7 +66,10 @@
             } else {
                 document.getElementById("payment-message").textContent = "Payment successful!";
 
-                // Confirm the payment on the server side (you can also store this in your database)
+
+            console.log("AppointmentID:", @Model.AppointmentID, "PiD", @Model.PaymentID, "CiD", @Model.ConsumerID, "BiD", @Model.BusinessID);
+
+            // Confirm the payment on the server side (you can also store this in your database)
                 fetch("/Payments/Confirm", {
                     method: "POST",
                     headers: {

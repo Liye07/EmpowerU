@@ -135,11 +135,10 @@ namespace EmpowerU.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
-        // GET: Create Payment (Stripe)
         // GET: Create Payment (Stripe)
         public ActionResult CreatePayment(int appointmentId)
         {
+
             try
             {
                 // Retrieve the appointment and service details
