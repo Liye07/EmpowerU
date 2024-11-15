@@ -30,13 +30,13 @@
                             @if (User.IsInRole("Business"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link @(ViewData["ActivePage"] == "BusinessDashboard" ? "active" : "")" href="@Url.Action("BusinessDashboard", "Business")">Business Dashboard</a>
+                                    <a class="nav-link @(ViewData["ActivePage"] == "BusinessDashboard" ? "active" : "")" href="@Url.Action("BusinessDashboard", "Businesses")">Business Dashboard</a>
                                 </li>
                             }
                             @if (User.IsInRole("Consumer"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link @(ViewData["ActivePage"] == "ConsumerDashboard" ? "active" : "")" href="@Url.Action("ConsumerDashboard", "Consumer")">Consumer Dashboard</a>
+                                    <a class="nav-link @(ViewData["ActivePage"] == "ConsumerDashboard" ? "active" : "")" href="@Url.Action("ConsumerDashboard", "Consumers")">Consumer Dashboard</a>
                                 </li>
                             }
                             <li class="nav-item dropdown">

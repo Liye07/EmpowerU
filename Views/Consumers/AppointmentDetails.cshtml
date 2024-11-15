@@ -35,7 +35,7 @@
                     <tbody>
                     @foreach (var appointment in upcomingAppointments)
                     {
-                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.Service.ServiceName','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
+                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.Service.ServiceName','@appointment.Service.ServiceID','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
                             <td>@appointment.Business.Name</td>
                             <td>@appointment.Service.ServiceName</td>
                             <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
@@ -71,7 +71,7 @@
                     <tbody>
                     @foreach (var appointment in pastAppointments)
                     {
-                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.Service.ServiceName','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
+                            <tr class="appointment-row" onclick="showAppointmentDetails(@appointment.AppointmentID,'@appointment.Business.Name','@appointment.Consumer.Name', '@appointment.Consumer.Surname' ,'@appointment.Consumer.Email','@appointment.Consumer.PhoneNumber','@appointment.Service.ServiceName','@appointment.Service.ServiceID','@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")','@appointment.Status')">
                             <td>@appointment.Business.Name</td>
                             <td>@appointment.Service.ServiceName</td>
                             <td>@appointment.DateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
@@ -105,6 +105,7 @@
                 <p><strong>Email: </strong><span id="detailEmail"></span></p>
                 <p><strong>Phone No.: </strong><span id="detailPhone"></span></p>
                 <p><strong>Service Type: </strong><span id="detailServiceType"></span></p>
+                <input type="hidden" id="detailServiceID">
                 <p><strong>Date & Time: </strong><span id="detailDate"></span></p>
                 <p><strong>Status: </strong><span class="badge" id="detailStatusBadge"></span></p>
 
@@ -173,8 +174,14 @@
                     <p><strong>Service Type:</strong> <span id="rescheduleServiceType"></span></p>
                     <p><strong>Date & Time:</strong> <span id="rescheduleDateTime"></span></p>
                     <div class="mb-3">
-                        <label for="newDateTime" class="form-label">New Date & Time:</label>
-                        <input type="datetime-local" class="form-control" id="newDateTime">
+                        <label for="rescheduleDate" class="form-label">New Date</label>
+                        <input type="date" class="form-control" id="rescheduleDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rescheduleTimeSlot" class="form-label">Available Time Slots</label>
+                        <select class="form-select" id="rescheduleTimeSlot" required>
+                            <option value="">Select a time slot</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -237,6 +244,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+
+
+
     function showPastAppointments() {
         document.getElementById('past-appointments-section').style.display = 'block';
         document.getElementById('upcoming-appointments-section').style.display = 'none';
@@ -255,7 +265,7 @@
         document.getElementById('past-btn').classList.add('btn-secondary');
     }
 
-    function showAppointmentDetails(appointmentId, businessName, firstName, surname, email, phone, serviceType, date, status) {
+    function showAppointmentDetails(appointmentId, businessName, firstName, surname, email, phone, serviceType, serviceId, date, status) {
         document.getElementById("detailAppointmentId").innerText = appointmentId;
         document.getElementById("detailBusinessName").innerText = businessName;
         document.getElementById("detailFirstName").innerText = firstName;
@@ -263,6 +273,7 @@
         document.getElementById("detailEmail").innerText = email;
         document.getElementById("detailPhone").innerText = phone;
         document.getElementById("detailServiceType").innerText = serviceType;
+        document.getElementById("detailServiceID").value = serviceId;
         document.getElementById("detailDate").innerText = date;
 
         // Set the status badge
@@ -306,45 +317,73 @@
     }
 
     function confirmReschedule() {
-        const newDateTime = document.getElementById("newDateTime").value;
+        const newDate = document.getElementById("rescheduleDate").value;
+        const selectedTimeSlot = document.getElementById("rescheduleTimeSlot").value;
         const appointmentId = document.getElementById("rescheduleAppointmentId").innerText;
+        const serviceId = document.getElementById("detailServiceID").value;
 
-        if (newDateTime) {
-            fetch(`/appointments/reschedule/${appointmentId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ DateTime: newDateTime })
+        if (!newDate || !selectedTimeSlot) {
+            alert("Please select both a valid date and a time slot.");
+            return;
+        }
+
+        const newDateTime = `${newDate}T${selectedTimeSlot}`;
+
+        fetch(`/Businesses/GetAvailableTimeSlots?serviceID=${serviceId}&bookingDate=${newDate}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.availableSlots && data.availableSlots.includes(selectedTimeSlot)) {
+                    fetch(`/appointments/reschedule/${appointmentId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ DateTime: newDateTime })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                document.getElementById("rescheduleConfirmationPrompt").classList.add("d-none");
+                                document.getElementById("modalFooter2").style.display = "none";
+                                document.getElementById("rescheduleConfirmationMessage").classList.remove("d-none");
+
+                                setTimeout(() => {
+                                    document.getElementById("rescheduleConfirmationMessage").classList.add("d-none");
+                                    location.reload();
+                                }, 3000);
+                            } else {
+                                alert(data.message || "Failed to reschedule appointment. Please try again.");
+                            }
+                        })
+                        .catch(error => console.error("Error:", error));
+                } else {
+                    alert("The selected time slot is no longer available. Please choose a different time.");
+                }
             })
+            .catch(error => console.error("Error fetching available time slots:", error));
+    }
+
+
+    document.getElementById("rescheduleDate").addEventListener("change", function () {
+        const serviceID = document.getElementById("detailServiceID").value; 
+        const bookingDate = this.value;
+
+        if (bookingDate && serviceID) {
+            fetch(`/Businesses/GetAvailableTimeSlots?serviceID=${serviceID}&bookingDate=${bookingDate}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        // Hide the prompt and modal footer
-                        document.getElementById("rescheduleConfirmationPrompt").classList.add("d-none");
-                        document.getElementById("modalFooter2").style.display = "none";
-
-                        // Show success message in the modal
-                        document.getElementById("rescheduleConfirmationMessage").classList.remove("d-none");
-                        document.getElementById("successMessage").innerText = "Appointment rescheduled successfully!";
-
-                        // Use setTimeout to hide the message after a few seconds
-                        setTimeout(() => {
-                            document.getElementById("rescheduleConfirmationMessage").classList.add("d-none");
-                            resetAppointmentDetails();
-                            // Reload the appointment list here
-                            location.reload();
-                        }, 3000); // Hide after 3 seconds (3000 milliseconds)
-                    } else {
-                        // Display error message based on response
-                        alert(data.message || "Failed to reschedule appointment. Please try again.");
-                    }
+                    const timeSlotDropdown = document.getElementById("rescheduleTimeSlot");
+                    timeSlotDropdown.innerHTML = '<option value="">Select a time slot</option>';
+                    data.availableSlots.forEach(slot => {
+                        const option = document.createElement("option");
+                        option.value = slot;
+                        option.textContent = slot;
+                        timeSlotDropdown.appendChild(option);
+                    });
                 })
-                .catch(error => console.error("Error:", error));
-        } else {
-            alert("Please select a valid date and time for rescheduling.");
+                .catch(error => console.error("Error fetching time slots:", error));
         }
-    }
+    });
 
 
 

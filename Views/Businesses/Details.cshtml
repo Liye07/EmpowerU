@@ -18,7 +18,6 @@
 
                 <!-- Business Details -->
                 <div class="business-details justify-content-right">
-                    <!-- Add Message Us Icon -->
                     <h4>@Model.Name</h4>
                     <p>@Model.Description</p>
 
@@ -32,20 +31,12 @@
                     <h4>Email</h4>
                     <p>@Model.Email</p>
 
-                    <h4>Location</h4>
-                    <p>@Model.LocationService.Address</p> <!-- Display the address -->
-                    <!-- Embed OpenStreetMap -->
                     <h4>Map Location</h4>
-                    <iframe width="500"
-                            height="400"
-                            frameborder="0"
-                            style="border:0"
-                            src="https://www.openstreetmap.org/export/embed.html?bbox=@(Model.LocationService.Longitude.ToString().Replace(",", ".")),@(Model.LocationService.Latitude.ToString().Replace(",", ".")),@(Model.LocationService.Longitude.ToString().Replace(",", ".")),@(Model.LocationService.Latitude.ToString().Replace(",", "."))&layer=mapnik&marker=@(Model.LocationService.Latitude.ToString().Replace(",", ".")),@(Model.LocationService.Longitude.ToString().Replace(",", "."))&zoom=-0"
-                            allowfullscreen>
+                    <iframe width="500" height="400" frameborder="0" style="border:0"
+                            src="https://www.openstreetmap.org/export/embed.html?bbox=@(Model.LocationService.Longitude.ToString().Replace(",", ".")),@(Model.LocationService.Latitude.ToString().Replace(",", ".")),@(Model.LocationService.Longitude.ToString().Replace(",", ".")),@(Model.LocationService.Latitude.ToString().Replace(",", "."))&layer=mapnik&marker=@(Model.LocationService.Latitude.ToString().Replace(",", ".")),@(Model.LocationService.Longitude.ToString().Replace(",", "."))&zoom=-0" allowfullscreen>
                     </iframe>
 
                     <h4>Reviews Summary</h4>
-                    <!-- Rating Section -->
                     <h5>Overall Rating</h5>
                     <p>
                         @for (var i = 1; i <= 5; i++)
@@ -79,13 +70,10 @@
                         }
                     </div>
 
-
-
                     <h4>Reviews</h4>
                     <div class="reviews-section" id="reviews-section">
                         @if (Model.Reviews != null && Model.Reviews.Any())
                         {
-                            <!-- Sort Reviews by Date (Most Recent First) -->
                             @foreach (var review in Model.Reviews.OrderByDescending(r => r.Date).Take(5))
                             {
                                 <div class="review">
@@ -105,7 +93,7 @@
                                             }
                                         }
                                     </p>
-                                    <p><small>@review.Date.ToString("MMMM dd, yyyy")</small></p> <!-- Date of review -->
+                                    <p><small>@review.Date.ToString("MMMM dd, yyyy")</small></p>
                                 </div>
                                 <hr />
                             }
@@ -115,68 +103,67 @@
                             <p>No reviews available.</p>
                         }
 
-                        <!-- See More Reviews Button -->
                         <button id="load-more-btn" class="btn btn-outline-primary mt-3">See More Reviews</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Booking Form Section -->
-        <div class="col-md-5">
-            <div class="card p-4">
-                <h4 class="text-center mb-4">@Model.Name</h4>
+        @if (!User.IsInRole("Business"))
+        {
+            <!-- Booking Form Section -->
+            <div class="col-md-5 d-none d-md-block">
+                <div class="card p-4">
+                    <h4 class="text-center mb-4">@Model.Name</h4>
 
-                @if (TempData["ConfirmationMessage"] != null)
-                {
-                    <div class="alert alert-success">
-                        @TempData["ConfirmationMessage"]
-                    </div>
-                }
-
-                <form asp-action="BookService" method="post">
-                    <input type="hidden" name="BusinessID" value="@Model.Id" />
-
-                    <div class="form-group mb-3">
-                        <label for="Service" class="form-label">Select Service</label>
-                        <select class="form-select" id="Service" name="ServiceID" required>
-                            @foreach (var service in Model.Services)
-                            {
-                                <option value="@service.ServiceID">@service.ServiceName</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="Date" class="form-label">Pick Date</label>
-                        <input type="date" class="form-control" id="Date" required />
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="TimeSlot" class="form-label">Available Time Slots</label>
-                        <select class="form-select" id="TimeSlot" name="BookingTime" required>
-                            <option value="">Select a time slot</option>
-                            <!-- Time slots will be loaded here by JavaScript -->
-                        </select>
-                    </div>
-
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary w-100">Book</button>
-                    </div>
-
-                    @if (!ViewData.ModelState.IsValid)
+                    @if (TempData["ConfirmationMessage"] != null)
                     {
-                        <div class="alert alert-danger mt-3">
-                            @Html.ValidationSummary()
+                        <div class="alert alert-success">
+                            @TempData["ConfirmationMessage"]
                         </div>
                     }
-                </form>
 
+                    <form asp-action="BookService" method="post">
+                        <input type="hidden" name="BusinessID" value="@Model.Id" />
+                        <div class="form-group mb-3">
+                            <label for="Service" class="form-label">Select Service</label>
+                            <select class="form-select" id="Service" name="ServiceID" required>
+                                @foreach (var service in Model.Services)
+                                {
+                                    <option value="@service.ServiceID">@service.ServiceName</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="Date" class="form-label">Pick Date</label>
+                            <input type="date" class="form-control" id="Date" required />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="TimeSlot" class="form-label">Available Time Slots</label>
+                            <select class="form-select" id="TimeSlot" name="BookingTime" required>
+                                <option value="">Select a time slot</option>
+                            </select>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary w-100">Book</button>
+                        </div>
+
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger mt-3">
+                                @Html.ValidationSummary()
+                            </div>
+                        }
+                    </form>
+                </div>
             </div>
-        </div>
-
+        }
     </div>
 </div>
+
 
     <style>
         .business-details h4 {

@@ -281,7 +281,7 @@ namespace EmpowerU.Controllers
                     Role = "Business",
                     LocationID = business.LocationService?.LocationID ?? 0, // Use the newly created LocationID
                     Description = business.Description,
-                    Rating = business.Rating,
+                    Rating = 0.00m,
                     BusinessCategory = business.BusinessCategory
                 };
 
