@@ -29,24 +29,6 @@
                         </a>
                     </div>
 
-                    <!-- Rating Section -->
-                    <h4>Rating</h4>
-                    <p>
-                        @for (var i = 1; i <= 5; i++)
-                        {
-                            if (i <= @Model.Rating)
-                            {
-                                <span class="fas fa-star" style="color: #FFD700;"></span> <!-- Filled star -->
-                            }
-                            else
-                            {
-                                <span class="far fa-star" style="color: #D3D3D3;"></span> <!-- Empty star -->
-                            }
-                        }
-                        (@Model.Rating)
-                    </p>
-
-
                     <h4>Email</h4>
                     <p>@Model.Email</p>
 
@@ -63,6 +45,23 @@
                     </iframe>
 
                     <h4>Reviews Summary</h4>
+                    <!-- Rating Section -->
+                    <h5>Overall Rating</h5>
+                    <p>
+                        @for (var i = 1; i <= 5; i++)
+                        {
+                            if (i <= @Model.Rating)
+                            {
+                                <span class="fas fa-star" style="color: #FFD700;"></span>
+                            }
+                            else
+                            {
+                                <span class="far fa-star" style="color: #D3D3D3;"></span>
+                            }
+                        }
+                        (@Model.Rating)
+                    </p>
+
                     <div class="review-summary">
                         @for (var i = 5; i >= 1; i--)
                         {
@@ -265,19 +264,19 @@
 
     /* Different colors for each rating level */
     .review-summary-item:nth-child(1) .progress-bar {
-        background-color: #4CAF50
+        background-color: limegreen; 
     }
     .review-summary-item:nth-child(2) .progress-bar {
-        background-color: #FFD700;
+        background-color: dodgerblue;
     }
     .review-summary-item:nth-child(3) .progress-bar {
-        background-color: #87CEEB;
+        background-color: orange;
     }
     .review-summary-item:nth-child(4) .progress-bar {
-        background-color: #CD7F32;
+        background-color: lightcoral;
     }
     .review-summary-item:nth-child(5) .progress-bar {
-        background-color: #FF6347;
+        background-color: red;
     }
 
 

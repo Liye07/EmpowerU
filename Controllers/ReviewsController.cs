@@ -38,7 +38,7 @@ namespace EmpowerU.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateReview(Review review)
         {
-            Console.WriteLine($"Incoming Data: BizID={review.BusinessID}, ConsumerID={review.ConsumerID}, Title={review.Title}, Rating={review.Rating}");
+/*            Console.WriteLine($"Incoming Data: BizID={review.BusinessID}, ConsumerID={review.ConsumerID}, Title={review.Title}, Rating={review.Rating}");*/
 
             ModelState.Remove(nameof(review.Business));
             ModelState.Remove(nameof(review.Consumer));
@@ -57,7 +57,26 @@ namespace EmpowerU.Controllers
                     new SqlParameter("@Comment", review.Comment ?? string.Empty), // Avoid null values for Comment
                     new SqlParameter("@Date", DateTime.Now));
 
-                return RedirectToAction("ViewReview", new { id = review.BusinessID });
+
+                // Calculate the new average rating for the business
+                var averageRating = await _context.Reviews
+                                                  .Where(r => r.BusinessID == review.BusinessID)
+                                                  .AverageAsync(r => r.Rating);
+
+                // Update the business's rating
+                var business = await _context.Businesses
+                                              .FirstOrDefaultAsync(b => b.Id == review.BusinessID);
+
+                if (business != null)
+                {
+                    // If there are no reviews, set rating to 0
+                    business.Rating = (decimal?)(averageRating > 0 ? averageRating : 0);
+
+                    _context.Update(business);
+                    await _context.SaveChangesAsync();
+                }
+
+                return RedirectToAction("Details", "Businesses", new { id = review.BusinessID });
             }
             else
             {
@@ -69,7 +88,7 @@ namespace EmpowerU.Controllers
                     }
                 }
 
-                Console.WriteLine($"Invalid State = BizID : {review.BusinessID}, ConsumerID : {review.ConsumerID}");
+/*                Console.WriteLine($"Invalid State = BizID : {review.BusinessID}, ConsumerID : {review.ConsumerID}");*/
 
             }
 
