@@ -21,7 +21,38 @@ namespace EmpowerU.Controllers
         private readonly ILogger<ConsumersController> _logger;
 
 
-     
+        [HttpPost]
+        public async Task<IActionResult> EditProfilePicture(IFormFile profilePicture)
+        {
+            if (profilePicture != null && profilePicture.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await profilePicture.CopyToAsync(memoryStream);
+                    var user = await _userManager.GetUserAsync(User); // Assuming UserManager is injected
+                    if (user != null)
+                    {
+                        user.ProfilePicture = memoryStream.ToArray();
+                        var result = await _userManager.UpdateAsync(user);
+
+                        if (result.Succeeded)
+                        {
+                            TempData["SuccessMessage"] = "Profile picture updated successfully.";
+                            return RedirectToAction("EditProfile"); // Redirect to the edit profile page
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "An error occurred while updating the profile picture.");
+                        }
+                    }
+                }
+            }
+
+            TempData["ErrorMessage"] = "Please upload a valid image.";
+            return RedirectToAction("EditProfile");
+        }
+
+
 
         public ConsumersController(EmpowerUContext context, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager, ILogger<ConsumersController> logger) // Change here if User is int
         {
