@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmpowerU.Models;
 using EmpowerU.Models.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.Data.SqlClient;
 
 namespace EmpowerU.Controllers
 {
@@ -36,29 +38,41 @@ namespace EmpowerU.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateReview(Review review)
         {
+            Console.WriteLine($"Incoming Data: BizID={review.BusinessID}, ConsumerID={review.ConsumerID}, Title={review.Title}, Rating={review.Rating}");
+
+            ModelState.Remove(nameof(review.Business));
+            ModelState.Remove(nameof(review.Consumer));
+
             if (ModelState.IsValid)
             {
-                review.Date = DateTime.Now; // Set the current date for the review
+                // Parameterized query to prevent SQL injection
+                var insertQuery = @"INSERT INTO Review (BusinessID, ConsumerID, Title, Rating, Comment, Date) VALUES (@BusinessID, @ConsumerID, @Title, @Rating, @Comment, @Date)";
 
-                // Add review to the database context
-                _context.Reviews.Add(review);
-                await _context.SaveChangesAsync();
+                // Execute the raw SQL query with parameters
+                await _context.Database.ExecuteSqlRawAsync(insertQuery,
+                    new SqlParameter("@BusinessID", review.BusinessID),
+                    new SqlParameter("@ConsumerID", review.ConsumerID),
+                    new SqlParameter("@Title", review.Title),
+                    new SqlParameter("@Rating", review.Rating),
+                    new SqlParameter("@Comment", review.Comment ?? string.Empty), // Avoid null values for Comment
+                    new SqlParameter("@Date", DateTime.Now));
 
-                // Redirect to a page, e.g., the business or consumer's reviews page
                 return RedirectToAction("ViewReview", new { id = review.BusinessID });
             }
             else
             {
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-                foreach (var error in errors)
+                foreach (var modelState in ModelState)
                 {
-                    // Log error message
-                    Console.WriteLine(error);
+                    foreach (var error in modelState.Value.Errors)
+                    {
+                        Console.WriteLine($"{modelState.Key}: {error.ErrorMessage}");
+                    }
                 }
+
+                Console.WriteLine($"Invalid State = BizID : {review.BusinessID}, ConsumerID : {review.ConsumerID}");
 
             }
 
-            // If the model is not valid, return the view to show validation errors
             return View(review);
         }
 

@@ -193,7 +193,7 @@
         </div>
 
         <!-- Review Form -->
-        <form id="reviewForm" method="post" asp-action="CreateReview" asp-controller="Reviews">
+        <form id="reviewForm" method="post" asp-action="CreateReview" asp-controller="Reviews" onsubmit="submitReview(event)">
             <input type="hidden" name="BusinessID" id="BusinessID" />
             <input type="hidden" name="ConsumerID" id="ConsumerID" />
 
@@ -520,7 +520,37 @@
         }
     };
 
+    function submitReview(event) {
+        event.preventDefault(); // Prevent the default form submission
 
+        const formData = new FormData(document.getElementById("reviewForm"));
+
+        fetch('/Reviews/CreateReview', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json()) // Assuming the action returns JSON data
+            .then(data => {
+                if (data.success) {
+                    // Close the modal
+                    closeModal();
+
+                    // Update the UI (remove "Leave a Review" button if necessary)
+                    document.getElementById("leaveReviewButton").style.display = "none";
+
+                    // Optionally show a success message
+                    alert("Review submitted successfully!");
+                } else {
+                    // Handle validation errors if any (display error messages)
+                    alert("There was an issue submitting the review. Please try again.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function closeModal() {
+        document.getElementById("reviewModal").style.display = "none";
+    }
 
 </script>
 
