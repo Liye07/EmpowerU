@@ -4,6 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EmpowerU.Models
 {
+    public enum SubscriptionType
+    {
+        Basic,
+        Premium,
+        Elite
+    }
+
     public class Subscription
     {
         [Key]
@@ -19,9 +26,9 @@ namespace EmpowerU.Models
         [Required]
         public DateTime EndDate { get; set; }
 
+        // Change SubscriptionType to be the enum
         [Required]
-        [StringLength(10)]
-        public string SubscriptionType { get; set; }
+        public SubscriptionType SubscriptionType { get; set; }
 
         [ForeignKey(nameof(UserID))]
         public User User { get; set; }
