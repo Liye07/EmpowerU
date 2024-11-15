@@ -46,6 +46,7 @@
                         (@Model.Rating)
                     </p>
 
+
                     <h4>Email</h4>
                     <p>@Model.Email</p>
 
@@ -61,12 +62,32 @@
                             allowfullscreen>
                     </iframe>
 
-                    <!-- Reviews Section -->
+                    <h4>Reviews Summary</h4>
+                    <div class="review-summary">
+                        @for (var i = 5; i >= 1; i--)
+                        {
+                            var reviewCountForRating = Model.Reviews.Count(r => r.Rating == i);
+                            var totalReviews = Model.Reviews.Count();
+                            var percentage = totalReviews > 0 ? (reviewCountForRating / (double)totalReviews * 100) : 0;
+
+                            <div class="review-summary-item">
+                                <span class="review-stars">@i Star</span>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width:@percentage%;"></div>
+                                </div>
+                                <span class="review-count">@reviewCountForRating</span>
+                            </div>
+                        }
+                    </div>
+
+
+
                     <h4>Reviews</h4>
-                    <div class="reviews-section">
+                    <div class="reviews-section" id="reviews-section">
                         @if (Model.Reviews != null && Model.Reviews.Any())
                         {
-                            foreach (var review in Model.Reviews)
+                            <!-- Sort Reviews by Date (Most Recent First) -->
+                            @foreach (var review in Model.Reviews.OrderByDescending(r => r.Date).Take(5))
                             {
                                 <div class="review">
                                     <strong>@review.Title</strong>
@@ -94,9 +115,10 @@
                         {
                             <p>No reviews available.</p>
                         }
-                        
-                    </div>
 
+                        <!-- See More Reviews Button -->
+                        <button id="load-more-btn" class="btn btn-outline-primary mt-3">See More Reviews</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -157,7 +179,6 @@
     </div>
 </div>
 
-
     <style>
         .business-details h4 {
             margin-top: 20px;
@@ -202,10 +223,116 @@
         .fa-star {
             font-size: 16px;
         }
+
+    .review-summary {
+        width: 100%;
+        max-width: 400px;
+        margin: 20px 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .review-summary-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .review-stars {
+        width: 60px;
+        font-weight: bold;
+    }
+
+    .progress-bar-container {
+        flex-grow: 1;
+        height: 12px;
+        background-color: #e0e0e0;
+        border-radius: 8px;
+        margin: 0 10px;
+        overflow: hidden;
+    }
+
+
+    .progress-bar {
+        height: 100%;
+        background-color: #FFD700; /* Default color for 5 stars */
+        border-radius: 8px;
+    }
+
+    .review-count {
+        min-width: 30px;
+        text-align: right;
+    }
+
+    /* Different colors for each rating level */
+    .review-summary-item:nth-child(1) .progress-bar {
+        background-color: #4CAF50
+    }
+    .review-summary-item:nth-child(2) .progress-bar {
+        background-color: #FFD700;
+    }
+    .review-summary-item:nth-child(3) .progress-bar {
+        background-color: #87CEEB;
+    }
+    .review-summary-item:nth-child(4) .progress-bar {
+        background-color: #CD7F32;
+    }
+    .review-summary-item:nth-child(5) .progress-bar {
+        background-color: #FF6347;
+    }
+
+
     </style>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+    let reviewCount = 5; // Initial number of reviews displayed
+    const businessId = @Model.Id; // Dynamic business ID
+
+    document.getElementById('load-more-btn').addEventListener('click', function () {
+        const loadMoreButton = document.getElementById('load-more-btn');
+        const reviewsSection = document.getElementById('reviews-section');
+
+        if (loadMoreButton.textContent.includes("See More Reviews")) {
+            // Fetch more reviews when "See More Reviews" is clicked
+            fetch(`/Businesses/LoadMoreReviews?count=${reviewCount}&businessId=${businessId}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(review => {
+                        const reviewElement = document.createElement('div');
+                        reviewElement.classList.add('review');
+                        reviewElement.innerHTML = `
+                            <strong>${review.title}</strong>
+                            <p>${review.comment}</p>
+                            <p>
+                                Rating:
+                                ${'<span class="fa fa-star checked" style="color: #FFD700;"></span>'.repeat(review.rating)}
+                                ${'<span class="fa fa-star" style="color: #D3D3D3;"></span>'.repeat(5 - review.rating)}
+                            </p>
+                            <p><small>${new Date(review.date).toLocaleDateString()}</small></p>
+                        `;
+                        reviewsSection.insertBefore(reviewElement, loadMoreButton); // Insert above the button
+                    });
+
+                    // Move the button to the bottom and change text to "See Less -"
+                    reviewCount += 5; // Update the count
+                    loadMoreButton.textContent = "See Less -";
+                })
+                .catch(error => console.error('Error loading more reviews:', error));
+        } else {
+            // Collapse reviews when "See Less" is clicked
+            const allReviews = reviewsSection.querySelectorAll('.review');
+            allReviews.forEach((review, index) => {
+                if (index >= 5) review.remove(); // Keep only the first 5 reviews
+            });
+
+            // Reset button text and position to "See More +"
+            loadMoreButton.textContent = "See More Reviews +";
+        }
+    });
+
+
+
+
         $(document).ready(function () {
             $("#bookingForm").submit(function (event) {
                 event.preventDefault(); // Prevent default form submission

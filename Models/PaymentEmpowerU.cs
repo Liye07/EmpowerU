@@ -17,6 +17,9 @@ namespace EmpowerU.Models
         public int BusinessID { get; set; }
 
         [Required]
+        public int AppointmentID { get; set; }
+
+        [Required]
         [Column(TypeName = "decimal(10, 2)")]
         public decimal Amount { get; set; }
 
@@ -39,5 +42,8 @@ namespace EmpowerU.Models
 
         [ForeignKey(nameof(BusinessID))]
         public Business Business { get; set; }
+
+        [ForeignKey(nameof(AppointmentID))]
+        public Appointment Appointment { get; set; }
     }
 }
