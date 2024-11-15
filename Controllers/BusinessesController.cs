@@ -10,6 +10,7 @@ using EmpowerU.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Stripe;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EmpowerU.Controllers
 {
@@ -36,7 +37,7 @@ namespace EmpowerU.Controllers
             return View(businesses);
         }
 
- 
+        [Authorize(Roles = "Business")]
         public IActionResult BusinessDashboard(int? id)
         {
 

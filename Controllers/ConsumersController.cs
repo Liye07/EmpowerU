@@ -9,6 +9,7 @@ using EmpowerU.Models.Data;
 using EmpowerU.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EmpowerU.Controllers
 {
@@ -18,7 +19,9 @@ namespace EmpowerU.Controllers
         private readonly RoleManager<IdentityRole<int>> _roleManager; // Change here if User is int
         private readonly EmpowerUContext _context;
         private readonly ILogger<ConsumersController> _logger;
-        
+
+
+     
 
         public ConsumersController(EmpowerUContext context, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager, ILogger<ConsumersController> logger) // Change here if User is int
         {
@@ -34,9 +37,11 @@ namespace EmpowerU.Controllers
             return View(await _context.Consumers.ToListAsync());
         }
 
-
+        [Authorize(Roles = "Consumer")]
         public IActionResult ConsumerDashboard(int? id)
         {
+            ViewData["ActivePage"] = "ConsumerDashboard";
+
 
             // Check if the id parameter is provided
             if (id == null)
@@ -83,6 +88,8 @@ namespace EmpowerU.Controllers
             ViewBag.UnreadMessages = unreadMessages; 
 
             return View(consumer);  // Pass the consumer model to the view
+
+
         }
 
 
@@ -437,6 +444,9 @@ namespace EmpowerU.Controllers
         {
             return deg * Math.PI / 180;
         }
+
+
+
 
 
 
