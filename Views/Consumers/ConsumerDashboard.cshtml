@@ -28,7 +28,7 @@
                     }
                 </button>
 
-                <button class="action-btn" onclick="window.location.href='/Messages/Details/@Model.Id'">
+                <button class="action-btn" onclick="window.location.href='/Messages/Index/@Model.Id'">
                     <i class="fa fa-envelope"></i>
                     <!-- Show unread message count if there are any -->
                     @if (unreadMessages != null && unreadMessages.Any())
@@ -45,7 +45,7 @@
             <h3 style="font-size: 20px;">Your Calendar</h3>
             <div class="calendar-content">
                 <p>View and manage your upcoming appointments, tasks, and reminders here.</p>
-                <button class="btn btn-primary" onclick="window.location.href='/Calendar/View'">Go to Calendar</button>
+                <button class="btn btn-primary" onclick="window.location.href='#'">Go to Calendar</button>
             </div>
         </div>
 
@@ -53,7 +53,7 @@
         <div class="social-history flex-fill p-3 mb-4 shadow">
             <h3 style="font-size: 20px;">Your Activity History</h3>
             <p>See recent appointments, cancellations, and any other past interactions here.</p>
-            <button class="btn btn-secondary" onclick="window.location.href='/History/View'">View History</button>
+            <button class="btn btn-secondary" onclick="window.location.href='#'">View History</button>
         </div>
 
             

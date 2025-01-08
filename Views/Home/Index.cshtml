@@ -79,17 +79,17 @@
 
 </style>
 
-<div class="text-center">
-    <p class="text-left">Book Your Next Appointment</p>
+<div class="text-center" style="margin-top: 1cm;">
+    <h1><b>Book Your Next Appointment</b></h1>
 </div>
 
-<div class="container mt-4">
+<div class="container mt-4 mb-2">
     <div class="row justify-content-start">
         <div class="col-md-8">
 
             <div class="form-group position-relative">
-                <label for="address-input" class="control-label">Search for businesses by location</label>
-                <input id="address-input" name="LocationService.Address" class="form-control" placeholder="Enter street address" oninput="getSuggestions(event)" required />
+                <label for="address-input" class="control-label" style="font-size: 20px;">Search for businesses by location</label>
+                <input id="address-input" name="LocationService.Address" class="form-control" style="font-palette:light" placeholder ="Enter suburb or street address" oninput="getSuggestions(event)" required />
 
                 <ul id="suggestion-list" class="list-group position-absolute" style="max-height: 200px; overflow-y: auto; display: none;"></ul>
                 <div id="loading-indicator" style="display: none;">Loading...</div> <!-- Loading indicator -->
@@ -107,53 +107,55 @@
     </div>
 </div>
 
-<div class="mb-3">
+<div class="container mt-2 mb-2">
     <a href="#" class="btn btn-outline-primary mx-1">Massage</a>
     <a href="#" class="btn btn-outline-primary mx-1">Hair</a>
     <a href="#" class="btn btn-outline-primary mx-1">Barber</a>
     <a href="#" class="btn btn-outline-primary mx-1">Nails</a>
-</div>
 
-<!-- Large Text for Services -->
-<h2 class="text-left">Services</h2>
+    <div class="container mt-2">
 
-<!-- Advertisement Section -->
-<div>
-    <div>
+        <h2 class="text-left">Services</h2>
         <div>
-            <div class="row mt-4">
-                @foreach (var business in Model) // Loop through each business
-                {
-                    <div class="col-md-4 mb-4">
-                        <div class="card">
-                            <img src="@business.ProfilePicture" class="card-img-top" alt="@business.Description"> <!-- You need an ImageUrl property -->
-                            <div class="card-body">
-                                <h5 class="card-title">@business.Description</h5> <!-- Adjust based on your model -->
-                                <p class="card-text">Category: @business.BusinessCategory</p> <!-- Display BusinessCategory -->
-                                <h5>Rating</h5>
-                                <p>
-                                    @for (var i = 1; i <= 5; i++)
-                                    {
-                                        if (i <= @business.Rating)
+            <div>
+                <div class="row mt-4">
+                    @foreach (var business in Model) // Loop through each business
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="text-center">
+                                    <img src="@business.ProfilePicture" class="mt-2 mb-3" width="200" height="200"
+                                         src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg">
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="card-text">@business.Name</h5> 
+                                    <h5 class="card-text">Category :  @business.BusinessCategory</h5>
+                                    <p>
+                                        @for (var i = 1; i <= 5; i++)
                                         {
-                                            <span class="fas fa-star" style="color: #FFD700;"></span> <!-- Filled star -->
+                                            if (i <= @business.Rating)
+                                            {
+                                                <span class="fas fa-star" style="color: #FFD700;"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="far fa-star" style="color: #D3D3D3;"></span>
+                                            }
                                         }
-                                        else
-                                        {
-                                            <span class="far fa-star" style="color: #D3D3D3;"></span> <!-- Empty star -->
-                                        }
-                                    }
-                                    <span class="greyed-rating">(@business.Rating)</span>  <!-- Wrap the rating in a span -->
+                                        <span class="greyed-rating">(@business.Rating)</span>
 
+                                </div>
+                                <a href="@Url.Action("Details", "Businesses", new { id = business.Id })" class="btn btn-primary">View Details</a>
                             </div>
-                            <a href="@Url.Action("Details", "Businesses", new { id = business.Id })" class="btn btn-primary">View Details</a> <!-- Adjust Action and Controller based on your application structure -->
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+
 
 
 
