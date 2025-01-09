@@ -2,120 +2,178 @@
     ViewData["Title"] = "Search";
 }
 
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Businesses</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-
-        .business-link {
-            text-decoration: none; /* Removes the default underline */
-            color: inherit; /* Ensures the link doesn't change text color */
+        .sidebar a {
+            text-decoration: none; /* Removes underline for all links in the sidebar */
+            color: inherit; /* Keeps text color consistent */
         }
 
-        .search-location-marker {
-            background: none;
-        }
-
-        .search-marker-inner {
-            width: 20px;
-            height: 20px;
-            background-color: #0066cc;
-            border: 3px solid white;
-            border-radius: 50%;
-            box-shadow: 0 0 0 2px #0066cc;
-        }
-
-        .popup-content {
-            min-width: 200px;
-            padding: 10px;
-        }
-
-        .business-card {
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-            .business-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            .sidebar a:hover {
+                text-decoration: none; /* Ensures no underline on hover */
             }
 
-        /* Style adjustments for layout */
+        /* General Page Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        /* Header with Search Bar */
+        .header {
+            background-color: #007baa;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .search-bar input {
+            width: 80%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main Container Layout */
         .container {
             display: flex;
             width: 100%;
+            margin-top: 20px;
         }
 
+        /* Sidebar Styling */
         .sidebar {
             width: 30%;
-            padding: 10px;
-            border-right: 1px solid #ccc;
-            max-height: 500px;
+            padding: 15px;
+            border-right: 1px solid #e0e0e0;
+            background-color: #ffffff;
+            max-height: calc(100vh - 120px);
             overflow-y: auto;
-            background-color: #f1f1f1;
         }
 
+            .sidebar h6 {
+                font-size: 18px;
+                margin-bottom: 15px;
+                color: #343a40;
+            }
+
+        .business-card {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+            .business-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .business-card img {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin-bottom: 10px;
+            }
+
+        .business-details {
+            text-align: left;
+        }
+
+            .business-details h5 {
+                font-size: 18px;
+                margin-bottom: 5px;
+                color: #0066cc;
+            }
+
+            .business-details p {
+                margin: 0;
+                font-size: 14px;
+                color: #555;
+            }
+
+            .business-details .fas, .business-details .far {
+                margin-right: 3px;
+            }
+
+            .business-details .greyed-rating {
+                font-size: 12px;
+                color: #888;
+            }
+
+        /* Map Section */
         .map {
             width: 70%;
             padding: 10px;
-            position: relative;
-            height: 400px; /* Explicitly set height */
+            height: 500px;
         }
 
-        .business-card img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-        }
-
-        /* Leaflet map styling */
         #map {
             width: 100%;
-            height: 100%; /* Make map fill the container */
-            border: 1px solid #ccc;
+            height: 100%;
             border-radius: 5px;
+            border: 1px solid #ddd;
         }
     </style>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <!-- Add these in the head section -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 </head>
 <body>
+    <!-- Header with Search Bar -->
     <div class="header">
+        <h1>What Can We Help You Find Today?</h1>
         <div class="search-bar">
-            <h1>EmpowerU</h1>
-            <input type="text" id="searchInput" placeholder="Enter business or location">
+            <input type="text" id="searchInput" placeholder="Search for businesses or locations...">
         </div>
     </div>
 
+    <!-- Main Content -->
     <div class="container">
-        <!-- Sidebar with business results -->
+        <!-- Sidebar with Business Results -->
         <div class="sidebar">
-            <h6>Search results: Businesses in <span id="locationLabel">[Specified location]</span></h6>
+            <h9><b>Search Results:</b> Businesses in <span id="locationLabel">[Specified Location]</span></h9>
 
             @foreach (var business in Model)
             {
-                <div class="business-card">
+                <div class="business-card text-center">
                     <a href="@Url.Action("Details", "Businesses", new { id = business.Id })" class="business-link">
-                        <img src="data:image/png;base64,@(Convert.ToBase64String(business.ProfilePicture ?? new byte[0]))" alt="Logo">
-                        <div class="business-details">
+                        <img @* src="data:image/png;base64,@(Convert.ToBase64String(business.ProfilePicture ?? new byte[0]))" *@ alt="Business Logo" src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg">
+                        <div class="business-details text-center">
                             <h5>@business.Name</h5>
                             <p>@business.Description</p>
                             <p>Category: @business.BusinessCategory</p>
-                            <p>Rating: @business.Rating</p>
+                            <p>
+                                @for (var i = 1; i <= 5; i++)
+                                {
+                                    if (i <= @business.Rating)
+                                    {
+                                        <span class="fas fa-star" style="color: #FFD700;"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="far fa-star" style="color: #D3D3D3;"></span>
+                                    }
+                                }
+                                <span class="greyed-rating">(@business.Rating)</span>
+                            </p>
                         </div>
                     </a>
                 </div>
             }
-
         </div>
 
-        <!-- Map section positioned on the right side -->
+        <!-- Map Section -->
         <div class="map">
             <div id="map"></div>
         </div>
@@ -265,4 +323,3 @@
     </script>
 
 </body>
-</html>
