@@ -21,6 +21,21 @@ namespace EmpowerU.Controllers
         private readonly ILogger<ConsumersController> _logger;
 
 
+        public ConsumersController(EmpowerUContext context, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager, ILogger<ConsumersController> logger) // Change here if User is int
+        {
+            _userManager = userManager;
+            _context = context;
+            _roleManager = roleManager;
+            _logger = logger;
+        }
+
+        // GET: Consumers
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Consumers.ToListAsync());
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> EditProfilePicture(IFormFile profilePicture)
         {
@@ -50,22 +65,6 @@ namespace EmpowerU.Controllers
 
             TempData["ErrorMessage"] = "Please upload a valid image.";
             return RedirectToAction("EditProfile");
-        }
-
-
-
-        public ConsumersController(EmpowerUContext context, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager, ILogger<ConsumersController> logger) // Change here if User is int
-        {
-            _userManager = userManager;
-            _context = context;
-            _roleManager = roleManager;
-            _logger = logger;
-        }
-
-        // GET: Consumers
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Consumers.ToListAsync());
         }
 
         [Authorize(Roles = "Consumer")]
@@ -144,6 +143,7 @@ namespace EmpowerU.Controllers
 
 
         // GET: Consumers/EditConsumerProfile/5
+        [Authorize(Roles = "Consumer")]
         public async Task<IActionResult> EditConsumerProfile(int? id)
         {
             if (id == null)
@@ -162,6 +162,7 @@ namespace EmpowerU.Controllers
         // POST: Consumers/EditConsumerProfile/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Consumer")]
         public async Task<IActionResult> EditConsumerProfile(int id, [Bind("PreferredCategories,Id,Name,Surname,Email,PhoneNumber,Password,Role,LastLogin")] Consumer consumer)
         {
 
@@ -234,14 +235,15 @@ namespace EmpowerU.Controllers
             return _context.Consumers.Any(e => e.Id == id);
         }
 
-   
 
+        [Authorize(Roles = "Consumer")]
         public IActionResult AppointmentDetails()
         {
             return View();
         }
 
         [Route("Consumers/AppointmentDetails/{id?}")]
+        [Authorize(Roles = "Consumer")]
         public async Task<IActionResult> AppointmentDetails(int? id)
         {
             if (id == null)
@@ -379,20 +381,6 @@ namespace EmpowerU.Controllers
 
             return Json(new { success = true });
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         private const double SEARCH_RADIUS_KM = 15; // Define search radius in kilometers
 

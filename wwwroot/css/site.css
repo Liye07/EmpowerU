@@ -141,4 +141,14 @@ body {
     }
 
 
-    
+@media screen and (max-width: 768px) {
+    .alert-info {
+        font-size: 14px;
+        text-align: center;
+    }
+
+        .alert-info a {
+            display: block;
+            margin-top: 10px;
+        }
+}

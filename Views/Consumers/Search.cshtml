@@ -132,9 +132,9 @@
 <body>
     <!-- Header with Search Bar -->
     <div class="header">
-        <h1>What Can We Help You Find Today?</h1>
+        <h1>Who Can We Help You Find Today?</h1>
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search for businesses or locations...">
+            <input type="text" id="searchInput" placeholder="Search for business by location...">
         </div>
     </div>
 
@@ -181,6 +181,8 @@
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
+
+
         // Get URL parameters (latitude, longitude, and address)
         const urlParams = new URLSearchParams(window.location.search);
         const centerLat = parseFloat(urlParams.get('lat')) || 0;

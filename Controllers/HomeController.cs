@@ -1,5 +1,6 @@
 using EmpowerU.Models;
 using EmpowerU.Models.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,7 @@ namespace EmpowerU.Controllers
             _context = context; // Initialize DbContext
         }
 
-
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             ViewData["ActivePage"] = "Home"; // Set active page for Home
@@ -78,14 +79,25 @@ namespace EmpowerU.Controllers
         public IActionResult Search(double lat, double lon)
         {
             double radius = 10; // Define the search radius in kilometers
-            var businesses = _context.LocationServices
-                .Where(b => CalculateDistance(lat, lon, b.Latitude, b.Longitude) <= radius)
+
+            var businesses = _context.Businesses
+                .Include(b => b.LocationService) // Ensure the LocationService is included
+                .Where(b => b.LocationService != null &&
+                            CalculateDistance(lat, lon, b.LocationService.Latitude, b.LocationService.Longitude) <= radius)
+                .Select(b => new
+                {
+                    b.Id,
+                    b.Name,
+                    b.Description,
+                    b.BusinessCategory,
+                    b.Rating,
+                    Latitude = b.LocationService.Latitude,
+                    Longitude = b.LocationService.Longitude
+                })
                 .ToList();
 
             return View(businesses);
         }
-
-
 
 
         [HttpPost]

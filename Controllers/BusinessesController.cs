@@ -123,6 +123,7 @@ namespace EmpowerU.Controllers
 
 
         // GET: Businesses/Details/5
+        [AllowAnonymous]
         public IActionResult Details(int id)
         {
             // Fetch the business along with its services and location service
@@ -141,6 +142,7 @@ namespace EmpowerU.Controllers
         }
 
         // GET: BusinessProfile/CreateProfile
+        [Authorize(Roles = "Business")]
         public IActionResult CreateProfile()
         {
             return View();
@@ -149,6 +151,7 @@ namespace EmpowerU.Controllers
         // POST: BusinessProfile/CreateProfile
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Business")]
         public async Task<IActionResult> CreateProfile(Business model)
         {
             if (ModelState.IsValid)
@@ -281,6 +284,7 @@ namespace EmpowerU.Controllers
 
 
         // GET: Businesses/EditBusinessProfile/5
+        [Authorize(Roles = "Business")]
         public async Task<IActionResult> EditBusinessProfile(int? id)
         {
             if (id == null)
@@ -310,6 +314,7 @@ namespace EmpowerU.Controllers
         // POST: Businesses/EditBusinessProfile/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Business")]
         public async Task<IActionResult> EditBusinessProfile(int id, [Bind("Description,LocationID,Rating,Id,Name,Email,PhoneNumber,Password,Role,LastLogin,BusinessCategory,LocationService")] Business business)
         {
             if (id != business.Id)
@@ -446,6 +451,7 @@ namespace EmpowerU.Controllers
         }
 
         // GET: Businesses/ManageAppointments/5
+        [Authorize(Roles = "Business")]
         public async Task<IActionResult> ManageAppointments(int? id)
         {
             if (id == null)

@@ -147,9 +147,21 @@
                             </select>
                         </div>
 
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary w-100">Book</button>
-                        </div>
+                        <!-- Message for guests -->
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <div class="alert alert-info">
+                                <strong>Log in to book services or interact with this business.</strong><br />
+                                You can explore business details, but to book services or get in touch, please <a href="@Url.Action("Login", "Account")">Log in</a> or <a href="@Url.Action("RegisterConsumer", "Account")">Register</a>.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary w-100">Book</button>
+                            </div>
+                        }
+                     
 
                         @if (!ViewData.ModelState.IsValid)
                         {
@@ -265,6 +277,7 @@
     .review-summary-item:nth-child(5) .progress-bar {
         background-color: red;
     }
+
 
 
     </style>
