@@ -4,29 +4,93 @@
 
 
 <style>
-    .greyed-rating {
-        color: gray; /* Light grey color */
-        font-weight: normal; /* Optionally reduce the weight of the text */
-        opacity: 2; /* Slightly fade the text */
+    body {
+        background: linear-gradient(135deg, #f8f9fa 30%, #e9ecef 90%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
     }
 
-    body {
-        background-color: #f8f9fa;
-        font-family: Arial, sans-serif;
+    #address-input {
+        border-radius: 8px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        padding: 10px 15px;
     }
+
+        #address-input::placeholder {
+            color: #aaa;
+        }
 
     .btn-outline-primary {
-        width: 120px;
+        border-radius: 10px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
     }
 
+        .btn-outline-primary:hover {
+            background-color: #0069d9;
+            color: white;
+            border-color: #0069d9;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
     .card {
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+    .card-img-top {
+        border-radius: 50%;
+        max-width: 200px;
+        height: 200px;
+        object-fit: cover;
+        margin-bottom: 15px;
+    }
+
+    .card-body {
+        padding: 25px;
+        text-align: center;
     }
 
     .card-title {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
+        font-weight: bold;
+        color: #333;
     }
+
+    .card-text {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .greyed-rating {
+        color: #888;
+        font-weight: normal;
+    }
+
+    .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    h1, h2 {
+        margin-bottom: 25px;
+        color: #333;
+    }
+
+        h2.text-left {
+            margin-top: 40px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
 /* 
     footer {
         background-color: #f8f9fa;
@@ -37,7 +101,7 @@
     }
 
     .card-img-top {
-        max-width: 100px; /* Adjust width */
+        max-width: 100px; Adjust width
         max-height: 100px; /* Adjust height */
         object-fit: cover; /* Ensures image scales proportionally */
         margin: auto;
@@ -128,8 +192,8 @@
                                          src="https://static.vecteezy.com/system/resources/previews/024/284/257/original/beauty-salon-logo-design-free-vector.jpg">
                                 </div>
                                 <div class="card-body text-center">
-                                    <h5 class="card-text">@business.Name</h5> 
-                                    <h5 class="card-text">Category :  @business.BusinessCategory</h5>
+                                    <h5 class="card-text" style="font-size:large; color: dodgerblue">@business.Name</h5>
+                                    <h5 class="card-text" style="font-size:medium;">Category :  @business.BusinessCategory</h5>
                                     <p>
                                         @for (var i = 1; i <= 5; i++)
                                         {
