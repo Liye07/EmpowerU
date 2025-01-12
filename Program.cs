@@ -6,7 +6,7 @@ using EmpowerU.Models.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<EmpowerUContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddIdentity<User, IdentityRole<int>>()
     .AddEntityFrameworkStores<EmpowerUContext>() 
@@ -23,7 +23,6 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailSender, EmailSender>();
-
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

@@ -78,7 +78,7 @@ namespace EmpowerU.Controllers
                                             .Count();
 
             // Fetch today's appointments for the business
-            var today = DateTime.Today;
+            var today = DateTime.UtcNow;
             var todayAppointments = _context.Appointments
                                              .Where(a => a.BusinessID == business.Id && a.DateTime.Date == today)
                                              .Select(a => new
@@ -89,14 +89,16 @@ namespace EmpowerU.Controllers
                                              .ToList<object>(); // Cast to List<object> instead of List<dynamic>
 
             // Calculate monthly income
-            DateTime startOfMonth = new DateTime(today.Year, today.Month, 1);
+            DateTime startOfMonth = new DateTime(today.Year, today.Month, 1, 0, 0, 0, DateTimeKind.Utc);
             DateTime endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
 
+            // Query payments for the month
             decimal monthlyIncome = _context.Payments
-                                            .Where(p => p.BusinessID == business.Id &&
-                                                        p.PaymentDate >= startOfMonth &&
-                                                        p.PaymentDate <= endOfMonth)
-                                            .Sum(p => (decimal?)p.Amount) ?? 0;
+                .Where(p => p.BusinessID == business.Id &&
+                            p.PaymentDate >= startOfMonth &&
+                            p.PaymentDate <= endOfMonth)
+                .Sum(p => (decimal?)p.Amount) ?? 0;
+
 
             var notifications = _context.Notifications
                                         .Where(n => n.UserID == business.Id && !n.IsRead)

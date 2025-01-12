@@ -7,9 +7,22 @@ namespace EmpowerU.Models.Data
 {
     public class EmpowerUContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
-        public EmpowerUContext(DbContextOptions<EmpowerUContext> options)
+
+        private readonly IConfiguration _configuration;
+        public EmpowerUContext(DbContextOptions<EmpowerUContext> options, IConfiguration configuration)
             : base(options)
         {
+            _configuration = configuration;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                // Fetch connection string from appsettings.json
+                var connectionString = _configuration.GetConnectionString("DefaultConnection");
+                optionsBuilder.UseNpgsql(connectionString);
+            }
         }
 
         public DbSet<Consumer> Consumers { get; set; }
