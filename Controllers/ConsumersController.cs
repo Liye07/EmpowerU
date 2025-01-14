@@ -93,7 +93,7 @@ namespace EmpowerU.Controllers
             string currentMonth = DateTime.Now.ToString("MMMM");
 
             // Fetch today's appointments for the consumer
-            var today = DateTime.Today;
+            var today = DateTime.UtcNow;
             var todayAppointments = _context.Appointments
                                              .Where(a => a.ConsumerID == consumer.Id && a.DateTime.Date == today)
                                              .Select(a => new
