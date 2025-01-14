@@ -36,6 +36,7 @@ namespace EmpowerU.Controllers
         }
 
         // GET: Notifications/Details/5
+        [Route("Notifications/Details/{id?}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

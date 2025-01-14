@@ -85,7 +85,7 @@ namespace EmpowerU.Controllers
                 _context.SaveChanges(); // Save to get the conversation ID
             }
 
-            var receiver = _context.Users.Find(1);
+            var receiver = _context.Users.Find(receiverId);
             if (receiver == null)
             {
                 // Handle the error (e.g., show an error message or redirect)
