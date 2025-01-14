@@ -55,7 +55,7 @@ namespace EmpowerU.Controllers
                     new SqlParameter("@Title", review.Title),
                     new SqlParameter("@Rating", review.Rating),
                     new SqlParameter("@Comment", review.Comment ?? string.Empty), // Avoid null values for Comment
-                    new SqlParameter("@Date", DateTime.Now));
+                    new SqlParameter("@Date", DateTime.UtcNow));
 
 
                 // Calculate the new average rating for the business

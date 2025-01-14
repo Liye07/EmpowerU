@@ -78,7 +78,7 @@ namespace EmpowerU.Controllers
                 {
                     User1ID = senderId,
                     User2ID = receiverId,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.UtcNow
                 };
 
                 _context.Conversations.Add(conversation);
@@ -98,7 +98,7 @@ namespace EmpowerU.Controllers
                 MessageContent = messageContent,
                 SenderID = senderId, // Assume you have the sender ID here
                 ReceiverID = receiverId,
-                Timestamp = DateTime.Now,
+                Timestamp = DateTime.UtcNow,
                 IsRead = false,
                 ConversationID = conversation.ConversationID
             };

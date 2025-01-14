@@ -90,7 +90,7 @@ namespace EmpowerU.Controllers
             }
 
             // Get current month name
-            string currentMonth = DateTime.Now.ToString("MMMM");
+            string currentMonth = DateTime.UtcNow.ToString("MMMM");
 
             // Fetch today's appointments for the consumer
             var today = DateTime.UtcNow;
@@ -311,7 +311,7 @@ namespace EmpowerU.Controllers
                 if (appointment.Status != "Scheduled" && appointment.Status != "Pending")
                     return Json(new { success = false, message = "Only scheduled or pending appointments can be rescheduled." });
 
-                if (request.DateTime < DateTime.Now)
+                if (request.DateTime < DateTime.UtcNow)
                     return Json(new { success = false, message = "The new appointment time must be in the future." });
 
                 appointment.DateTime = request.DateTime;

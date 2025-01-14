@@ -384,7 +384,7 @@ namespace EmpowerU.Controllers
         </div>
         <div class='footer'>
             <p>If you did not sign up, you can safely ignore this email.</p>
-            <p>&copy; {DateTime.Now.Year} EmpowerU. All rights reserved.</p>
+            <p>&copy; {DateTime.UtcNow.Year} EmpowerU. All rights reserved.</p>
         </div>
     </div>
 </body>

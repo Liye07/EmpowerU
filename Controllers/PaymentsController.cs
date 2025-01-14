@@ -188,7 +188,7 @@ namespace EmpowerU.Controllers
                     ConsumerID = appointment.ConsumerID,
                     BusinessID = appointment.BusinessID,
                     Amount = servicePrice,
-                    PaymentDate = DateTime.Now,
+                    PaymentDate = DateTime.UtcNow,
                     PaymentStatus = "Pending",
                     PaymentIntentId = paymentIntent.Id,
                     Currency = "USD",
@@ -222,7 +222,7 @@ namespace EmpowerU.Controllers
                     ConsumerID = paymentData.ConsumerID,
                     BusinessID = paymentData.BusinessID,
                     Amount = paymentData.Amount,
-                    PaymentDate = DateTime.Now,
+                    PaymentDate = DateTime.UtcNow,
                     PaymentStatus = paymentData.PaymentStatus,
                     PaymentIntentId = paymentData.PaymentIntentId,
                     AppointmentID = paymentData.AppointmentID // Include AppointmentID
