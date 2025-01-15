@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Stripe;
 using Microsoft.AspNetCore.Authorization;
+using Npgsql;
 
 namespace EmpowerU.Controllers
 {
@@ -200,15 +201,18 @@ namespace EmpowerU.Controllers
 
         public IActionResult GetAvailableTimeSlots(int serviceID, DateTime bookingDate)
         {
+            // Convert bookingDate to UTC
+            bookingDate = bookingDate.ToUniversalTime();
+
             // Define working hours and slot duration
-            TimeSpan startTime = TimeSpan.FromHours(9);  // 9:00 AM
-            TimeSpan endTime = TimeSpan.FromHours(17);   // 5:00 PM
+            TimeSpan startTime = TimeSpan.FromHours(7);  // 9:00 AM UTC+2 is 7:00 AM UTC
+            TimeSpan endTime = TimeSpan.FromHours(15);  // 5:00 PM UTC+2 is 3:00 PM UTC
             TimeSpan slotDuration = TimeSpan.FromHours(1); // 1-hour slots
 
             // Get existing appointments for the selected date and service
             var bookedSlots = _context.Appointments
                 .Where(a => a.ServiceID == serviceID && a.DateTime.Date == bookingDate.Date)
-                .Select(a => a.DateTime.TimeOfDay)
+                .Select(a => a.DateTime.ToUniversalTime().TimeOfDay)
                 .ToList();
 
             // Generate all possible time slots within the working hours
@@ -225,6 +229,7 @@ namespace EmpowerU.Controllers
             // Return available time slots
             return Json(new { availableSlots = availableSlots.Select(s => s.ToString(@"hh\:mm")) });
         }
+
 
 
         [HttpPost]
@@ -266,10 +271,22 @@ namespace EmpowerU.Controllers
                     return View("Details", new { id = businessID }); 
                 }
 
-                var insertQuery = $@"INSERT INTO Appointment (BusinessID, ConsumerID, ServiceID, DateTime, Status, Confirmation)
-                             VALUES ({businessID}, {consumer.Id}, '{serviceID}', '{fullBookingDateTime}', 'Scheduled', 1)";
+                var insertQuery = @"
+    INSERT INTO ""Appointment"" (""BusinessID"", ""ConsumerID"", ""ServiceID"", ""DateTime"", ""Status"", ""Confirmation"")
+    VALUES (@BusinessID, @ConsumerID, @ServiceID, @DateTime, @Status, @Confirmation)";
 
-                _context.Database.ExecuteSqlRaw(insertQuery);
+                var parameters = new[]
+                {
+    new NpgsqlParameter("@BusinessID", businessID),
+    new NpgsqlParameter("@ConsumerID", consumer.Id),
+    new NpgsqlParameter("@ServiceID", serviceID),
+    new NpgsqlParameter("@DateTime", fullBookingDateTime),
+    new NpgsqlParameter("@Status", "Scheduled"),
+    new NpgsqlParameter("@Confirmation", true)
+};
+
+                _context.Database.ExecuteSqlRaw(insertQuery, parameters);
+
 
                 var notificationService = new NotificationsController(_context);
                 notificationService.AddNotification(consumer.Id, $"Your appointment for {service.ServiceName} in {business.Name} has been confirmed for {fullBookingDateTime:dd MMM yyyy} at {fullBookingDateTime:hh:mm tt}.");

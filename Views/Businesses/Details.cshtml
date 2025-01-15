@@ -371,6 +371,7 @@
                 const serviceID = serviceElement.value;
                 const date = dateElement.value;
 
+
                 if (serviceID && date) {
                     const url = `/Businesses/GetAvailableTimeSlots?serviceID=${serviceID}&bookingDate=${date}`;
 
@@ -385,12 +386,14 @@
                         const timeSlotSelect = document.getElementById("TimeSlot");
                         timeSlotSelect.innerHTML = '<option value="">Select a time slot</option>'; // Reset
 
-                        data.availableSlots.forEach(slot => {
-                            const fullDateTime = `${date}T${slot}`; // Format it correctly
-                            const option = document.createElement("option");
-                            option.value = fullDateTime; // Set value to full datetime
-                            option.textContent = slot; // Display time slot
-                            timeSlotSelect.appendChild(option);
+
+                       data.availableSlots.forEach(slot => {
+                           const fullDateTime = new Date(`${date}T${slot}Z`); // Add Z to indicate UTC
+                           const localTime = fullDateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                           const option = document.createElement("option");
+                           option.value = fullDateTime.toISOString(); // Set value to full datetime
+                           option.textContent = localTime; // Display local time
+                           timeSlotSelect.appendChild(option);
                         });
                     })
                     .catch(error => {
