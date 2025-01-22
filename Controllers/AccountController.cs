@@ -807,7 +807,7 @@ namespace EmpowerU.Controllers
 ";
 
             // Send the email (you need to configure an email service here)
-            await _emailSender.SendEmailAsync(user.Email, "Confirm your email", emailMessage);
+            await _emailSender.SendEmailAsync(user.Email, "[RESEND] Confirm your email", emailMessage);
 
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
             foreach (var error in errors)
