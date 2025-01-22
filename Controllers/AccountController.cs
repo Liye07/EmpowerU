@@ -178,7 +178,93 @@ namespace EmpowerU.Controllers
                     var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
 
                     // Send the email confirmation
-                    var emailMessage = $"Please confirm your email by clicking this link: <a href='{confirmationLink}'>Confirm Email</a>";
+                    var emailMessage = $@"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Email Confirmation</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }}
+        .email-container {{
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }}
+        .header {{
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }}
+        .header h1 {{
+            margin: 0;
+            font-size: 24px;
+        }}
+        .content {{
+            padding: 20px;
+            text-align: center;
+            color: #333;
+        }}
+        .content p {{
+            font-size: 16px;
+            line-height: 1.6;
+        }}
+        .content a {{
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+        }}
+        .content a:hover {{
+            background-color: #0056b3;
+        }}
+        .footer {{
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #aaa;
+            border-top: 1px solid #ddd;
+        }}
+        .footer p {{
+            margin: 0;
+        }}
+    </style>
+</head>
+<body>
+    <div class='email-container'>
+        <div class='header'>
+            <h1>Email Confirmation</h1>
+        </div>
+        <div class='content'>
+            <p>Thank you for signing up! Please confirm your email address to activate your account.</p>
+            <p>Click the button below to verify your email:</p>
+            <a href='{confirmationLink}'>Confirm Email</a>
+        </div>
+        <div class='footer'>
+            <p>If you did not sign up, you can safely ignore this email.</p>
+            <p>&copy; {DateTime.UtcNow.Year} EmpowerU. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+";
                     await _emailSender.SendEmailAsync(consumer.Email, "Email Confirmation", emailMessage);
 
                     // Notify the user to check their email for confirmation
@@ -436,6 +522,8 @@ namespace EmpowerU.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(Login model)
         {
+            ModelState.Remove("Password");
+
             if (ModelState.IsValid)
             {
                 // Find the user by email
@@ -448,14 +536,110 @@ namespace EmpowerU.Controllers
 
                 // Generate the password reset token
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, token = token }, Request.Scheme);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, email = user.Email, token = token }, Request.Scheme);
+
+                var emailMessage = $@"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Reset Password</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }}
+        .email-container {{
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }}
+        .header {{
+            background-color: #dc3545;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }}
+        .header h1 {{
+            margin: 0;
+            font-size: 24px;
+        }}
+        .content {{
+            padding: 20px;
+            text-align: center;
+            color: #333;
+        }}
+        .content p {{
+            font-size: 16px;
+            line-height: 1.6;
+        }}
+        .content a {{
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #dc3545;
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+        }}
+        .content a:hover {{
+            background-color: #c82333;
+        }}
+        .footer {{
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #aaa;
+            border-top: 1px solid #ddd;
+        }}
+        .footer p {{
+            margin: 0;
+        }}
+    </style>
+</head>
+<body>
+    <div class='email-container'>
+        <div class='header'>
+            <h1>Reset Your Password</h1>
+        </div>
+        <div class='content'>
+            <p>We received a request to reset your password. If you made this request, click the button below to reset your password:</p>
+            <a href='{callbackUrl}'>Reset Password</a>
+            <p>If you did not request a password reset, you can safely ignore this email.</p>
+        </div>
+        <div class='footer'>
+            <p>&copy; {DateTime.UtcNow.Year} EmpowerU. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+";
+
 
                 // Send email with the reset link
-                await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-                    $"Please reset your password by <a href='{_urlEncoder.Encode(callbackUrl)}'>clicking here</a>.");
-
+                await _emailSender.SendEmailAsync(model.Email, "Reset Password", emailMessage);
 
                 return RedirectToAction("ForgotPasswordConfirmation");
+            }
+            else
+            {
+                // Log validation errors
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                foreach (var error in errors)
+                {
+                    // Log error message
+                    Console.WriteLine(error);
+                }
             }
 
             // If we got this far, something failed, redisplay form
@@ -541,6 +725,67 @@ namespace EmpowerU.Controllers
             return RedirectToAction("EmailVerificationPending"); // Redirect back to the verify email page
         }
 
+        [HttpGet]
+        public IActionResult ResetPassword(string email, string token)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token))
+            {
+                Console.WriteLine("Missing email or token.");
+                return RedirectToAction("ForgotPassword");
+            }
+
+            ViewData["Token"] = token; // Pass token to the view
+            var user = new User { Email = email };
+            return View(user); // Use the User model
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(User model, string token)
+        {
+            ModelState.Remove("Name");
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                foreach (var error in errors)
+                {
+                    Console.WriteLine(error);
+                }
+
+                return View(model);
+            }
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "No user found with the given email address.");
+                return View(model);
+            }
+
+            // Reset the password using the provided token
+            var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
+
+            if (result.Succeeded)
+            {
+                TempData["SuccessMessage"] = "Your password has been successfully reset.";
+                return RedirectToAction("ResetPasswordSuccessful");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View(model);
+        }
+
+
+        [HttpGet]
+        public IActionResult ResetPasswordSuccessful()
+        {
+            return View();
+        }
 
     }
 
