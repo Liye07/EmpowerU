@@ -717,8 +717,104 @@ namespace EmpowerU.Controllers
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
 
+            // Improved Email Content
+            var emailMessage = $@"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Email Confirmation</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }}
+        .email-container {{
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }}
+        .header {{
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }}
+        .header h1 {{
+            margin: 0;
+            font-size: 24px;
+        }}
+        .content {{
+            padding: 20px;
+            text-align: center;
+            color: #333;
+        }}
+        .content p {{
+            font-size: 16px;
+            line-height: 1.6;
+        }}
+        .content a {{
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+        }}
+        .content a:hover {{
+            background-color: #0056b3;
+        }}
+        .footer {{
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #aaa;
+            border-top: 1px solid #ddd;
+        }}
+        .footer p {{
+            margin: 0;
+        }}
+    </style>
+</head>
+<body>
+    <div class='email-container'>
+        <div class='header'>
+            <h1>Email Confirmation</h1>
+        </div>
+        <div class='content'>
+            <p>Thank you for signing up! Please confirm your email address to activate your account.</p>
+            <p>Click the button below to verify your email:</p>
+            <a href='{callbackUrl}'>Confirm Email</a>
+        </div>
+        <div class='footer'>
+            <p>If you did not sign up, you can safely ignore this email.</p>
+            <p>&copy; {DateTime.UtcNow.Year} EmpowerU. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+";
+
             // Send the email (you need to configure an email service here)
-            await _emailSender.SendEmailAsync(user.Email, "Confirm your email", $"Please confirm your email by clicking <a href='{callbackUrl}'>here</a>");
+            await _emailSender.SendEmailAsync(user.Email, "Confirm your email", emailMessage);
+
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            foreach (var error in errors)
+            {
+                // Log error message
+                Console.WriteLine(error);
+            }
 
             // Provide feedback to the user
             TempData["Success"] = "Verification email has been resent. Please check your inbox.";
