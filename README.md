@@ -12,7 +12,7 @@ Despite challenges such as API integration and database synchronization, the tea
 
 ## Website Video Walkthrough
 <div>
-    <a href="https://www.loom.com/share/3bafea188faa4c858c833afae7e09987">
+    <a>
       <p>Live Walkthrough Of the EmpowerU Website - Watch Video</p>
     </a>
     <a href="https://www.loom.com/share/3bafea188faa4c858c833afae7e09987">
