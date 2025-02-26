@@ -75,10 +75,10 @@ EmpowerU is a web-based platform aimed at connecting consumers with trusted serv
 **Purpose:** SQL Server was selected as the primary database management system due to its better compatibility with ASP.NET MVC and seamless integration with Visual Studio. SQL Server provided robust database management capabilities and optimized querying.
 
 **Tool:** Render  
-- **Purpose:** Render is used for hosting the web application, ensuring it remains accessible online. Initially, it was also used for database hosting, but due to its free-tier limitations, the database was migrated to Supabase.  
+**Purpose:** Render is used for hosting the web application, ensuring it remains accessible online. Initially, it was also used for database hosting, but due to its free-tier limitations, the database was migrated to Supabase.  
 
 **Tool:** Supabase  
-- **Purpose:** The database is now hosted on Supabase, offering a scalable PostgreSQL solution. However, due to inactivity, the database may shut down occasionally, requiring a manual restore to bring it back online.  
+**Purpose:** The database is now hosted on Supabase, offering a scalable PostgreSQL solution. However, due to inactivity, the database may shut down occasionally, requiring a manual restore to bring it back online.  
 
 ### 4. ORM (Object-Relational Mapping)
 
