@@ -11,7 +11,7 @@ EmpowerU enhances both user experience and business opportunities.
 Despite challenges such as API integration and database synchronization, the team overcame these hurdles through innovative problem-solving and collaboration.
 
 ## Website Video Walkthrough
-[![Watch the video]((https://www.loom.com/share/3bafea188faa4c858c833afae7e09987?sid=55083645-4470-484a-b820-a443b8e0283](https://www.loom.com/share/3bafea188faa4c858c833afae7e09987?sid=55083645-4470-484a-b820-a443b8e02837)
+<div style="position: relative; padding-bottom: 53.09734513274337%; height: 0;"><iframe src="https://www.loom.com/embed/3bafea188faa4c858c833afae7e09987?sid=ac2f0b0f-facb-4225-8898-3460851c9660" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
 
 ## Live Website
 The live website for EmpowerU is hosted (https://empoweru-2h40.onrender.com/). Please note that this link may go down occasionally, as it is hosted on a free-tier platform. 
