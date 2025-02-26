@@ -4,9 +4,11 @@
 
 EmpowerU is a web-based platform aimed at connecting consumers with trusted service providers, empowering emerging businesses to gain visibility and grow. 
 
-The platform features a centralized directory, appointment booking system, user reviews, and advanced search functionalities. 
+The platform features a centralized directory, appointment booking system, user reviews, search functionalities, and more. 
 
-EmpowerU enhances both user experience and business opportunities. Despite challenges such as API integration and database synchronization, the team overcame these hurdles through innovative problem-solving and collaboration.
+EmpowerU enhances both user experience and business opportunities. 
+
+Despite challenges such as API integration and database synchronization, the team overcame these hurdles through innovative problem-solving and collaboration.
 
 ## Live Website
 The live website for EmpowerU is hosted (https://empoweru-2h40.onrender.com/). Please note that this link may go down occasionally, as it is hosted on a free-tier platform. 
