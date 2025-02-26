@@ -12,9 +12,6 @@ Despite challenges such as API integration and database synchronization, the tea
 
 ## Website Video Walkthrough
 <div>
-    <a>
-      <p>Live Walkthrough Of the EmpowerU Website - Watch Video</p>
-    </a>
     <a href="https://www.loom.com/share/3bafea188faa4c858c833afae7e09987">
       <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/3bafea188faa4c858c833afae7e09987-d05c2488be72390c-full-play.gif">
     </a>
