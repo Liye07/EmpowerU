@@ -10,6 +10,10 @@ EmpowerU enhances both user experience and business opportunities.
 
 Despite challenges such as API integration and database synchronization, the team overcame these hurdles through innovative problem-solving and collaboration.
 
+## Website Video Walkthrough
+[![Watch the video](https://vumbnail.com/968842243.jpg)](https://vimeo.com/968842243)
+
+
 ## Live Website
 The live website for EmpowerU is hosted (https://empoweru-2h40.onrender.com/). Please note that this link may go down occasionally, as it is hosted on a free-tier platform. 
 
