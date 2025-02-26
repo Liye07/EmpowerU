@@ -11,7 +11,11 @@ EmpowerU enhances both user experience and business opportunities.
 Despite challenges such as API integration and database synchronization, the team overcame these hurdles through innovative problem-solving and collaboration.
 
 ## Website Video Walkthrough
-[![Watch the video](https://vumbnail.com/968842243.jpg)](https://vimeo.com/968842243)
+<p align="center">
+    <a href="https://vimeo.com/968842243">
+        <img src="https://vumbnail.com/968842243.jpg" width="200" alt="Watch the video">
+    </a>
+</p>
 
 
 ## Live Website
