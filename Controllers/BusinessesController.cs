@@ -205,8 +205,8 @@ namespace EmpowerU.Controllers
             bookingDate = bookingDate.ToUniversalTime();
 
             // Define working hours and slot duration
-            TimeSpan startTime = TimeSpan.FromHours(9);  // 9:00 AM UTC+2 is 7:00 AM UTC
-            TimeSpan endTime = TimeSpan.FromHours(17);  // 5:00 PM UTC+2 is 3:00 PM UTC
+            TimeSpan startTime = TimeSpan.FromHours(7);  // 9:00 AM UTC+2 is 7:00 AM UTC
+            TimeSpan endTime = TimeSpan.FromHours(15);  // 5:00 PM UTC+2 is 3:00 PM UTC
             TimeSpan slotDuration = TimeSpan.FromHours(1); // 1-hour slots
 
             // Get existing appointments for the selected date and service
