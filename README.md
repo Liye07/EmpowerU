@@ -143,7 +143,7 @@ If the live site is unavailable, you can run the website locally using Visual St
 - Businesses are notified of new appointments and can manage their schedule.
 
 #### 1.4 Optimized Search and Discovery
-- Leveraging the Google Maps API, EmpowerU allows users to search for service providers by proximity, rating, and service type.
+- Leveraging the OpenStreetMap API (Nominatim), EmpowerU allows users to search for service providers by proximity, rating, and service type.
 
 #### 1.5 Consumer Behavior Analytics
 - The platform includes analytics and reporting features to provide businesses with insights into consumer interactions and service demand.
@@ -169,7 +169,7 @@ If the live site is unavailable, you can run the website locally using Visual St
 - **Analytics:** Businesses can access performance metrics such as customer trends and service demand.
 
 ### Third-Party Integrations
-- OpenStreetMapAPI for location-based search functionality.
+- OpenStreetMap API (Nominatim) for location-based search functionality.
 
 ---
 
@@ -183,4 +183,4 @@ To run the EmpowerU project locally, follow the steps below:
 
 ### Clone the Repository
 ```bash
-git clone https://github.com/yourusername/empoweru.git
+git clone https://github.com/Liye07/EmpowerU.git
