@@ -63,66 +63,66 @@ If the live site is unavailable, you can run the website locally using Visual St
 
 ### 1. Development Environment
 
-- **Tool:** Visual Studio 2022  
-- **Purpose:** Visual Studio was chosen for writing, managing, and debugging code in the ASP.NET MVC web application. It offers integrated features such as IntelliSense, project templates, and debugging tools, streamlining the development process. The built-in Git integration also simplified version control and collaboration.
+**Tool:** Visual Studio 2022  
+**Purpose:** Visual Studio was chosen for writing, managing, and debugging code in the ASP.NET MVC web application. It offers integrated features such as IntelliSense, project templates, and debugging tools, streamlining the development process. The built-in Git integration also simplified version control and collaboration.
 
 ### 2. Framework
 
-- **Tool:** ASP.NET MVC  
-- **Purpose:** ASP.NET MVC was used to build the web application with a Model-View-Controller architecture, promoting separation of concerns. This framework was chosen for its scalability, maintainability, and ease of testing, making it a reliable choice for web development.
+**Tool:** ASP.NET MVC  
+**Purpose:** ASP.NET MVC was used to build the web application with a Model-View-Controller architecture, promoting separation of concerns. This framework was chosen for its scalability, maintainability, and ease of testing, making it a reliable choice for web development.
 
 ### 3. Database
 
-- **Tool:** MySQL  
-- **Purpose:** MySQL was initially used to create the first version of the database due to its ERD (Entity Relationship Diagram) generation feature, which helped in visualizing the database structure. It was a quick tool to start with for designing and building the database foundation.
+**Tool:** MySQL  
+**Purpose:** MySQL was initially used to create the first version of the database due to its ERD (Entity Relationship Diagram) generation feature, which helped in visualizing the database structure. It was a quick tool to start with for designing and building the database foundation.
 
-- **Tool:** SQL Server 2019  
-- **Purpose:** SQL Server was selected as the primary database management system due to its better compatibility with ASP.NET MVC and seamless integration with Visual Studio. SQL Server provided robust database management capabilities and optimized querying.
+**Tool:** SQL Server 2019  
+**Purpose:** SQL Server was selected as the primary database management system due to its better compatibility with ASP.NET MVC and seamless integration with Visual Studio. SQL Server provided robust database management capabilities and optimized querying.
 
-- **Tool:** Render  
-- **Purpose:** Render is used for hosting the web application, ensuring it remains accessible online. Initially, it was also used for database hosting, but due to its free-tier limitations, the database was migrated to Supabase.  
+**Tool:** Render  
+**Purpose:** Render is used for hosting the web application, ensuring it remains accessible online. Initially, it was also used for database hosting, but due to its free-tier limitations, the database was migrated to Supabase.  
 
-- **Tool:** Supabase  
-- **Purpose:** The database is now hosted on Supabase, offering a scalable PostgreSQL solution. However, due to inactivity, the database may shut down occasionally, requiring a manual restore to bring it back online.  
+**Tool:** Supabase  
+**Purpose:** The database is now hosted on Supabase, offering a scalable PostgreSQL solution. However, due to inactivity, the database may shut down occasionally, requiring a manual restore to bring it back online.  
 
 ### 4. ORM (Object-Relational Mapping)
 
-- **Tool:** Entity Framework Core  
-- **Purpose:** Entity Framework Core was used for mapping database tables to C# objects, facilitating easy interaction with the database through object-oriented programming. Its data migration and management features made it an efficient tool for handling database operations.
+**Tool:** Entity Framework Core  
+**Purpose:** Entity Framework Core was used for mapping database tables to C# objects, facilitating easy interaction with the database through object-oriented programming. Its data migration and management features made it an efficient tool for handling database operations.
 
 ### 5. Version Control
 
-- **Tool:** Git  
-- **Purpose:** Git was used to track changes in the project’s source code, providing a history of all modifications. It allowed for effective version control and branching for different features and updates.
+**Tool:** Git  
+**Purpose:** Git was used to track changes in the project’s source code, providing a history of all modifications. It allowed for effective version control and branching for different features and updates.
 
-- **Tool:** GitHub  
-- **Purpose:** GitHub served as the remote repository hosting platform. It facilitated collaboration and code sharing between team members and provided a centralized location for pushing and pulling code changes, backups, and issue tracking.
+**Tool:** GitHub  
+**Purpose:** GitHub served as the remote repository hosting platform. It facilitated collaboration and code sharing between team members and provided a centralized location for pushing and pulling code changes, backups, and issue tracking.
 
 ### 6. UI Design
 
-- **Tool:** Bootstrap  
-- **Purpose:** Bootstrap was selected for designing a responsive and user-friendly interface. Its pre-built CSS and JavaScript components helped accelerate the UI development process and ensured cross-browser compatibility.
+**Tool:** Bootstrap  
+**Purpose:** Bootstrap was selected for designing a responsive and user-friendly interface. Its pre-built CSS and JavaScript components helped accelerate the UI development process and ensured cross-browser compatibility.
 
 ### 7. APIs
 
-- **Tool:** OpenStreetMap API (Nominatim)  
-- **Purpose:** The OpenStreetMap Nominatim API was used to handle real-time address lookups and suggestions in the business registration form, providing geolocation and mapping functionalities for accurate address data input.
+**Tool:** OpenStreetMap API (Nominatim)  
+**Purpose:** The OpenStreetMap Nominatim API was used to handle real-time address lookups and suggestions in the business registration form, providing geolocation and mapping functionalities for accurate address data input.
 
 ### 8. Version Control Integration
 
-- **Tool:** Visual Studio Git Integration  
-- **Purpose:** Integrated directly into Visual Studio, this tool made it easy to push, pull, and manage code with Git and GitHub. This streamlined version control activities without needing a separate application, directly from within the development environment.
+**Tool:** Visual Studio Git Integration  
+**Purpose:** Integrated directly into Visual Studio, this tool made it easy to push, pull, and manage code with Git and GitHub. This streamlined version control activities without needing a separate application, directly from within the development environment.
 
 ### 9. Diagram and Documentation Tools
 
-- **Tool:** Lucidchart  
-- **Purpose:** Lucidchart was chosen for creating UML diagrams, leveraging AI-assisted generation to create initial versions of the diagrams. These diagrams visually represented system architecture, class relationships, and workflows.
+**Tool:** Lucidchart  
+**Purpose:** Lucidchart was chosen for creating UML diagrams, leveraging AI-assisted generation to create initial versions of the diagrams. These diagrams visually represented system architecture, class relationships, and workflows.
 
-- **Tool:** Wondershare EdrawMax  
-- **Purpose:** Wondershare EdrawMax was used to create the Use Case Diagram (UCD), helping to represent user interactions with the system and ensuring key functional requirements were captured clearly.
+**Tool:** Wondershare EdrawMax  
+**Purpose:** Wondershare EdrawMax was used to create the Use Case Diagram (UCD), helping to represent user interactions with the system and ensuring key functional requirements were captured clearly.
 
 **Additional Tools:**  
-- **AI Assistance**: Tools like ChatGPT were used for problem-solving, optimizing code, and gaining insights into best practices, particularly in debugging and overcoming architectural challenges.
+**AI Assistance**: Tools like ChatGPT were used for problem-solving, optimizing code, and gaining insights into best practices, particularly in debugging and overcoming architectural challenges.
 
 ---
 
