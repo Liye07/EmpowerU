@@ -20,7 +20,7 @@ If the live site is unavailable, you can run the website locally using Visual St
    - If using **SQL Server**, update the connection string as follows:
      ```json
      "ConnectionStrings": {
-         "DefaultConnection": "Server=your_server_name;Database=your_database;User Id=your_user;Password=your_password;Trusted_Connection=True;MultipleActiveResultSets=true"
+         "DefaultConnection": "Server=your_server_name;Database=your_database;Trusted_Connection=True;MultipleActiveResultSets=true"
      }
      ```
    - If using **PostgreSQL/Supabase**, update it accordingly:
