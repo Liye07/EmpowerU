@@ -10,7 +10,7 @@ EmpowerU enhances both user experience and business opportunities.
 
 Despite challenges such as API integration and database synchronization, the team overcame these hurdles through innovative problem-solving and collaboration.
 
-## Website Video Walkthrough
+## Website Video Walkthrough (4 mins)
 <div>
     <a href="https://rebrand.ly/websitewalkthroughvid">
       <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/3bafea188faa4c858c833afae7e09987-d05c2488be72390c-full-play.gif">
