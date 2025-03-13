@@ -12,13 +12,13 @@ Despite challenges such as API integration and database synchronization, the tea
 
 ## Website Video Walkthrough
 <div>
-    <a href="https://www.loom.com/share/3bafea188faa4c858c833afae7e09987">
+    <a href="https://rebrand.ly/websitewalkthroughvid">
       <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/3bafea188faa4c858c833afae7e09987-d05c2488be72390c-full-play.gif">
     </a>
   </div>
 
 ## Live Website
-The live website for EmpowerU is hosted (https://empoweru-2h40.onrender.com/). Please note that this link may go down occasionally, as it is hosted on a free-tier platform. 
+The live website for EmpowerU is hosted (https://rebrand.ly/empoweru). Please note that this link may go down occasionally, as it is hosted on a free-tier platform. 
 
 ### Backup Option
 
