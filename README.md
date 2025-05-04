@@ -173,7 +173,7 @@ If the live site is unavailable, you can run the website locally using Visual St
 - **User Reviews and Ratings:** Consumers can leave reviews and rate businesses.
 - **Search and Filter Options:** Search functionality with filters by category, location, rating, and service type.
 - **Appointment Booking:** An integrated scheduling system for easy appointment booking.
-- **Analytics:** Businesses can access performance metrics such as customer trends and service demand.
+- **Analytics:** Businesses can access performance metrics such as customer trends and service demand(not yet available).
 
 ### Third-Party Integrations
 - OpenStreetMap API (Nominatim) for location-based search functionality.
